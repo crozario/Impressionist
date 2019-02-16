@@ -4,7 +4,7 @@
 #### Python
 - Need python `google-cloud-speech` package
 ```bash
-pip install --upgrade gogle-cloud-speech
+pip install --upgrade google-cloud-speech
 ```
 - Run like this
 ```bash
