@@ -10,7 +10,7 @@ pip install --upgrade gogle-cloud-speech
 ```bash
 python transcribe_time_offsets_with_language_change.py -s "en-US" sample.flac
 ```
-- To run with `.wav` file extensions, delete the following line from file
+- To run with `.wav` file extensions, delete the following line from python file or change `.FLAC` to `.LINEAR16`
 ```python
 encoding=enums.RecognitionConfig.AudioEncoding.FLAC
 ```
