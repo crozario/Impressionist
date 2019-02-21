@@ -1,5 +1,7 @@
 # The Impressionist
 
+> **Impressionist** is like Karaoke but for movies and shows, and more interactive and awesome!
+
 Normally when you watch shows and movies, information only flows one way. From your television, computer or smartphone to you. **Impressionist changes this paradigm**. 
 	
 If you love a show or movie and want to do more than just watch it, if you’re watching friends or office or spongebob for the 5th time and you already know the words and punch lines, OR if you’re an ESL student and want to practice your fluency in a safe environment while having fun and learning essential idioms and pop culture references, **Impressionist** is for you. 
@@ -9,3 +11,12 @@ If you love a show or movie and want to do more than just watch it, if you’re 
 Put simply, the better your *impression*, the more points you get. 
 
 > **Impressionist** is like Karaoke but for movies and shows, and more interactive and awesome!
+
+**Impressionist** is like Karaoke but for movies and shows, and more interactive and awesome!
+
+Entrepreneur Team members:
+- Haard Shah
+- Crossley Rozario
+- Deborah Santo
+- Alfurqan Khan
+- Raj Patel

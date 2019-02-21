@@ -32,10 +32,13 @@ from google.oauth2 import service_account
 
 credentials = service_account.Credentials.from_service_account_file('api-key.json')
 
-
-def transcribe_file_with_word_time_offsets(speech_file,language):
+# for files that are on local computer and not on google cloud (gc://)
+# default language = "en-US"
+def transcribe_file_with_word_time_offsets(speech_file,language='en-US'):
     """Transcribe the given audio file synchronously and output the word time
     offsets."""
+    if not language:
+        language = 'en-US'
     print("Start")
 
     from google.cloud import speech
@@ -56,7 +59,7 @@ def transcribe_file_with_word_time_offsets(speech_file,language):
 
     print("config start")
     config = types.RecognitionConfig(
-            encoding=enums.RecognitionConfig.AudioEncoding.FLAC,
+            # encoding=enums.RecognitionConfig.AudioEncoding.FLAC,
             language_code=language,
             enable_word_time_offsets=True)
 
@@ -78,7 +81,7 @@ def transcribe_file_with_word_time_offsets(speech_file,language):
                 end_time.seconds + end_time.nanos * 1e-9))
 
 
-# [START def_transcribe_gcs]
+# [START def_transcribe_gcs] # need to use this for audio > 1 minute
 def transcribe_gcs_with_word_time_offsets(gcs_uri,language):
     """Transcribe the given audio file asynchronously and output the word time
     offsets."""
@@ -120,7 +123,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description=__doc__,
         formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument(dest='path', help='File or GCS path for audio file to be recognized')
-    parser.add_argument("-s","--string", type=str, required=True)
+    parser.add_argument("-s","--string", type=str, required=False)
     args = parser.parse_args()
     if args.path.startswith('gs://'):
         transcribe_gcs_with_word_time_offsets(args.path,args.string)
