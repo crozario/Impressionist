@@ -9,3 +9,4 @@ If you love a show or movie and want to do more than just watch it, if you’re 
 Put simply, the better your *impression*, the more points you get. 
 
 > **Impressionist** is like Karaoke but for movies and shows, and more interactive and awesome!
+
