@@ -1,0 +1,764 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>useNotes.md</title>
+<meta http-equiv="Content-type" content="text/html;charset=UTF-8">
+
+<style>
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+body {
+	font-family: "Segoe WPC", "Segoe UI", "SFUIText-Light", "HelveticaNeue-Light", sans-serif, "Droid Sans Fallback";
+	font-size: 14px;
+	padding: 0 12px;
+	line-height: 22px;
+	word-wrap: break-word;
+}
+
+#code-csp-warning {
+	position: fixed;
+	top: 0;
+	right: 0;
+	color: white;
+	margin: 16px;
+	text-align: center;
+	font-size: 12px;
+	font-family: sans-serif;
+	background-color:#444444;
+	cursor: pointer;
+	padding: 6px;
+	box-shadow: 1px 1px 1px rgba(0,0,0,.25);
+}
+
+#code-csp-warning:hover {
+	text-decoration: none;
+	background-color:#007acc;
+	box-shadow: 2px 2px 2px rgba(0,0,0,.25);
+}
+
+
+body.scrollBeyondLastLine {
+	margin-bottom: calc(100vh - 22px);
+}
+
+body.showEditorSelection .code-line {
+	position: relative;
+}
+
+body.showEditorSelection .code-active-line:before,
+body.showEditorSelection .code-line:hover:before {
+	content: "";
+	display: block;
+	position: absolute;
+	top: 0;
+	left: -12px;
+	height: 100%;
+}
+
+body.showEditorSelection li.code-active-line:before,
+body.showEditorSelection li.code-line:hover:before {
+	left: -30px;
+}
+
+.vscode-light.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(0, 0, 0, 0.15);
+}
+
+.vscode-light.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(0, 0, 0, 0.40);
+}
+
+.vscode-dark.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(255, 255, 255, 0.4);
+}
+
+.vscode-dark.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(255, 255, 255, 0.60);
+}
+
+.vscode-high-contrast.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(255, 160, 0, 0.7);
+}
+
+.vscode-high-contrast.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(255, 160, 0, 1);
+}
+
+img {
+	max-width: 100%;
+	max-height: 100%;
+}
+
+a {
+	color: #4080D0;
+	text-decoration: none;
+}
+
+a:focus,
+input:focus,
+select:focus,
+textarea:focus {
+	outline: 1px solid -webkit-focus-ring-color;
+	outline-offset: -1px;
+}
+
+hr {
+	border: 0;
+	height: 2px;
+	border-bottom: 2px solid;
+}
+
+h1 {
+	padding-bottom: 0.3em;
+	line-height: 1.2;
+	border-bottom-width: 1px;
+	border-bottom-style: solid;
+}
+
+h1, h2, h3 {
+	font-weight: normal;
+}
+
+h1 code,
+h2 code,
+h3 code,
+h4 code,
+h5 code,
+h6 code {
+	font-size: inherit;
+	line-height: auto;
+}
+
+a:hover {
+	color: #4080D0;
+	text-decoration: underline;
+}
+
+table {
+	border-collapse: collapse;
+}
+
+table > thead > tr > th {
+	text-align: left;
+	border-bottom: 1px solid;
+}
+
+table > thead > tr > th,
+table > thead > tr > td,
+table > tbody > tr > th,
+table > tbody > tr > td {
+	padding: 5px 10px;
+}
+
+table > tbody > tr + tr > td {
+	border-top: 1px solid;
+}
+
+blockquote {
+	margin: 0 7px 0 5px;
+	padding: 0 16px 0 10px;
+	border-left: 5px solid;
+}
+
+code {
+	font-family: Menlo, Monaco, Consolas, "Droid Sans Mono", "Courier New", monospace, "Droid Sans Fallback";
+	font-size: 14px;
+	line-height: 19px;
+}
+
+body.wordWrap pre {
+	white-space: pre-wrap;
+}
+
+.mac code {
+	font-size: 12px;
+	line-height: 18px;
+}
+
+pre:not(.hljs),
+pre.hljs code > div {
+	padding: 16px;
+	border-radius: 3px;
+	overflow: auto;
+}
+
+/** Theming */
+
+.vscode-light,
+.vscode-light pre code {
+	color: rgb(30, 30, 30);
+}
+
+.vscode-dark,
+.vscode-dark pre code {
+	color: #DDD;
+}
+
+.vscode-high-contrast,
+.vscode-high-contrast pre code {
+	color: white;
+}
+
+.vscode-light code {
+	color: #A31515;
+}
+
+.vscode-dark code {
+	color: #D7BA7D;
+}
+
+.vscode-light pre:not(.hljs),
+.vscode-light code > div {
+	background-color: rgba(220, 220, 220, 0.4);
+}
+
+.vscode-dark pre:not(.hljs),
+.vscode-dark code > div {
+	background-color: rgba(10, 10, 10, 0.4);
+}
+
+.vscode-high-contrast pre:not(.hljs),
+.vscode-high-contrast code > div {
+	background-color: rgb(0, 0, 0);
+}
+
+.vscode-high-contrast h1 {
+	border-color: rgb(0, 0, 0);
+}
+
+.vscode-light table > thead > tr > th {
+	border-color: rgba(0, 0, 0, 0.69);
+}
+
+.vscode-dark table > thead > tr > th {
+	border-color: rgba(255, 255, 255, 0.69);
+}
+
+.vscode-light h1,
+.vscode-light hr,
+.vscode-light table > tbody > tr + tr > td {
+	border-color: rgba(0, 0, 0, 0.18);
+}
+
+.vscode-dark h1,
+.vscode-dark hr,
+.vscode-dark table > tbody > tr + tr > td {
+	border-color: rgba(255, 255, 255, 0.18);
+}
+
+.vscode-light blockquote,
+.vscode-dark blockquote {
+	background: rgba(127, 127, 127, 0.1);
+	border-color: rgba(0, 122, 204, 0.5);
+}
+
+.vscode-high-contrast blockquote {
+	background: transparent;
+	border-color: #fff;
+}
+</style>
+
+<style>
+/* Tomorrow Theme */
+/* http://jmblog.github.com/color-themes-for-google-code-highlightjs */
+/* Original theme - https://github.com/chriskempson/tomorrow-theme */
+
+/* Tomorrow Comment */
+.hljs-comment,
+.hljs-quote {
+	color: #8e908c;
+}
+
+/* Tomorrow Red */
+.hljs-variable,
+.hljs-template-variable,
+.hljs-tag,
+.hljs-name,
+.hljs-selector-id,
+.hljs-selector-class,
+.hljs-regexp,
+.hljs-deletion {
+	color: #c82829;
+}
+
+/* Tomorrow Orange */
+.hljs-number,
+.hljs-built_in,
+.hljs-builtin-name,
+.hljs-literal,
+.hljs-type,
+.hljs-params,
+.hljs-meta,
+.hljs-link {
+	color: #f5871f;
+}
+
+/* Tomorrow Yellow */
+.hljs-attribute {
+	color: #eab700;
+}
+
+/* Tomorrow Green */
+.hljs-string,
+.hljs-symbol,
+.hljs-bullet,
+.hljs-addition {
+	color: #718c00;
+}
+
+/* Tomorrow Blue */
+.hljs-title,
+.hljs-section {
+	color: #4271ae;
+}
+
+/* Tomorrow Purple */
+.hljs-keyword,
+.hljs-selector-tag {
+	color: #8959a8;
+}
+
+.hljs {
+	display: block;
+	overflow-x: auto;
+	color: #4d4d4c;
+	padding: 0.5em;
+}
+
+.hljs-emphasis {
+	font-style: italic;
+}
+
+.hljs-strong {
+	font-weight: bold;
+}
+</style>
+
+<style>
+/*
+ * Markdown PDF CSS
+ */
+
+ body {
+	font-family:  "Meiryo", "Segoe WPC", "Segoe UI", "SFUIText-Light", "HelveticaNeue-Light", sans-serif, "Droid Sans Fallback";
+}
+
+pre {
+	background-color: #f8f8f8;
+	border: 1px solid #cccccc;
+	border-radius: 3px;
+	overflow-x: auto;
+	white-space: pre-wrap;
+	overflow-wrap: break-word;
+}
+
+pre:not(.hljs) {
+	padding: 23px;
+	line-height: 19px;
+}
+
+blockquote {
+	background: rgba(127, 127, 127, 0.1);
+	border-color: rgba(0, 122, 204, 0.5);
+}
+
+.emoji {
+	height: 1.4em;
+}
+
+/* for inline code */
+:not(pre):not(.hljs) > code {
+	color: #C9AE75; /* Change the old color so it seems less like an error */
+	font-size: inherit;
+}
+
+/* Page Break : use <div class="page"/> to insert page break
+-------------------------------------------------------- */
+.page {
+	page-break-after: always;
+}
+
+</style>
+
+</head>
+<body>
+<h1 id="using-opensmile"><strong>Using opensmile</strong></h1>
+<blockquote>
+<p>Installation creates <code>SMILExtract</code> executable in local dir and installation location</p>
+</blockquote>
+<blockquote>
+<p>Note: appendix-like terminal printouts at the end</p>
+</blockquote>
+<h2 id="first-run"><strong>First Run</strong></h2>
+<pre class="hljs"><code><div>(impressionist_py3.6) haardshah~/developement/Impressionist/opensmile-2.3.0$ SMILExtract -C config/demo/demo1_energy.conf -I example-audio/media-interpretation.wav -O speech02.energy.csv
+(MSG) [2] <span class="hljs-keyword">in</span> SMILExtract : openSMILE starting!
+(MSG) [2] <span class="hljs-keyword">in</span> SMILExtract : config file is: config/demo/demo1_energy.conf
+(MSG) [2] <span class="hljs-keyword">in</span> cComponentManager : successfully registered 91 component types.
+==&gt; LEVEL <span class="hljs-string">'wave'</span>  +++  Buffersize(frames) = 88201  +++  nReaders = 1
+==&gt; LEVEL <span class="hljs-string">'waveframes'</span>  +++  Buffersize(frames) = 3  +++  nReaders = 1
+==&gt; LEVEL <span class="hljs-string">'energy'</span>  +++  Buffersize(frames) = 3  +++  nReaders = 1
+(MSG) [2] <span class="hljs-keyword">in</span> cComponentManager : successfully finished createInstances
+									(4 component instances were finalised, 1 data memories were finalised)
+(MSG) [2] <span class="hljs-keyword">in</span> cComponentManager : starting single thread processing loop
+(MSG) [2] <span class="hljs-keyword">in</span> cComponentManager : Processing finished! System ran <span class="hljs-keyword">for</span> 526 ticks.
+</div></code></pre>
+<h2 id="how-can-signals-be-compared"><strong>How can signals be compared</strong></h2>
+<ul>
+<li><a href="https://stackoverflow.com/a/20672356">Stackoverflow</a>
+<ul>
+<li>time doman analysis : how visually similar are signals</li>
+<li>frequency or time-frequency analysis : how similar audio signals sound</li>
+<li>signal variance : for noise measure</li>
+<li>See link ^ for matlab code for the following
+<ul>
+<li>Similarity in time domain (static): <em>Multiply in place and sum</em>.</li>
+<li>Similarity in time domain (with shift): Take <em>fft</em> of each signal, <em>multiply</em>, and <em>ifft</em>. (I believe this equivalent to matlab's xcorr.)</li>
+<li>Similarity in frequency domain (static): Take <em>fft</em> of each signal, <em>multiply</em>, and <em>sum</em>.</li>
+<li>Similarity in frequency domain (with shift): <em>Multiply the two signals and take fft</em>. This will show if the signals share similar spectral shapes.</li>
+<li>Similarity in energy (or power if different lengths): <em>Square the two signals and sum each</em> (and divide by signal length for power). (Since the signals were detrended, this should be <em>signal variance</em>.) Then subtract and take absolute value for a measure of signal variance similarity</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="https://dsp.stackexchange.com/questions/9491/normalized-square-error-vs-pearson-correlation-as-similarity-measures-of-two-sig/9492#9492">Pearson correlation coefficient</a>
+<blockquote>
+<p>Summarizing, in general the Pearson correlation coefficient gives you a better idea of the similarity of two signals.</p>
+</blockquote>
+</li>
+<li><a href="https://dsp.stackexchange.com/questions/2556/audio-signal-comparison-for-automatic-singing-evaluation/2559#2559">Audio signal comparison for automatic singing evaluation</a></li>
+<li>Further research <a href="https://dsp.stackexchange.com/tags/waveform-similarity/hot">Hot answers <code>waveform-similarity</code></a></li>
+</ul>
+<h2 id="config-files"><strong>Config files</strong></h2>
+<p>Outline:</p>
+<ul>
+<li><a href="#generate-configs">Generate Configs</a></li>
+<li><a href="#section-headers">Section Headers</a></li>
+<li><a href="#component-connections">Component Connections</a></li>
+<li><a href="#Section-24">Section 2.4</a> - Inside OpenSMILE</li>
+<li><a href="#241-Buffers">2.4.1 Buffers</a></li>
+<li><a href="#243-OpenSMILE-terminology">2.4.3 OpenSMILE terminology</a></li>
+<li><a href="#Section-25-Default-feature-sets">Section 2.5 Default feature sets</a></li>
+<li><a href="#251-Available-options-for-audio-input-for-all-standard-config-files">2.5.1 Available options for audio input for all standard config files</a></li>
+<li><a href="#Prosodic-features">Prosodic features</a></li>
+<li><a href="#Chroma-features">Chroma features</a></li>
+<li><a href="#What-are-chroma-features?">What are chroma features?</a></li>
+<li><a href="#MFCC-features">MFCC features</a></li>
+<li><a href="#PLP-features">PLP features</a></li>
+</ul>
+<h3 id="generate-configs"><strong>Generate Configs</strong></h3>
+<ul>
+<li>Generate config files</li>
+</ul>
+<pre class="hljs"><code><div>SMILExtract -cfgFileTemplate -configDflt cWaveSource,cFramer,cEnergy,cCsvSink -l 1 2&gt; haardconfigs/mydemo.conf
+</div></code></pre>
+<h3 id="section-headers"><strong>Section Headers</strong></h3>
+<ul>
+<li><code>[instanceName:componentName]</code></li>
+</ul>
+<h3 id="component-connections"><strong>Component Connections</strong></h3>
+<ul>
+<li>Okay having some difficulty understanding this</li>
+<li><strong>How to configure component connections?</strong>
+<ul>
+<li>assigning memory &quot;levels&quot; to the <em>dataReader</em> and <em>dataWriter</em> by modifying <code>reader.dmLevel</code> and <code>writer.dmLevel</code></li>
+<li><em>dataReader</em> and <em>dataWriter</em> in each source, sink, or processing component</li>
+<li><mark>Section 2.3</mark>: Basics of how to configure openSMILE</li>
+</ul>
+</li>
+<li>UP NEXT
+<ul>
+<li><strong>2.5</strong></li>
+<li><em>standard baseling feature sets of international research competitions</em></li>
+<li>also explains cmdline options that the standard feature set configuration files all provide and that can be used to influence parameters of hte data input and output</li>
+<li><strong>4.2 - 4.3</strong>: to explore full potential of openSMILE</li>
+<li><em>4.2</em> description of the format</li>
+<li><em>4.3</em> detailed function and configuration options of all components</li>
+</ul>
+</li>
+</ul>
+<h3 id="section-24"><strong>Section 2.4</strong></h3>
+<blockquote>
+<p>what is going on inside openSMILE, which components exist besides those which are instantiable and connectable via the configuration files, and to learn more about the terminology used.</p>
+</blockquote>
+<ul>
+<li>OpenSmILE split into 3 phases
+<ul>
+<li>Pre-config phase
+<ul>
+<li>cmdline options read and config file parsed</li>
+</ul>
+</li>
+<li>
+<h2 id="configuration-phase">Configuration phase</h2>
+</li>
+<li>Execution phase
+<ul>
+<li>tick-loop</li>
+<li>each component has a <code>tick()</code> method</li>
+<li></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="241-buffers"><strong>2.4.1 Buffers</strong></h3>
+<pre><code>- buffers: *ring-buffer* or *non-ring buffer*
+- if you use non-ring buffers, or if you want to process the full input (e.g. for functionals of the complete input, or mean normalization) use dynamically growing non-ring buffer level (see `cDataWriter` configuration for details)
+</code></pre>
+<ul>
+<li>2.4.2 (not documented yet)
+<ul>
+<li>look at <code>doc/developer/messages.txt</code></li>
+<li><code>smileComponent.hpp</code> source file for structural definition of smile messages</li>
+</ul>
+</li>
+</ul>
+<h3 id="243-opensmile-terminology"><strong>2.4.3 OpenSMILE terminology</strong></h3>
+<pre><code>- *frames*: are an example sample at a timestamp
+	- for a &lt;nFields x nTimestamps&gt; matrix, frames would refer to columns
+		- *windows* or *contours* correspond to rows of this matrix
+	- for exported data files, matrix is transposed, so *fields* are rows here
+		- *windows* or *contours* would be columns here
+- *elements* refers to actual elements of frame/vectors
+- *field*: group of elements that belong together logically and where all elements have the same name
+</code></pre>
+<h3 id="section-25-default-feature-sets"><strong>Section 2.5 Default feature sets</strong></h3>
+<blockquote>
+<p>For common tasks from Music Information Retrieval and Speech Recognition fields we provide some example configuration files in the <code>config/</code> directory</p>
+</blockquote>
+<ul>
+<li>
+<h2 id="todo-lookup-first-information-about-the-following-feature-sets"><strong>TODO:</strong> Lookup first information about the following feature sets</h2>
+</li>
+</ul>
+<h3 id="251-available-options-for-audio-input-for-all-standard-config-files"><strong>2.5.1 Available options for audio input for all standard config files</strong></h3>
+<p align="center"><img src="images/smile-cmd-args.png" align="center">
+<ul>
+<li><strong>-frameModeFunctionalsConf</strong> option to include and four most common use-cases:</li>
+</ul>
+<p align="center"><img src="images/frameMode-include-usecases.png" align="center">
+<ul>
+<li>
+<p><strong>bufferMode</strong> configuration</p>
+<ul>
+<li><em>imp: buffer size configured must be compatible with the frameMode setting in frameModeFunctionalsConf</em></li>
+<li>REVIEW <mark>page 34</mark> again</li>
+</ul>
+</li>
+<li>
+<p>Page 35 - <strong>output data formats</strong> for the features pulled out</p>
+</li>
+</ul>
+<h3 id="prosodic-features"><strong>Prosodic features</strong></h3>
+<ol>
+<li><code>config/prosodyAcf.conf</code> and</li>
+<li><code>config/prosodyShs.conf</code></li>
+</ol>
+<ul>
+<li>They extract:
+<ul>
+<li>fundamental frequency (F0)? -</li>
+<li>voicing probability</li>
+<li>loudness contours</li>
+</ul>
+</li>
+<li><strong>default output</strong> - CSV</li>
+<li>Command</li>
+</ul>
+<pre class="hljs"><code><div>SMILExtract -C config/prosodyShs.conf -I input.wav -O prosody.csv
+</div></code></pre>
+<ul>
+<li><code>1</code> uses <code>cPitchACF</code> component
+<ul>
+<li>extracts <code>f0</code> via an <em>autocorrelation</em> and <em>cepstrum based method</em></li>
+</ul>
+</li>
+<li><code>2</code> uses <code>cPitchShs</code> component
+<ul>
+<li>extracts <code>f0</code> via the <em>sub-harmonic sampling algorithm (SHS)</em></li>
+</ul>
+</li>
+</ul>
+<h3 id="chroma-features"><strong>Chroma features</strong></h3>
+<ul>
+<li><code>config/chroma_fft.conf</code></li>
+<li>command - <code>SMILExtract -C config/chroma_fft.conf -I input.wav -O chroma.csv</code></li>
+<li><strong>output</strong>: single line with 12 comma separated values representing mean Chroma values.</li>
+</ul>
+<p>--&gt; <mark>Resolve</mark>: prolly not a bad idea to test (question still remains, how to compare?)</p>
+<h4 id="what-are-chroma-features">What are chroma features?</h4>
+<ul>
+<li><em>Chroma features</em>: also <em>pitch class profiles</em> are a powerful tool for analyzing usic whose pitches can be meaningfully categorized (into 12 categories)</li>
+<li>they <u>capture harmonic and melodic characteristics</u> of music, while being <em>robust to changes in timbre and instrumentation</em> (do we want this?)
+<ul>
+<li><em>timbre</em>: perceived sound quality of musical note, sound or tone (<em>we don't want to focus on timbre</em>) - so this makes sense? <em><strong>confirm with debbie</strong></em></li>
+<li><em>instrumentation</em>: combination of musical instruments employed in a composition, and properties of those instruments individually.</li>
+</ul>
+<hr>
+<ul>
+<li>Do we want to capture <u>harmonic and melodic characteristics</u>? <em><strong>debbie?</strong></em></li>
+</ul>
+</li>
+<li>Another APPLICATION: &quot;chroma features have become de facto standard for tasks such as music alignment and synchronization as well as audio structure analysis.&quot; --&gt; <em>Could we align user's dialogue with actor's dialgue?</em></li>
+</ul>
+<h3 id="mfcc-features"><strong>MFCC features</strong></h3>
+<ul>
+<li>MFCC - Mel-frequency cepstral coefficient</li>
+</ul>
+<p>--&gt; <mark>Resolve</mark>: seems helpful in determining prosodic aspects + might help us learn user's voice (timber) for personalization (more custom feature - DREAM BIG)</p>
+<ul>
+<li>MFCCs are commonly used as feature in speech recognition systems</li>
+<li>MFCCs make up an MFC (Mel-frequency cepstrum)
+<ul>
+<li><em>Mel-freq cepstrum</em> is a representation of the short-term <u>power spectrum</u> of a sound, based on linear cosine transform of a log power spectrum on a nonlinear <em>mel-scale</em> of frequency
+<ul>
+<li><em>Mel-scale</em>: perceptual scale of pitches judged by listeners to be equal in distance from one another</li>
+</ul>
+</li>
+<li><em>cepstrum</em> result of taking the inverse Fourier transform (IFT) of the logarithm of estimated <em>spectrum</em> of a signal.
+<ul>
+<li>&quot;Cepstrum pitch determination is particularly effective because the effects of the voical excitation (pitch) and vocal tract (<em>formants</em>) are additive in the logarithm of the power spectrum and thus clearly separate&quot; (<em>what does this mean? - pitch and formants can be separated from log of power spectrum to detection</em>)</li>
+<li><em>formants</em>: each of several prominent bands of frequency that determine the phonetic quality of a vowel</li>
+<li>4 different sepstrums (&quot;<u><strong>power sepstrum</strong></u> has applications in analysis of human speech)</li>
+</ul>
+</li>
+<li><em>spectrum</em> &quot;any waveform can be represented by a summation of a (possibly infinite) number of sinusoids, each with a particular amplitude and phase. This representation is referred to as the <em>signal's spectrum</em> (or it's frequency-domain representation)&quot; <a href="https://www.music.mcgill.ca/~gary/307/week1/spectra.html">Signal Spectra</a></li>
+</ul>
+</li>
+</ul>
+<blockquote>
+<p>The cepstrum is a representation used in homomorphic signal processing, to convert signals combined by convolution (such as a source and filter) into sums of their cepstra, for linear separation. In particular, the <u><em>power cepstrum</em></u> is often used as a feature vector for representing the human voice and musical signals. For these applications, the spectrum is usually first transformed using the mel scale. The result is called the mel-frequency cepstrum or MFC (its coefficients are called mel-frequency cepstral coefficients, or MFCCs). It is used for voice identification, pitch detection and much more. The cepstrum is useful in these applications because the low-frequency periodic excitation from the vocal cords and the formant filtering of the vocal tract, which convolve in the time domain and multiply in the frequency domain, are additive and in different regions in the quefrency domain.</p>
+</blockquote>
+<ul>
+<li><strong>Not noise sensitive</strong> - therefore common to normalize their values in speech recognition systems</li>
+</ul>
+<h3 id="plp-features"><strong>PLP features</strong></h3>
+<ul>
+<li>PLP : perceptual linear predictive</li>
+<li><a href="plp-paper.pdf">Techniques for speaker-independent automatic-speech recognition</a></li>
+</ul>
+<blockquote>
+<p>PLP analysis is computationally efficient and yields a low-dimentional representation of speech.
+These properties are found to be useful in <em>speaker-independent automatic-speech recognition</em>.</p>
+</blockquote>
+<ul>
+<li>PLP and <a href="https://www.vocal.com/perceptual-filtering/">Perceptual filtering</a></li>
+<li>Could be used to improve performace of speech recognition and reduce computational load</li>
+</ul>
+<h2 id="high-level-feature-ideas-thoughts"><strong>High level feature ideas / thoughts</strong></h2>
+<ul>
+<li>To make this highly interactive
+<ul>
+<li>the front has to be slick</li>
+<li>the video should scrub seemlessly (if animated, it should be smooth)</li>
+<li>messaged (feedback about performance or program function messages or directions) should be highly personalized and specific. Not general and useless.</li>
+</ul>
+</li>
+<li>Implement sophisticated failsafe option
+<ul>
+<li>meaning <em>if user is saying it right but we can't see that</em></li>
+<li>display personalized messages for special events with special back-end checking</li>
+<li>scenarios
+<ul>
+<li><em>if user performed well but the scored don't reflect that</em>
+<ul>
+<li>&quot;don't think the scores judging properly? - report it!&quot; OR under the score, have a button that says, &quot;I actually did well!&quot;</li>
+<li><em>back-end</em> maybe check for inconsistency between various different feature similarities before even giving that option. OR always give that option but check for inconsistency among different feature similarities before using the feedback</li>
+</ul>
+</li>
+<li><em>when the scores are good but the user didn't actually do</em>
+<ul>
+<li>Button &quot;I actually don't think I did that well.&quot;</li>
+<li><em>back-end</em> this might mean that more than necessary weight given to a feature that was compared. Readjust the weights.
+<ul>
+<li><em>If it's a personalized neural net, for this and above scenario, manually or some other way label these to be used for training</em></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><em>user is happy with scores they're getting</em></li>
+<li><em>user's hate the scoring</em>
+<ul>
+<li>ask for text feedback</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="appendix">Appendix</h2>
+<ul>
+<li>Running <code>$ SMILExtract -h</code></li>
+</ul>
+<pre class="hljs"><code><div> =============================================================== 
+   openSMILE version 2.3.0 (Rev. 2014:2043)
+   Build date: Feb 12 2019 (UNKNOWN-BUILD-DATE)
+   Build branch: 'opensmile-2.3.0'
+   (c) 2014-2016 by audEERING GmbH
+   All rights reserved. See the file COPYING for license terms.
+   Lead author: Florian Eyben
+ =============================================================== 
+ 
+Usage: SMILExtract [-option (value)] ...
+ 
+ -h    Show this usage information
+ 
+ -C, -configfile  	 &lt;string&gt;
+	 Path to openSMILE config file
+	 {{ default = 'smile.conf' }}
+ 
+ -l, -loglevel  	 &lt;integer value&gt;
+	 Verbosity level (0-9)
+	 {{ default = 2 }}
+ 
+ -t, -nticks  	 &lt;integer value&gt;
+	 Number of ticks to process (-1 = infinite) (only works for single thread processing, i.e. nThreads=1)
+	 {{ default = -1 }}
+ 
+ -L, -components  	 [boolean 0/1]
+	 Show component list
+	 {{ default = 0 }}
+ 
+ -H, -configHelp  	 [string]
+	 Show documentation of registered config types (on/off/argument) (if an argument is given, show only documentation for config types beginning with the name given in the argument)
+	 {{ default = '(null)' }}
+ 
+ -configDflt      	 [string]
+	 Show default config section templates for each config type (on/off/argument) (if an argument is given, show only documentation for config types beginning with the name given in the argument, OR for a list of components in conjunctions with the 'cfgFileTemplate' option enabled)
+	 {{ default = '(null)' }}
+ 
+ -cfgFileTemplate      	 [boolean 0/1]
+	 Print a complete template config file for a configuration containing the components specified in a comma separated string as argument to the 'configDflt' option
+	 {{ default = 0 }}
+ 
+ -cfgFileDescriptions      	 [boolean 0/1]
+	 Include description in config file templates.
+	 {{ default = 0 }}
+ 
+ -c, -ccmdHelp  	 [boolean 0/1]
+	 Show custom commandline option help (those specified in config file)
+	 {{ default = 0 }}
+ 
+ -logfile      	 &lt;string&gt;
+	 set log file
+	 {{ default = 'smile.log' }}
+ 
+ -nologfile      	 [boolean 0/1]
+	 don't write to a log file (e.g. on a read-only filesystem)
+	 {{ default = 0 }}
+ 
+ -noconsoleoutput      	 [boolean 0/1]
+	 don't output any messages to the console (log file is not affected by this option)
+	 {{ default = 0 }}
+ 
+ -appendLogfile      	 [boolean 0/1]
+	 append log messages to an existing logfile instead of overwriting the logfile at every start
+	 {{ default = 0 }}
+</div></code></pre>
+
+</body>
+</html>
