@@ -4,6 +4,8 @@
 
 ### Approach 1
 - Use `scipy.signal.correlate` to align signals and then compute pearson coef using `scipy.stats.pearsonr`
+- **DONE** uploaded to git 
+    - inside `compareSig.py`
 
 ### Approach 2
 - Use `fastdtw` to calculate distance (its dynamic!)

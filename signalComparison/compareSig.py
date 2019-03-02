@@ -1,3 +1,22 @@
+'''
+Compare features extracted using OpenSMILE
+- audio files are aligned using `scipy.signal.correlate`
+- then pearson correlation coefficient is calculated (this is the similarity measurement)
+
+Author: Haard @ Impressionist
+
+Status:
+- input files are hard coded (will support cmd line argument in future)
+- needs `.csv` feature files (will support audio file inputs in future)
+    - OpenSMILE can be run from inside the script
+- MORE REALISTIC feature (will work on it tomorrow)
+    - Input1 original features
+    - Input2 new audio file
+    Program:
+    - extract feature from new audio file and then compare with original features
+'''
+
+
 import numpy as np
 from scipy.signal import correlate
 from scipy.stats import pearsonr
