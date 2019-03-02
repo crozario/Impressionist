@@ -1,8 +1,27 @@
-# **Using opensmile**
+# **OpenSMILE and Feature Extraction Notes**
+Authors: Haard Shah, Deborah Santo
+
+**TODOs:**
+- *Add Debbie's notes*
+
+
+>OpenSMILE toolkit - Open-Source Media Interpretation by Large feature-space Extraction
+>- Modular and flexible feature extractor for signal processing and machine learning applications
+
+>*Open-source licence* - for private, research, and educational **NOT commercial**
+>- BUT requires commercial development license to commercialize
 
 > Installation creates `SMILExtract` executable in local dir and installation location
 
-> Note: appendix-like terminal printouts at the end
+> *Note: appendix-like terminal printouts at the end*
+
+## **Table of contents**
+- [First Run](#first-run)
+- [Comparing Signals](#comparing-signals)
+- [Config Files](#config-files)
+- [Appendix](#appendix)
+	- [All available components](#all-available-components)
+	- [SMILExtract Help](#smilextract-help)
 
 ## **First Run**
 ```bash
@@ -19,7 +38,7 @@
 (MSG) [2] in cComponentManager : Processing finished! System ran for 526 ticks.
 ```
 
-## **How can signals be compared**
+## **Comparing Signals**
 - [Stackoverflow](https://stackoverflow.com/a/20672356)
 	- time doman analysis : how visually similar are signals
 	- frequency or time-frequency analysis : how similar audio signals sound
@@ -35,21 +54,28 @@
 - [Audio signal comparison for automatic singing evaluation](https://dsp.stackexchange.com/questions/2556/audio-signal-comparison-for-automatic-singing-evaluation/2559#2559)
 - Further research [Hot answers `waveform-similarity`](https://dsp.stackexchange.com/tags/waveform-similarity/hot)
 
+- [Audio signals: Comparison (medium)](https://medium.com/@shivama205/audio-signals-comparison-23e431ed2207)
+	- Uses [Chroma print](https://oxygene.sk/2011/01/how-does-chromaprint-work/) to generate audio fingerprint
+
+- [Algorithm for voice comparison (stackoverflow)](https://stackoverflow.com/a/2809283/7303112)
+	
+
+
 ## **Config files**
 Outline:
 - [Generate Configs](#generate-configs)
 - [Section Headers](#section-headers)
 - [Component Connections](#component-connections)
-- [Section 2.4](#Section-24) - Inside OpenSMILE
-- [2.4.1 Buffers](#241-Buffers)
-- [2.4.3 OpenSMILE terminology](#243-OpenSMILE-terminology)
-- [Section 2.5 Default feature sets](#Section-25-Default-feature-sets)
-- [2.5.1 Available options for audio input for all standard config files](#251-Available-options-for-audio-input-for-all-standard-config-files)
-- [Prosodic features](#Prosodic-features)
-- [Chroma features](#Chroma-features)
-- [What are chroma features?](#What-are-chroma-features?)
-- [MFCC features](#MFCC-features)
-- [PLP features](#PLP-features)
+- [Section 2.4](#section-24) - Inside OpenSMILE
+- [2.4.1 Buffers](#241-buffers)
+- [2.4.3 OpenSMILE terminology](#243-opensmile-terminology)
+- [Section 2.5 Default feature sets](#section-25-default-feature-sets)
+- [2.5.1 Available options for audio input for all standard config files](#251-available-options-for-audio-input-for-all-standard-config-files)
+- [Prosodic features](#prosodic-features)
+- [Chroma features](#chroma-features)
+- [What are chroma features?](#what-are-chroma-features?)
+- [MFCC features](#mfcc-features)
+- [PLP features](#plp-features)
 
 ### **Generate Configs** 
 - Generate config files
@@ -127,8 +153,8 @@ SMILExtract -cfgFileTemplate -configDflt cWaveSource,cFramer,cEnergy,cCsvSink -l
 2. `config/prosodyShs.conf`
 - They extract:
 	- fundamental frequency (F0)? - 
-	- voicing probability
-	- loudness contours
+	- voicing probability - 
+	- loudness contours - 
 - **default output** - CSV 
 - Command
 ```
@@ -156,6 +182,16 @@ SMILExtract -C config/prosodyShs.conf -I input.wav -O prosody.csv
 
 ### **MFCC features** 
 - MFCC - Mel-frequency cepstral coefficient
+- Config files
+	- `MFCC12_0_D_A.conf`
+	- `MFCC12_E_D_A.conf`
+	- `MFCC12_0_D_A_Z.conf`
+	- `MFCC12_E_D_A_Z.conf`
+- Command
+```bash
+SMILExtract -C config/MFCC12_E_D_A.conf -I input.wav -O output.mfcc.htk
+```
+- Output file format: HTK paramater file format (?)
 
 --> <mark>Resolve</mark>: seems helpful in determining prosodic aspects + might help us learn user's voice (timber) for personalization (more custom feature - DREAM BIG)
 
@@ -219,10 +255,249 @@ SMILExtract -C config/prosodyShs.conf -I input.wav -O prosody.csv
 
 
 
-## Appendix
+# Appendix
 
-- Running `$ SMILExtract -h`
+## All Available Components 
+```bash
+$ SMILExtract -L
+# for specific component help:
+$ SMILExtract -H cMyComponentName
 ```
+```bash
+(MSG) [2] in SMILExtract : openSMILE starting!
+(MSG) [2] in SMILExtract : config file is: smile.conf
+(MSG) [2] in cComponentManager : successfully registered 91 component types.
+==> The following 91 components are currently registered in openSMILE:
+
+ +++ 'cDataMemory' +++
+   central data memory component
+
+ +++ 'cDataSelector' +++
+   This component copies data from one level to another, thereby selecting frame fields and elements by their element/field name.
+
+ +++ 'cVectorProcessor' +++
+   dataProcessor, where each array field is processed individually as a vector
+
+ +++ 'cVectorTransform' +++
+   this is a base class for vector transforms which require history data or precomputed data (e.g. cepstral mean subtraction, etc.)
+
+ +++ 'cWindowProcessor' +++
+   filter dataProcessor, filters each element in a dataMemory level independently
+
+ +++ 'cWinToVecProcessor' +++
+   reads input windows, outputs frame(s)
+
+ +++ 'cVecToWinProcessor' +++
+   Base class: reads in frames , outputs windows
+
+ +++ 'cExampleSource' +++
+   This is an example of a cDataSource descendant. It writes random data to the data memory. This component is intended as a template for developers.
+
+ +++ 'cExampleSink' +++
+   This is an example of a cDataSink descendant. It reads data from the data memory and prints it to the console. This component is intended as a template for developers.
+
+ +++ 'cSimpleMessageSender' +++
+   This is an example of a cDataSink descendant. It reads data from the data memory and prints it to the console. This component is intended as a template for developers.
+
+ +++ 'cVectorConcat' +++
+   concatenates vectors from multiple levels and copy to another level
+
+ +++ 'cFramer' +++
+   This component creates frames from single dimensional input stream. It is possible to specify the frame step and frame size independently, thus allowing for overlapping frames or non continuous frames.
+
+ +++ 'cWindower' +++
+   This component applies applies window function to pcm frames.
+
+ +++ 'cVectorOperation' +++
+   This component performs elementary operations on vectors (i.e. basically everything that does not require history or context, everything that can be performed on single vectors w/o external data (except for constant parameters, etc.))
+
+ +++ 'cValbasedSelector' +++
+   This component copies only those frames from the input to the output that match a certain threshold criterion, i.e. where a specified value N exceeds a certain threshold.
+
+ +++ 'cMaxIndex' +++
+   This component computes the indices of the features with the maximum absolute values per frame.
+
+ +++ 'cFullinputMean' +++
+   This component performs mean normalizing on a data series. A 2-pass analysis of the data is performed, which makes this component unusable for on-line analysis. In the first pass, no output is produced and the mean value (over time) is computed for each input element. In the second pass the mean vector is subtracted from all input frames, and the result is written to the output dataMemory level. Attention: Due to the 2-pass processing the input level must be large enough to hold the whole data sequence.
+
+ +++ 'cFullturnMean' +++
+   This component performs mean normalizing on a data series. A 2-pass analysis of the data is performed, which makes this component unusable for on-line analysis. In the first pass, no output is produced and the mean value (over time) is computed for each input element. In the second pass the mean vector is subtracted from all input frames, and the result is written to the output dataMemory level. Attention: Due to the 2-pass processing the input level must be large enough to hold the whole data sequence.
+
+ +++ 'cWaveSource' +++
+   This component reads an uncompressed RIFF (PCM-WAVE) file and saves it as a stream to the data memory. For most feature extraction tasks you will now require a cFramer component.
+
+ +++ 'cArffSource' +++
+   This component reads WEKA ARFF files. The full ARFF format is not yet supported, but a simplified form, such as the files generated by the cArffSink component can be parsed and read. This component reads all (and only!!) 'numeric' or 'real' attributes from an ARFF file (WEKA file format) into the specified data memory level. Thereby each instance (i.e. one line in the arff file\'s data section) corresponds to one frame. The frame period is 0 by default (aperiodic level), use the 'period' option to change this and use a fixed period for each frame/instance. Automatic generation of frame timestamps from a 'timestamp' field in the Arff file is not yet supported.
+
+ +++ 'cCsvSource' +++
+   This component reads CSV (Comma seperated value) files. It reads all columns as attributes into the data memory. One line represents one frame. The first line may contain a header with the feature names (see header=yes/no/auto option).
+
+ +++ 'cHtkSource' +++
+   This component reads data from binary HTK parameter files.
+
+ +++ 'cNullSink' +++
+   This component reads data vectors from the data memory and 'destroys' them, i.e. does not write them anywhere. This component has no configuration options.
+
+ +++ 'cCsvSink' +++
+   This component exports data in CSV (comma-separated-value) format used in many spreadsheet applications. As the first line of the CSV file a header line may be printed, which contains a delimiter separated list of field names of the output values.
+
+ +++ 'cDatadumpSink' +++
+   This component writes dataMemory data to a raw binary file (e.g. for matlab import). The binary file consits of 32-bit float values representing the data values, concattenated frame by frame along the time axis. The first two float values in the file resemble the file header, an thus indicate the dimension of the matrix (1: size of frames, 2: number of frames in file). The total file size in bytes is thus <size of frames>x<number of frames>x4 + 2.
+
+ +++ 'cArffSink' +++
+   This component writes dataMemory data to an ARFF file (WEKA). Depending on your config an instance name field, a frame index, and a frame time field can be added as well as multiple class/target attributes. See the config type documentation for more details.
+
+ +++ 'cHtkSink' +++
+   This component writes dataMemory data to a binary HTK parameter file.
+
+ +++ 'cWaveSink' +++
+   This component saves data to an uncompressed PCM WAVE file
+
+ +++ 'cWaveSinkCut' +++
+   This component writes data to uncompressed PCM WAVE files. Only chunks, based on timings received via smile messages are written to files. The files may have consecutive numbers appended to the file name.
+
+ +++ 'cBowProducer' +++
+   This component produces a bag-of-words vector from the keyword spotter result message.
+
+ +++ 'cSignalGenerator' +++
+   This component provides a signal source. This source generates various noise types and pre-defined signals and value patterns. See the configuration documentation for a list of currently implemented types.
+
+ +++ 'cMonoMixdown' +++
+   This is a simple mixer, which adds multiple channels (elements) to a single channel (element).
+
+ +++ 'cTransformFFT' +++
+   This component performs an FFT on a sequence of real values (one frame), the output is the complex domain result of the transform. Use the cFFTmagphase component to compute magnitudes and phases from the complex output.
+
+ +++ 'cFFTmagphase' +++
+   This component computes magnitude and phase of each array in the input level (it thereby assumes that the arrays contain complex numbers with real and imaginary parts alternating, as computed by the cTransformFFT component).
+
+ +++ 'cAmdf' +++
+   This component computes the Average Magnitude Difference Function (AMDF) for each input frame. Various methods for padding or warping at the border exist.
+
+ +++ 'cAcf' +++
+   This component computes the autocorrelation function (ACF) by sqauring a magnitude spectrum and applying an inverse Fast Fourier Transform. This component mus read from a level containing *only* FFT magnitudes in a single field. Use the 'cTransformFFT' and 'cFFTmagphase' components to compute the magnitude spectrum from PCM frames. Computation of the Cepstrum is also supported (this applies a log() function to the magnitude spectra).
+
+ +++ 'cPreemphasis' +++
+   This component performs pre- and de-emphasis of speech signals using a 1st order difference equation: y(t) = x(t) - k*x(t-1)  (de-emphasis: y(t) = x(t) + k*x(t-1))
+
+ +++ 'cVectorPreemphasis' +++
+   This component performs per frame pre-emphasis without an inter-frame state memory. (This is the way HTK does pre-emphasis). Pre-emphasis: y(t) = x(t) - k*x(t-1) ; de-emphasis : y(t) = x(t) + k*x(t-1)
+
+ +++ 'cVectorMVN' +++
+   This component extends the base class cVectorTransform and implements mean/variance normalisation. You can use this component to perform on-line cepstral mean normalisation. See cFullinputMean for off-line cepstral mean normalisation.
+
+ +++ 'cTurnDetector' +++
+   Speaker turn detector using data from cVadV1 component or cSemaineSpeakerID1 (adaptive VAD) to determine speaker turns and identify continuous segments of voice activity.
+
+ +++ 'cDeltaRegression' +++
+   This component computes delta regression coefficients using the regression equation from the HTK book.
+
+ +++ 'cContourSmoother' +++
+   This component smooths data contours by applying a moving average filter of configurable length.
+
+ +++ 'cSmileResample' +++
+   This component implements a spectral domain resampling component. Input frames are transferred to the spectral domain, then the spectra are shifted, and a modified DFT is performed to synthesize samples at the new rate.
+
+ +++ 'cSpecResample' +++
+   This component implements a spectral domain resampling component. Input frames are complex valued spectral domain data, which will be shifted and scaled by this component, and a modified DFT is performed to synthesize samples at the new rate.
+
+ +++ 'cDbA' +++
+   This component performs dbX (dbA,dbB,dbC,...) equal loudness weighting of FFT bin magnitudes. Currently only dbA weighting is implemented.
+
+ +++ 'cVadV1' +++
+   A voice activity detector based on Line-Spectral-Frequencies, Mel spectra and energy + smoothing. This component requires input of the following type in the following order: MelSpec;lsf;energy. See vadV1.hpp for an example config!
+
+ +++ 'cSpecScale' +++
+   This component performs linear/non-linear axis scaling of FFT magnitude spectra with spline interpolation.
+
+ +++ 'cMZcr' +++
+   This component computes time signal properties, zero-corssing rate, mean-crossing rate, dc offset, max/min value, and absolute maximum value of a PCM frame.
+
+ +++ 'cEnergy' +++
+   This component computes logarithmic (log) and root-mean-square (rms) signal energy from PCM frames.
+
+ +++ 'cIntensity' +++
+   This component computes simplified frame intensity (narrow band approximation). IMPORTANT: It expects UNwindowed raw PCM frames as input!! A Hamming window is internally applied and the resulting signal is squared bevore applying loudness compression, etc.
+
+ +++ 'cMelspec' +++
+   This component computes an N-band Mel/Bark/Semitone-frequency spectrum (critical band spectrum) by applying overlapping triangular filters equidistant on the Mel/Bark/Semitone-frequency scale to an FFT magnitude or power spectrum.
+
+ +++ 'cMfcc' +++
+   This component computes Mel-frequency cepstral coefficients (MFCC) from a critical band spectrum (see 'cMelspec'). An I-DCT of type-II is used from transformation from the spectral to the cepstral domain. Liftering of cepstral coefficients is supported. HTK compatible values can be computed.
+
+ +++ 'cPlp' +++
+   This component computes PLP and RASTA-PLP (currently the RASTA filter is not yet implemented) cepstral coefficients from a critical band spectrum (generated by the cMelspec component, for example).
+   The component is capable of performing the following processing steps: 
+   1) Take the natural logarithm of the critical band powers (doLog)
+   2) RASTA filtering
+   3) Computation of auditory spectrum (equal loudness curve and loudness compression)
+   4) Inverse of the natural logarithm
+   5) Inverse DFT to obtain autocorrelation coefficients
+   6) Linear prediction analysis on autocorr. coeff.
+   7) Computation of cepstral coefficients from lp coefficients
+   8) Cepstral 'liftering'
+
+ +++ 'cSpectral' +++
+   This component computes spectral features such as flux, roll-off, centroid, and user defined band energies (rectangular summation of FFT magnitudes), etc.
+
+ +++ 'cPitchACF' +++
+   This component computes the fundamental frequency and the probability of voicing via an acf and cepstrum based method. The input must be an acf field and a cepstrum field (both generated by a cAcf component).
+
+ +++ 'cPitchSmoother' +++
+   This component performs temporal pitch smoothing. Input: candidates produced by a pitchBase descendant (e.g. cPitchSHS). The voicing cutoff threshold is inherited from the input component, thus this smoother component does not provide its own threshold option.
+
+ +++ 'cTonespec' +++
+   This component computes (or rather estimates) a semi-tone spectrum from an FFT magnitude spectrum.
+
+ +++ 'cTonefilt' +++
+   This component implements an on-line, sample by sample semi-tone filter bank which can be used as first step for the computation of CHROMA features as a replacement of cTonespec. The filter is based on correlating with a sine wave of the exact target frequency of a semi-tone for each note in the filter-bank.
+
+ +++ 'cChroma' +++
+   This component computes CHROMA features from a semi-tone scaled spectrum generated by the 'cTonespec' component.
+
+ +++ 'cCens' +++
+   This component computes CENS (energy normalised and smoothed chroma features) from raw Chroma features generated by the 'cChroma' component.
+
+ +++ 'cHarmonics' +++
+   This component computes statistics of F0 harmonics. It requires an F0 (Hertz) input field and a linear frequency axis magnitude spectrum as input.
+
+ +++ 'cPitchSmootherViterbi' +++
+   Viterbi algorithm to smooth pitch contours and remove octave jumps.
+
+ +++ 'cPitchJitter' +++
+   This component computes Voice Quality parameters Jitter (pitch period deviations) and Shimmer (pitch period amplitude deviations). It requires the raw PCM frames and the corresponding fundamental frequency (F0) as inputs.
+
+ +++ 'cPitchDirection' +++
+   This component reads pitch data, detects pseudo syllables, and computes pitch direction estimates per syllable. Thereby the classes falling, flat, and rising are distinguished. 
+    Required input fields: F0, F0env, and 'loudness' or 'RMSenergy'.
+
+ +++ 'cPitchShs' +++
+   This component computes the fundamental frequency via the Sub-Harmonic-Sampling (SHS) method (this is related to the Harmonic Product Spectrum method).
+
+ +++ 'cLpc' +++
+   This component computes linear predictive coding (LPC) coefficients from PCM frames. Burg\'s algorithm and the standard ACF/Durbin based method are implemented for LPC coefficient computation. The output of LPC filter coefficients, reflection coefficients, residual signal, and LP spectrum is supported.
+
+ +++ 'cLsp' +++
+   This component computes LSP (line spectral pair frequencies, also known as LSF) from LPC coefficients by partial factorisation of the LPC polynomial.
+
+ +++ 'cFormantLpc' +++
+   This component computes formant frequencies and bandwidths by solving for the roots of the LPC polynomial. The formant trajectories can and should be smoothed by the cFormantSmoother component.
+
+ +++ 'cFormantSmoother' +++
+   This component performs temporal formant smoothing. Input: candidates produced by a formant** component AND(!) - appended - an F0final or voicing field (which is 0 for unvoiced frames and non-zero for voiced frames). Output: Smoothed formant frequency contours.
+
+ +++ 'cFunctionals' +++
+   computes functionals from input frames, this component uses various cFunctionalXXXX sub-components, which implement the actual functionality
+
+ +++ 'cLibsvmSink' +++
+   This component writes data to a text file in LibSVM feature file format. For the 'on-the-fly' classification component see 'cLibsvmliveSink'.
+```
+
+## SMILExtract Help 
+```bash
+$ SMILExtract -h
+```
+```bash
  =============================================================== 
    openSMILE version 2.3.0 (Rev. 2014:2043)
    Build date: Feb 12 2019 (UNKNOWN-BUILD-DATE)
@@ -288,3 +563,4 @@ Usage: SMILExtract [-option (value)] ...
 	 append log messages to an existing logfile instead of overwriting the logfile at every start
 	 {{ default = 0 }}
 ```
+
