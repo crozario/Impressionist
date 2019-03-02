@@ -3,81 +3,88 @@ from scipy.signal import correlate
 from scipy.stats import pearsonr
 import matplotlib.pyplot as plt
 
-# a = np.array([3, 4, 1, 3])
-# b = np.array([2,3,1])
+# GLOBAL constants 
+SKIPCOLS = 1
 
 # TODO: get files from cmdline inputs OR get audiofile input and use SMILExtract from here to produce prosody feature files
 orig_file = '../test-data/features/prosodyShs_opensmile.csv'
 new_file = '../test-data/features/prosodyShs_haardopensmile.csv'
 
-# TODO: understand ``
 # f0 - fundamental frequency
-# voicing - voicing probability ... TODO: understand this before using it as a attribute to judge user signal's similarity
+# voicing - voicing probability ... TODO: understand this before using it as data_orig attribute to judge user signal's similarity
 # loudness - pcm_loudness_sma; acoustic intensity
-##  Read data
-data_orig = {}
-data_orig['frameTime'], data_orig['f0'], data_orig['voicing'], data_orig['loudness'] = np.loadtxt(orig_file, delimiter=';', usecols=(1,2,3,4), unpack=True, skiprows=1)
-data_new = {}
-data_new['frameTime'], data_new['f0'], data_new['voicing'], data_new['loudness'] = np.loadtxt(
-    new_file, delimiter=';', usecols=(1, 2, 3, 4), unpack=True, skiprows=1)
+##  Read prosody data NOTE: specific to prosodyShs features extracted 
+data_orig = np.loadtxt(orig_file, delimiter=';', usecols=(1,2,3,4), unpack=True, skiprows=1)
+data_new = np.loadtxt(new_file, delimiter=';', usecols=(1,2,3,4), unpack=True, skiprows=1)
+# Constants specific to prosodyShs feature files
+FRAMETIME = 0
+F0 = 1
+VOICING = 2
+LOUDNESS = 3
 
+##  Plot both raw signals
+def plotRawSignals(skipcols=0):
+    global data_orig
+    global data_new
+    plt.subplot(2,1,1)
+    for i in range(skipcols, len(data_orig)):
+        plt.plot(data_orig[i]/data_orig[i].sum())
+    plt.legend([l for l in range(skipcols, len(data_orig))], loc='upper left')
+    plt.title('Original Signal')
 
-##  Plot raw signals
-# plt.subplot(2,1,1)
-# plt.plot(data_orig['frameTime'], data_orig['f0']/data_orig['f0'].sum())
-# plt.plot(data_orig['frameTime'], data_orig['voicing']/data_orig['voicing'].sum())
-# plt.plot(data_orig['frameTime'], data_orig['loudness']/data_orig['loudness'].sum())
-# plt.legend(['f0', 'voicing_prob', 'loudness'], loc='upper left')
-# plt.title('Original Signal')
+    plt.subplot(2,1,2)
+    for i in range(skipcols, len(data_orig)):
+        plt.plot(data_new[i]/data_new[i].sum())
+    plt.legend([l for l in range(skipcols, len(data_new))], loc='upper left')
+    plt.title('New Signal')
+    plt.show()
 
-# plt.subplot(2,1,2)
-# plt.plot(data_new['frameTime'], data_new['f0']/data_new['f0'].sum())
-# plt.plot(data_new['frameTime'], data_new['voicing'] / data_new['voicing'].sum())
-# plt.plot(data_new['frameTime'], data_new['loudness'] / data_new['loudness'].sum())
-# plt.legend(['f0', 'voicing_prob', 'loudness'], loc='upper left')
-# plt.title('New Signal')
-# plt.show()
+# plotRawSignals(skipcols=1)
 
 ##  Pad shorter signal
-# `a` and `b` are dictionaries
+# `data_orig` and `data_new` are dictionaries
 # `ii` is any column name
-def pad_shorter(a, b, ii='frameTime'):
-    diff = a[ii].size - b[ii].size
+def pad_shorter(ii=0):
+    global data_orig
+    global data_new
+    diff = data_orig[ii].size - data_new[ii].size
     # print("diff", diff)
     if (diff > 0):
-        for c in b:
-            data_new[c] = np.concatenate(( np.zeros(diff//2), b[c], np.zeros(diff - diff//2) ))
+        data_new = np.concatenate(( np.zeros((data_new.shape[0], diff//2)), data_new, np.zeros((data_new.shape[0], diff - diff//2))), axis=1)
     elif (diff < 0):
-        diff = abs(diff)
-        for c in a:
-            data_orig[c] = np.concatenate(( np.zeros(diff//2), a[c], np.zeros(diff - diff//2) ))
+        diff = -diff
+        data_orig = np.concatenate((np.zeros((data_orig.shape[0], diff//2)), data_orig, np.zeros((data_orig.shape[0], diff - diff//2))), axis=1)
 
-pad_shorter(data_orig, data_new)
+pad_shorter()
+
+# print('orig size', data_orig[0].size)
+# print('new size', data_new[0].size)
 
 ##  Align signals
 
-print('orig size', data_orig['frameTime'].size)
-print('new size', data_new['frameTime'].size)
-
 # output 
-# `a` and `b` are dictionaries
-# `corrcol` which column to use to correlate
-def alignSignals(a, b, corrcol):
-    plt.subplot(2,1,1)
-    plt.plot(a[corrcol])
-    plt.plot(b[corrcol])
-    plt.legend(['original', 'new'], loc='upper left')
-    plt.title("Before alignment")
+# `corrcol` : which column to use when correlating the features
+# `skipcols` : number of beginning columns to skip for pearson coef calculation
+# `a` : original signal
+# `b` : new signal
+def alignSignals(a, b, corrcol, skipcols=0):
+    # print("Aligning signals...")
+    # Plot Before 
+        # plt.subplot(2,1,1)
+        # plt.plot(a[corrcol])
+        # plt.plot(b[corrcol])
+        # plt.legend(['original', 'new'], loc='upper left')
+        # plt.title("Before alignment")
 
-    # cols = []
-    cols = [key for key in a]
+        # calculate pearson coefficient (initial)
+        # pscore = 0
+        # for c in range(skipcols, a.shape[0]):
+        #     pscore += sum(pearsonr(a[c], b[c])) / (a.shape[0] - skipcols)
+        # print("pearson before: ", pscore, "out of 1")
 
-    pscore = 0
-    for c in range(1, len(cols)):
-        pscore += sum(pearsonr(a[cols[c]], b[cols[c]])) / (len(cols) - 1)
-    print("pearson before: ", pscore, "out of 1")
-
+    # shift signals to align
     shift = (correlate(a[corrcol], b[corrcol]).argmax() - (a[corrcol].size - 1))
+    # print("shift", shift)
     if (shift > 0):
         # move new signal RIGHT
         b[corrcol] = np.append(b[corrcol], np.zeros(shift//2))
@@ -85,23 +92,28 @@ def alignSignals(a, b, corrcol):
     elif(shift < 0):
         # move new signal LEFT
         shift = -shift
-        b[corrcol] = np.append(np.zeros(shift//2), b[corrcol])
-        a[corrcol] = np.append(a[corrcol], np.zeros(shift//2))
+        b = np.append( np.zeros( (b.shape[0], shift//2) ), b, axis=1 )
+        a = np.append( a, np.zeros( (a.shape[0], shift//2) ), axis=1)
 
-    plt.subplot(2,1,2)
-    plt.plot(a[corrcol])
-    plt.plot(b[corrcol])
-    plt.legend(['original', 'new'], loc='upper left')
-    plt.title("After alignment")
+    # Plot After
+        # plt.subplot(2,1,2)
+        # plt.plot(a[corrcol])
+        # plt.plot(b[corrcol])
+        # plt.legend(['original', 'new'], loc='upper left')
+        # plt.title("After alignment")
+        # plt.show()
 
+    # calculate pearson coefficient (new)
     pscore = 0
-    for c in range(1, len(cols)):
-        pscore += sum(pearsonr(a[cols[c]], b[cols[c]])) / (len(cols) - 1)
-    print("pearson after: ", pscore, "out of 1")
-    
-    plt.show()
+    for c in range(skipcols, a.shape[0]):
+        pscore += sum(pearsonr(a[c], b[c])) / (a.shape[0] - skipcols)
+    # print("pearson after: ", pscore, "out of 1")  
 
-alignSignals(data_orig, data_new, 'f0')
+    return pscore
+
+coeffs = [alignSignals(data_orig, data_new, col, skipcols=SKIPCOLS) for col in range(SKIPCOLS, data_orig.shape[0])]
+
+print("Similarity Score: ", max(coeffs)*100)
 
 
 
