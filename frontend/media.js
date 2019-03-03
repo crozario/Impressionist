@@ -1,4 +1,4 @@
-window.onload = () => {
+onload = () => {
     let video = document.createElement('video');
     video.clientWidth = "1280"
     video.clientHeight = "720";
@@ -14,7 +14,7 @@ window.onload = () => {
 
 };
 
-
+ 
 
 if (navigator.mediaDevices) {
     console.log('getUserMedia supported.');
