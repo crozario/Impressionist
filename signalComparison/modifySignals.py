@@ -89,8 +89,8 @@ def alignSignals(a, b, corrcol, skipcols=0):
     # print("shift", shift)
     if (shift > 0):
         # move new signal RIGHT
-        b[corrcol] = np.append(b[corrcol], np.zeros(shift//2))
-        a[corrcol] = np.append(np.zeros(shift//2), a[corrcol])
+        b = np.append(b, np.zeros((b.shape[0], shift//2)), axis=1)
+        a = np.append(np.zeros((a.shape[0], shift//2)), a, axis=1)
     elif(shift < 0):
         # move new signal LEFT
         shift = -shift

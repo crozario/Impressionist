@@ -62,27 +62,6 @@ if __name__ == '__main__':
     # close any open plots
     cleanupPlots()
 
-# read data for prosodyShs 
-
-# SKIPCOLS=1
-# data_orig, data_new, headers = readCsvData(orig_file, new_file, delimiter=';', skipcols=SKIPCOLS, skiprows=1)
-# read data for chromafeatures
-# SKIPCOLS=0
-# data_orig, data_new, headers = readCsvData(orig_file, new_file, delimiter=';', skipcols=SKIPCOLS, skiprows=0)
-
-# print("--------Visualize raw input signals--------")
-# plotTwoFeaturesMatrices(data_orig, data_new, skipcols=1, headers=headers)
-
-# data_orig, data_new = pad_shorter(data_orig, data_new)
-
-# # print('orig size', data_orig[0].size)
-# # print('new size', data_new[0].size)
-
-# similarity = getPearsonSimilarity(data_orig, data_new, skipcols=SKIPCOLS)
-# print("Pearson similarity: ", similarity)
-
-# cleanupPlots()
-
 
 
 
