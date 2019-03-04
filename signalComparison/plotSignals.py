@@ -1,24 +1,26 @@
 import matplotlib.pyplot as plt
 
-def plotTwoFeaturesMatrices(a, b, skipcols=0):
+def plotTwoFeaturesMatrices(a, b, skipcols=0, headers=None):
     """Plot two separate 2D matrices normalized
     assumes input signal is transposed (each feature vector is a column)
     @param `a` : 2D numpy.ndarray
     @param `b` : 2D numpy.ndarray
     @param `skipcols` : (optional) number of features to exclude from graph starting from feature 0. (Default) is 0, meaning no features are skipped.
     """
-    plt.subplot(2, 1, 1)
     plt.ion()
-    for i in range(skipcols, len(a)):
-        plt.plot(a[i]/a[i].sum())
-    plt.legend([l for l in range(skipcols, len(a))], loc='upper left')
-    plt.title('Original Signal')
+    bothplots = (a, b)
+    bothtitles = ('Original Signal', 'New Signal')
+    for p in range(2):
+        plt.subplot(2, 1, p+1)
+        currplot = bothplots[p]
+        for i in range(skipcols, len(currplot)):
+            plt.plot(currplot[i]/currplot[i].sum())
+        plt.title(bothtitles[p])
+        if (headers == None):
+            plt.legend([l for l in range(skipcols, len(b))], loc='upper left')
+        else:
+            plt.legend(headers[skipcols:], loc='upper left')
 
-    plt.subplot(2, 1, 2)
-    for i in range(skipcols, len(a)):
-        plt.plot(b[i]/b[i].sum())
-    plt.legend([l for l in range(skipcols, len(b))], loc='upper left')
-    plt.title('New Signal')
     plt.show()
     input("Displaying plot, press [enter] to continue...")
     plt.clf()
