@@ -3,10 +3,13 @@
 > *Comparison using Dynamic Time Warping and ML coming soon.*
 
 ## To run:
-- Currently it doesn't support cmd line args. So you can just run using:
 ```bash
 # this aligns features using cross-correlation and checks similarity using pearson correllation coefficient
-python3 compareSig.py
+python3 compareSig.py ../test-data/features/prosodyShs_opensmile.csv ../test-data/features/prosodyShs_haardopensmile.csv prosody
+```
+- For help run:
+```bash
+python3 compareSig.py -h
 ```
 
 ## Install dependencies
