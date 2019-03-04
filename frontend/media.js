@@ -1,19 +1,53 @@
+'use strict';
+
 window.onload = () => {
+    // create element video
     let video = document.createElement('video');
-    video.clientWidth = "1280"
-    video.clientHeight = "720";
+    video.width = "1280"
+    video.heigle = "720";
     video.controls = true;
     video.id = "video-content";
     video.autoplay = false;
 
+    // add episode to video
     let content = document.createElement("source");
     content.src = "content/friends_s02e12/clip_one.mp4";
     content.type = "video/mp4";
     video.appendChild(content);
+
+    // add subtitle to video
+    let track = document.createElement("track");
+    track.label = "English";
+    track.kind = "subtitles";
+    track.srclang = "en";
+    track.src = "content/friends_s02e12/clip_one.vtt"
+    track.default = true;
+
+    video.appendChild(track);
+
     document.body.appendChild(video);
+    
+    createButton(document.body, "Pause Video", function() {
+        video.pause();
+        console.log("video pause pressed");
+    });
 
-};
+    createButton(document.body, "Play Video", function() {
+        // video.currentTime = 5; // goes to second on video
+        video.play();
+        console.log("video play pressed");
+    });
 
+
+}
+
+let createButton = (context, value, onclick) => {
+    let button = document.createElement('input');
+    button.type = "button";
+    button.value = value;
+    button.onclick = onclick;
+    context.appendChild(button);
+}
 
 
 if (navigator.mediaDevices) {
@@ -53,7 +87,7 @@ if (navigator.mediaDevices) {
     .catch(function(err) {
         console.log('The following error occurred: ' + err);
     })
-};
+}
 
 
 function createAudioElement(blobUrl) {
