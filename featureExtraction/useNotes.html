@@ -385,13 +385,42 @@ blockquote {
 
 </head>
 <body>
-<h1 id="using-opensmile"><strong>Using opensmile</strong></h1>
+<h1 id="opensmile-and-feature-extraction-notes"><strong>OpenSMILE and Feature Extraction Notes</strong></h1>
+<p>Authors: Haard Shah, Deborah Santo</p>
+<p><strong>TODOs:</strong></p>
+<ul>
+<li><em>Add Debbie's notes</em></li>
+</ul>
+<blockquote>
+<p>OpenSMILE toolkit - Open-Source Media Interpretation by Large feature-space Extraction</p>
+<ul>
+<li>Modular and flexible feature extractor for signal processing and machine learning applications</li>
+</ul>
+</blockquote>
+<blockquote>
+<p><em>Open-source licence</em> - for private, research, and educational <strong>NOT commercial</strong></p>
+<ul>
+<li>BUT requires commercial development license to commercialize</li>
+</ul>
+</blockquote>
 <blockquote>
 <p>Installation creates <code>SMILExtract</code> executable in local dir and installation location</p>
 </blockquote>
 <blockquote>
-<p>Note: appendix-like terminal printouts at the end</p>
+<p><em>Note: appendix-like terminal printouts at the end</em></p>
 </blockquote>
+<h2 id="table-of-contents"><strong>Table of contents</strong></h2>
+<ul>
+<li><a href="#first-run">First Run</a></li>
+<li><a href="#comparing-signals">Comparing Signals</a></li>
+<li><a href="#config-files">Config Files</a></li>
+<li><a href="#appendix">Appendix</a>
+<ul>
+<li><a href="#all-available-components">All available components</a></li>
+<li><a href="#smilextract-help">SMILExtract Help</a></li>
+</ul>
+</li>
+</ul>
 <h2 id="first-run"><strong>First Run</strong></h2>
 <pre class="hljs"><code><div>(impressionist_py3.6) haardshah~/developement/Impressionist/opensmile-2.3.0$ SMILExtract -C config/demo/demo1_energy.conf -I example-audio/media-interpretation.wav -O speech02.energy.csv
 (MSG) [2] <span class="hljs-keyword">in</span> SMILExtract : openSMILE starting!
@@ -405,7 +434,7 @@ blockquote {
 (MSG) [2] <span class="hljs-keyword">in</span> cComponentManager : starting single thread processing loop
 (MSG) [2] <span class="hljs-keyword">in</span> cComponentManager : Processing finished! System ran <span class="hljs-keyword">for</span> 526 ticks.
 </div></code></pre>
-<h2 id="how-can-signals-be-compared"><strong>How can signals be compared</strong></h2>
+<h2 id="comparing-signals"><strong>Comparing Signals</strong></h2>
 <ul>
 <li><a href="https://stackoverflow.com/a/20672356">Stackoverflow</a>
 <ul>
@@ -437,16 +466,16 @@ blockquote {
 <li><a href="#generate-configs">Generate Configs</a></li>
 <li><a href="#section-headers">Section Headers</a></li>
 <li><a href="#component-connections">Component Connections</a></li>
-<li><a href="#Section-24">Section 2.4</a> - Inside OpenSMILE</li>
-<li><a href="#241-Buffers">2.4.1 Buffers</a></li>
-<li><a href="#243-OpenSMILE-terminology">2.4.3 OpenSMILE terminology</a></li>
-<li><a href="#Section-25-Default-feature-sets">Section 2.5 Default feature sets</a></li>
-<li><a href="#251-Available-options-for-audio-input-for-all-standard-config-files">2.5.1 Available options for audio input for all standard config files</a></li>
-<li><a href="#Prosodic-features">Prosodic features</a></li>
-<li><a href="#Chroma-features">Chroma features</a></li>
-<li><a href="#What-are-chroma-features?">What are chroma features?</a></li>
-<li><a href="#MFCC-features">MFCC features</a></li>
-<li><a href="#PLP-features">PLP features</a></li>
+<li><a href="#section-24">Section 2.4</a> - Inside OpenSMILE</li>
+<li><a href="#241-buffers">2.4.1 Buffers</a></li>
+<li><a href="#243-opensmile-terminology">2.4.3 OpenSMILE terminology</a></li>
+<li><a href="#section-25-default-feature-sets">Section 2.5 Default feature sets</a></li>
+<li><a href="#251-available-options-for-audio-input-for-all-standard-config-files">2.5.1 Available options for audio input for all standard config files</a></li>
+<li><a href="#prosodic-features">Prosodic features</a></li>
+<li><a href="#chroma-features">Chroma features</a></li>
+<li><a href="#what-are-chroma-features?">What are chroma features?</a></li>
+<li><a href="#mfcc-features">MFCC features</a></li>
+<li><a href="#plp-features">PLP features</a></li>
 </ul>
 <h3 id="generate-configs"><strong>Generate Configs</strong></h3>
 <ul>
@@ -561,8 +590,8 @@ blockquote {
 <li>They extract:
 <ul>
 <li>fundamental frequency (F0)? -</li>
-<li>voicing probability</li>
-<li>loudness contours</li>
+<li>voicing probability -</li>
+<li>loudness contours -</li>
 </ul>
 </li>
 <li><strong>default output</strong> - CSV</li>
@@ -690,16 +719,249 @@ These properties are found to be useful in <em>speaker-independent automatic-spe
 </ul>
 </li>
 </ul>
-<h2 id="appendix">Appendix</h2>
-<ul>
-<li>Running <code>$ SMILExtract -h</code></li>
-</ul>
+<h1 id="appendix">Appendix</h1>
+<h2 id="all-available-components">All Available Components</h2>
+<pre class="hljs"><code><div>$ SMILExtract -L
+<span class="hljs-comment"># for specific component help:</span>
+$ SMILExtract -H cMyComponentName
+</div></code></pre>
+<pre class="hljs"><code><div>(MSG) [2] <span class="hljs-keyword">in</span> SMILExtract : openSMILE starting!
+(MSG) [2] <span class="hljs-keyword">in</span> SMILExtract : config file is: smile.conf
+(MSG) [2] <span class="hljs-keyword">in</span> cComponentManager : successfully registered 91 component types.
+==&gt; The following 91 components are currently registered <span class="hljs-keyword">in</span> openSMILE:
+
+ +++ <span class="hljs-string">'cDataMemory'</span> +++
+   central data memory component
+
+ +++ <span class="hljs-string">'cDataSelector'</span> +++
+   This component copies data from one level to another, thereby selecting frame fields and elements by their element/field name.
+
+ +++ <span class="hljs-string">'cVectorProcessor'</span> +++
+   dataProcessor, <span class="hljs-built_in">where</span> each array field is processed individually as a vector
+
+ +++ <span class="hljs-string">'cVectorTransform'</span> +++
+   this is a base class <span class="hljs-keyword">for</span> vector transforms <span class="hljs-built_in">which</span> require <span class="hljs-built_in">history</span> data or precomputed data (e.g. cepstral mean subtraction, etc.)
+
+ +++ <span class="hljs-string">'cWindowProcessor'</span> +++
+   filter dataProcessor, filters each element <span class="hljs-keyword">in</span> a dataMemory level independently
+
+ +++ <span class="hljs-string">'cWinToVecProcessor'</span> +++
+   reads input windows, outputs frame(s)
+
+ +++ <span class="hljs-string">'cVecToWinProcessor'</span> +++
+   Base class: reads <span class="hljs-keyword">in</span> frames , outputs windows
+
+ +++ <span class="hljs-string">'cExampleSource'</span> +++
+   This is an example of a cDataSource descendant. It writes random data to the data memory. This component is intended as a template <span class="hljs-keyword">for</span> developers.
+
+ +++ <span class="hljs-string">'cExampleSink'</span> +++
+   This is an example of a cDataSink descendant. It reads data from the data memory and prints it to the console. This component is intended as a template <span class="hljs-keyword">for</span> developers.
+
+ +++ <span class="hljs-string">'cSimpleMessageSender'</span> +++
+   This is an example of a cDataSink descendant. It reads data from the data memory and prints it to the console. This component is intended as a template <span class="hljs-keyword">for</span> developers.
+
+ +++ <span class="hljs-string">'cVectorConcat'</span> +++
+   concatenates vectors from multiple levels and copy to another level
+
+ +++ <span class="hljs-string">'cFramer'</span> +++
+   This component creates frames from single dimensional input stream. It is possible to specify the frame step and frame size independently, thus allowing <span class="hljs-keyword">for</span> overlapping frames or non continuous frames.
+
+ +++ <span class="hljs-string">'cWindower'</span> +++
+   This component applies applies window <span class="hljs-keyword">function</span> to pcm frames.
+
+ +++ <span class="hljs-string">'cVectorOperation'</span> +++
+   This component performs elementary operations on vectors (i.e. basically everything that does not require <span class="hljs-built_in">history</span> or context, everything that can be performed on single vectors w/o external data (except <span class="hljs-keyword">for</span> constant parameters, etc.))
+
+ +++ <span class="hljs-string">'cValbasedSelector'</span> +++
+   This component copies only those frames from the input to the output that match a certain threshold criterion, i.e. <span class="hljs-built_in">where</span> a specified value N exceeds a certain threshold.
+
+ +++ <span class="hljs-string">'cMaxIndex'</span> +++
+   This component computes the indices of the features with the maximum absolute values per frame.
+
+ +++ <span class="hljs-string">'cFullinputMean'</span> +++
+   This component performs mean normalizing on a data series. A 2-pass analysis of the data is performed, <span class="hljs-built_in">which</span> makes this component unusable <span class="hljs-keyword">for</span> on-line analysis. In the first pass, no output is produced and the mean value (over time) is computed <span class="hljs-keyword">for</span> each input element. In the second pass the mean vector is subtracted from all input frames, and the result is written to the output dataMemory level. Attention: Due to the 2-pass processing the input level must be large enough to hold the whole data sequence.
+
+ +++ <span class="hljs-string">'cFullturnMean'</span> +++
+   This component performs mean normalizing on a data series. A 2-pass analysis of the data is performed, <span class="hljs-built_in">which</span> makes this component unusable <span class="hljs-keyword">for</span> on-line analysis. In the first pass, no output is produced and the mean value (over time) is computed <span class="hljs-keyword">for</span> each input element. In the second pass the mean vector is subtracted from all input frames, and the result is written to the output dataMemory level. Attention: Due to the 2-pass processing the input level must be large enough to hold the whole data sequence.
+
+ +++ <span class="hljs-string">'cWaveSource'</span> +++
+   This component reads an uncompressed RIFF (PCM-WAVE) file and saves it as a stream to the data memory. For most feature extraction tasks you will now require a cFramer component.
+
+ +++ <span class="hljs-string">'cArffSource'</span> +++
+   This component reads WEKA ARFF files. The full ARFF format is not yet supported, but a simplified form, such as the files generated by the cArffSink component can be parsed and <span class="hljs-built_in">read</span>. This component reads all (and only!!) <span class="hljs-string">'numeric'</span> or <span class="hljs-string">'real'</span> attributes from an ARFF file (WEKA file format) into the specified data memory level. Thereby each instance (i.e. one line <span class="hljs-keyword">in</span> the arff file\<span class="hljs-string">'s data section) corresponds to one frame. The frame period is 0 by default (aperiodic level), use the '</span>period<span class="hljs-string">' option to change this and use a fixed period for each frame/instance. Automatic generation of frame timestamps from a '</span>timestamp<span class="hljs-string">' field in the Arff file is not yet supported.
+
+ +++ '</span>cCsvSource<span class="hljs-string">' +++
+   This component reads CSV (Comma seperated value) files. It reads all columns as attributes into the data memory. One line represents one frame. The first line may contain a header with the feature names (see header=yes/no/auto option).
+
+ +++ '</span>cHtkSource<span class="hljs-string">' +++
+   This component reads data from binary HTK parameter files.
+
+ +++ '</span>cNullSink<span class="hljs-string">' +++
+   This component reads data vectors from the data memory and '</span>destroys<span class="hljs-string">' them, i.e. does not write them anywhere. This component has no configuration options.
+
+ +++ '</span>cCsvSink<span class="hljs-string">' +++
+   This component exports data in CSV (comma-separated-value) format used in many spreadsheet applications. As the first line of the CSV file a header line may be printed, which contains a delimiter separated list of field names of the output values.
+
+ +++ '</span>cDatadumpSink<span class="hljs-string">' +++
+   This component writes dataMemory data to a raw binary file (e.g. for matlab import). The binary file consits of 32-bit float values representing the data values, concattenated frame by frame along the time axis. The first two float values in the file resemble the file header, an thus indicate the dimension of the matrix (1: size of frames, 2: number of frames in file). The total file size in bytes is thus &lt;size of frames&gt;x&lt;number of frames&gt;x4 + 2.
+
+ +++ '</span>cArffSink<span class="hljs-string">' +++
+   This component writes dataMemory data to an ARFF file (WEKA). Depending on your config an instance name field, a frame index, and a frame time field can be added as well as multiple class/target attributes. See the config type documentation for more details.
+
+ +++ '</span>cHtkSink<span class="hljs-string">' +++
+   This component writes dataMemory data to a binary HTK parameter file.
+
+ +++ '</span>cWaveSink<span class="hljs-string">' +++
+   This component saves data to an uncompressed PCM WAVE file
+
+ +++ '</span>cWaveSinkCut<span class="hljs-string">' +++
+   This component writes data to uncompressed PCM WAVE files. Only chunks, based on timings received via smile messages are written to files. The files may have consecutive numbers appended to the file name.
+
+ +++ '</span>cBowProducer<span class="hljs-string">' +++
+   This component produces a bag-of-words vector from the keyword spotter result message.
+
+ +++ '</span>cSignalGenerator<span class="hljs-string">' +++
+   This component provides a signal source. This source generates various noise types and pre-defined signals and value patterns. See the configuration documentation for a list of currently implemented types.
+
+ +++ '</span>cMonoMixdown<span class="hljs-string">' +++
+   This is a simple mixer, which adds multiple channels (elements) to a single channel (element).
+
+ +++ '</span>cTransformFFT<span class="hljs-string">' +++
+   This component performs an FFT on a sequence of real values (one frame), the output is the complex domain result of the transform. Use the cFFTmagphase component to compute magnitudes and phases from the complex output.
+
+ +++ '</span>cFFTmagphase<span class="hljs-string">' +++
+   This component computes magnitude and phase of each array in the input level (it thereby assumes that the arrays contain complex numbers with real and imaginary parts alternating, as computed by the cTransformFFT component).
+
+ +++ '</span>cAmdf<span class="hljs-string">' +++
+   This component computes the Average Magnitude Difference Function (AMDF) for each input frame. Various methods for padding or warping at the border exist.
+
+ +++ '</span>cAcf<span class="hljs-string">' +++
+   This component computes the autocorrelation function (ACF) by sqauring a magnitude spectrum and applying an inverse Fast Fourier Transform. This component mus read from a level containing *only* FFT magnitudes in a single field. Use the '</span>cTransformFFT<span class="hljs-string">' and '</span>cFFTmagphase<span class="hljs-string">' components to compute the magnitude spectrum from PCM frames. Computation of the Cepstrum is also supported (this applies a log() function to the magnitude spectra).
+
+ +++ '</span>cPreemphasis<span class="hljs-string">' +++
+   This component performs pre- and de-emphasis of speech signals using a 1st order difference equation: y(t) = x(t) - k*x(t-1)  (de-emphasis: y(t) = x(t) + k*x(t-1))
+
+ +++ '</span>cVectorPreemphasis<span class="hljs-string">' +++
+   This component performs per frame pre-emphasis without an inter-frame state memory. (This is the way HTK does pre-emphasis). Pre-emphasis: y(t) = x(t) - k*x(t-1) ; de-emphasis : y(t) = x(t) + k*x(t-1)
+
+ +++ '</span>cVectorMVN<span class="hljs-string">' +++
+   This component extends the base class cVectorTransform and implements mean/variance normalisation. You can use this component to perform on-line cepstral mean normalisation. See cFullinputMean for off-line cepstral mean normalisation.
+
+ +++ '</span>cTurnDetector<span class="hljs-string">' +++
+   Speaker turn detector using data from cVadV1 component or cSemaineSpeakerID1 (adaptive VAD) to determine speaker turns and identify continuous segments of voice activity.
+
+ +++ '</span>cDeltaRegression<span class="hljs-string">' +++
+   This component computes delta regression coefficients using the regression equation from the HTK book.
+
+ +++ '</span>cContourSmoother<span class="hljs-string">' +++
+   This component smooths data contours by applying a moving average filter of configurable length.
+
+ +++ '</span>cSmileResample<span class="hljs-string">' +++
+   This component implements a spectral domain resampling component. Input frames are transferred to the spectral domain, then the spectra are shifted, and a modified DFT is performed to synthesize samples at the new rate.
+
+ +++ '</span>cSpecResample<span class="hljs-string">' +++
+   This component implements a spectral domain resampling component. Input frames are complex valued spectral domain data, which will be shifted and scaled by this component, and a modified DFT is performed to synthesize samples at the new rate.
+
+ +++ '</span>cDbA<span class="hljs-string">' +++
+   This component performs dbX (dbA,dbB,dbC,...) equal loudness weighting of FFT bin magnitudes. Currently only dbA weighting is implemented.
+
+ +++ '</span>cVadV1<span class="hljs-string">' +++
+   A voice activity detector based on Line-Spectral-Frequencies, Mel spectra and energy + smoothing. This component requires input of the following type in the following order: MelSpec;lsf;energy. See vadV1.hpp for an example config!
+
+ +++ '</span>cSpecScale<span class="hljs-string">' +++
+   This component performs linear/non-linear axis scaling of FFT magnitude spectra with spline interpolation.
+
+ +++ '</span>cMZcr<span class="hljs-string">' +++
+   This component computes time signal properties, zero-corssing rate, mean-crossing rate, dc offset, max/min value, and absolute maximum value of a PCM frame.
+
+ +++ '</span>cEnergy<span class="hljs-string">' +++
+   This component computes logarithmic (log) and root-mean-square (rms) signal energy from PCM frames.
+
+ +++ '</span>cIntensity<span class="hljs-string">' +++
+   This component computes simplified frame intensity (narrow band approximation). IMPORTANT: It expects UNwindowed raw PCM frames as input!! A Hamming window is internally applied and the resulting signal is squared bevore applying loudness compression, etc.
+
+ +++ '</span>cMelspec<span class="hljs-string">' +++
+   This component computes an N-band Mel/Bark/Semitone-frequency spectrum (critical band spectrum) by applying overlapping triangular filters equidistant on the Mel/Bark/Semitone-frequency scale to an FFT magnitude or power spectrum.
+
+ +++ '</span>cMfcc<span class="hljs-string">' +++
+   This component computes Mel-frequency cepstral coefficients (MFCC) from a critical band spectrum (see '</span>cMelspec<span class="hljs-string">'). An I-DCT of type-II is used from transformation from the spectral to the cepstral domain. Liftering of cepstral coefficients is supported. HTK compatible values can be computed.
+
+ +++ '</span>cPlp<span class="hljs-string">' +++
+   This component computes PLP and RASTA-PLP (currently the RASTA filter is not yet implemented) cepstral coefficients from a critical band spectrum (generated by the cMelspec component, for example).
+   The component is capable of performing the following processing steps: 
+   1) Take the natural logarithm of the critical band powers (doLog)
+   2) RASTA filtering
+   3) Computation of auditory spectrum (equal loudness curve and loudness compression)
+   4) Inverse of the natural logarithm
+   5) Inverse DFT to obtain autocorrelation coefficients
+   6) Linear prediction analysis on autocorr. coeff.
+   7) Computation of cepstral coefficients from lp coefficients
+   8) Cepstral '</span>liftering<span class="hljs-string">'
+
+ +++ '</span>cSpectral<span class="hljs-string">' +++
+   This component computes spectral features such as flux, roll-off, centroid, and user defined band energies (rectangular summation of FFT magnitudes), etc.
+
+ +++ '</span>cPitchACF<span class="hljs-string">' +++
+   This component computes the fundamental frequency and the probability of voicing via an acf and cepstrum based method. The input must be an acf field and a cepstrum field (both generated by a cAcf component).
+
+ +++ '</span>cPitchSmoother<span class="hljs-string">' +++
+   This component performs temporal pitch smoothing. Input: candidates produced by a pitchBase descendant (e.g. cPitchSHS). The voicing cutoff threshold is inherited from the input component, thus this smoother component does not provide its own threshold option.
+
+ +++ '</span>cTonespec<span class="hljs-string">' +++
+   This component computes (or rather estimates) a semi-tone spectrum from an FFT magnitude spectrum.
+
+ +++ '</span>cTonefilt<span class="hljs-string">' +++
+   This component implements an on-line, sample by sample semi-tone filter bank which can be used as first step for the computation of CHROMA features as a replacement of cTonespec. The filter is based on correlating with a sine wave of the exact target frequency of a semi-tone for each note in the filter-bank.
+
+ +++ '</span>cChroma<span class="hljs-string">' +++
+   This component computes CHROMA features from a semi-tone scaled spectrum generated by the '</span>cTonespec<span class="hljs-string">' component.
+
+ +++ '</span>cCens<span class="hljs-string">' +++
+   This component computes CENS (energy normalised and smoothed chroma features) from raw Chroma features generated by the '</span>cChroma<span class="hljs-string">' component.
+
+ +++ '</span>cHarmonics<span class="hljs-string">' +++
+   This component computes statistics of F0 harmonics. It requires an F0 (Hertz) input field and a linear frequency axis magnitude spectrum as input.
+
+ +++ '</span>cPitchSmootherViterbi<span class="hljs-string">' +++
+   Viterbi algorithm to smooth pitch contours and remove octave jumps.
+
+ +++ '</span>cPitchJitter<span class="hljs-string">' +++
+   This component computes Voice Quality parameters Jitter (pitch period deviations) and Shimmer (pitch period amplitude deviations). It requires the raw PCM frames and the corresponding fundamental frequency (F0) as inputs.
+
+ +++ '</span>cPitchDirection<span class="hljs-string">' +++
+   This component reads pitch data, detects pseudo syllables, and computes pitch direction estimates per syllable. Thereby the classes falling, flat, and rising are distinguished. 
+    Required input fields: F0, F0env, and '</span>loudness<span class="hljs-string">' or '</span>RMSenergy<span class="hljs-string">'.
+
+ +++ '</span>cPitchShs<span class="hljs-string">' +++
+   This component computes the fundamental frequency via the Sub-Harmonic-Sampling (SHS) method (this is related to the Harmonic Product Spectrum method).
+
+ +++ '</span>cLpc<span class="hljs-string">' +++
+   This component computes linear predictive coding (LPC) coefficients from PCM frames. Burg\'</span>s algorithm and the standard ACF/Durbin based method are implemented <span class="hljs-keyword">for</span> LPC coefficient computation. The output of LPC filter coefficients, reflection coefficients, residual signal, and LP spectrum is supported.
+
+ +++ <span class="hljs-string">'cLsp'</span> +++
+   This component computes LSP (line spectral pair frequencies, also known as LSF) from LPC coefficients by partial factorisation of the LPC polynomial.
+
+ +++ <span class="hljs-string">'cFormantLpc'</span> +++
+   This component computes formant frequencies and bandwidths by solving <span class="hljs-keyword">for</span> the roots of the LPC polynomial. The formant trajectories can and should be smoothed by the cFormantSmoother component.
+
+ +++ <span class="hljs-string">'cFormantSmoother'</span> +++
+   This component performs temporal formant smoothing. Input: candidates produced by a formant** component AND(!) - appended - an F0final or voicing field (<span class="hljs-built_in">which</span> is 0 <span class="hljs-keyword">for</span> unvoiced frames and non-zero <span class="hljs-keyword">for</span> voiced frames). Output: Smoothed formant frequency contours.
+
+ +++ <span class="hljs-string">'cFunctionals'</span> +++
+   computes functionals from input frames, this component uses various cFunctionalXXXX sub-components, <span class="hljs-built_in">which</span> implement the actual functionality
+
+ +++ <span class="hljs-string">'cLibsvmSink'</span> +++
+   This component writes data to a text file <span class="hljs-keyword">in</span> LibSVM feature file format. For the <span class="hljs-string">'on-the-fly'</span> classification component see <span class="hljs-string">'cLibsvmliveSink'</span>.
+</div></code></pre>
+<h2 id="smilextract-help">SMILExtract Help</h2>
+<pre class="hljs"><code><div>$ SMILExtract -h
+</div></code></pre>
 <pre class="hljs"><code><div> =============================================================== 
    openSMILE version 2.3.0 (Rev. 2014:2043)
    Build date: Feb 12 2019 (UNKNOWN-BUILD-DATE)
-   Build branch: 'opensmile-2.3.0'
+   Build branch: <span class="hljs-string">'opensmile-2.3.0'</span>
    (c) 2014-2016 by audEERING GmbH
-   All rights reserved. See the file COPYING for license terms.
+   All rights reserved. See the file COPYING <span class="hljs-keyword">for</span> license terms.
    Lead author: Florian Eyben
  =============================================================== 
  
@@ -709,14 +971,14 @@ Usage: SMILExtract [-option (value)] ...
  
  -C, -configfile  	 &lt;string&gt;
 	 Path to openSMILE config file
-	 {{ default = 'smile.conf' }}
+	 {{ default = <span class="hljs-string">'smile.conf'</span> }}
  
- -l, -loglevel  	 &lt;integer value&gt;
+ -l, -loglevel  	 &lt;<span class="hljs-built_in">integer</span> value&gt;
 	 Verbosity level (0-9)
 	 {{ default = 2 }}
  
- -t, -nticks  	 &lt;integer value&gt;
-	 Number of ticks to process (-1 = infinite) (only works for single thread processing, i.e. nThreads=1)
+ -t, -nticks  	 &lt;<span class="hljs-built_in">integer</span> value&gt;
+	 Number of ticks to process (-1 = infinite) (only works <span class="hljs-keyword">for</span> single thread processing, i.e. nThreads=1)
 	 {{ default = -1 }}
  
  -L, -components  	 [boolean 0/1]
@@ -724,39 +986,39 @@ Usage: SMILExtract [-option (value)] ...
 	 {{ default = 0 }}
  
  -H, -configHelp  	 [string]
-	 Show documentation of registered config types (on/off/argument) (if an argument is given, show only documentation for config types beginning with the name given in the argument)
-	 {{ default = '(null)' }}
+	 Show documentation of registered config types (on/off/argument) (<span class="hljs-keyword">if</span> an argument is given, show only documentation <span class="hljs-keyword">for</span> config types beginning with the name given <span class="hljs-keyword">in</span> the argument)
+	 {{ default = <span class="hljs-string">'(null)'</span> }}
  
  -configDflt      	 [string]
-	 Show default config section templates for each config type (on/off/argument) (if an argument is given, show only documentation for config types beginning with the name given in the argument, OR for a list of components in conjunctions with the 'cfgFileTemplate' option enabled)
-	 {{ default = '(null)' }}
+	 Show default config section templates <span class="hljs-keyword">for</span> each config <span class="hljs-built_in">type</span> (on/off/argument) (<span class="hljs-keyword">if</span> an argument is given, show only documentation <span class="hljs-keyword">for</span> config types beginning with the name given <span class="hljs-keyword">in</span> the argument, OR <span class="hljs-keyword">for</span> a list of components <span class="hljs-keyword">in</span> conjunctions with the <span class="hljs-string">'cfgFileTemplate'</span> option enabled)
+	 {{ default = <span class="hljs-string">'(null)'</span> }}
  
  -cfgFileTemplate      	 [boolean 0/1]
-	 Print a complete template config file for a configuration containing the components specified in a comma separated string as argument to the 'configDflt' option
+	 Print a complete template config file <span class="hljs-keyword">for</span> a configuration containing the components specified <span class="hljs-keyword">in</span> a comma separated string as argument to the <span class="hljs-string">'configDflt'</span> option
 	 {{ default = 0 }}
  
  -cfgFileDescriptions      	 [boolean 0/1]
-	 Include description in config file templates.
+	 Include description <span class="hljs-keyword">in</span> config file templates.
 	 {{ default = 0 }}
  
  -c, -ccmdHelp  	 [boolean 0/1]
-	 Show custom commandline option help (those specified in config file)
+	 Show custom commandline option <span class="hljs-built_in">help</span> (those specified <span class="hljs-keyword">in</span> config file)
 	 {{ default = 0 }}
  
  -logfile      	 &lt;string&gt;
-	 set log file
-	 {{ default = 'smile.log' }}
+	 <span class="hljs-built_in">set</span> <span class="hljs-built_in">log</span> file
+	 {{ default = <span class="hljs-string">'smile.log'</span> }}
  
  -nologfile      	 [boolean 0/1]
-	 don't write to a log file (e.g. on a read-only filesystem)
+	 don<span class="hljs-string">'t write to a log file (e.g. on a read-only filesystem)
 	 {{ default = 0 }}
  
  -noconsoleoutput      	 [boolean 0/1]
-	 don't output any messages to the console (log file is not affected by this option)
+	 don'</span>t output any messages to the console (<span class="hljs-built_in">log</span> file is not affected by this option)
 	 {{ default = 0 }}
  
  -appendLogfile      	 [boolean 0/1]
-	 append log messages to an existing logfile instead of overwriting the logfile at every start
+	 append <span class="hljs-built_in">log</span> messages to an existing logfile instead of overwriting the logfile at every start
 	 {{ default = 0 }}
 </div></code></pre>
 
