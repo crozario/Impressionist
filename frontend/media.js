@@ -26,7 +26,7 @@ window.onload = () => {
     video.appendChild(track);
 
     document.body.appendChild(video);
-    
+
     createButton(document.body, "Pause Video", function() {
         video.pause();
         console.log("video pause pressed");
@@ -54,7 +54,7 @@ if (navigator.mediaDevices) {
     console.log('getUserMedia supported.');
     var constraints = { audio: true };
     var chunks = [];
-  
+
     navigator.mediaDevices.getUserMedia(constraints)
     .then(function(stream) {
 
@@ -73,7 +73,7 @@ if (navigator.mediaDevices) {
             console.log(mediaRecorder.state);
             console.log("recorder ended");
         }
-        
+
         mediaRecorder.onstop = function(e) {
             const blob = new Blob(chunks, { type: 'audio/webm' });
             createAudioElement(URL.createObjectURL(blob));
@@ -105,3 +105,10 @@ function createAudioElement(blobUrl) {
     document.body.appendChild(audioEl);
     document.body.appendChild(downloadEl);
   }
+
+//testing sending blob to python script
+//serverUrl=python script file path
+fetch('http://127.0.0.1:5000/messages', {
+  method: "post",
+  body: blob
+});
