@@ -3,9 +3,12 @@
 [Tutorial](https://www.callicoder.com/node-js-express-mongodb-restful-crud-api-tutorial/)
 
 ## Dependencies
-- node v10.15.2
 
-- npm 6.4.1
+- [mongodb v4.0.6](https://docs.mongodb.com/manual/installation/)
+
+- [node v10.15.2](https://nodejs.org/en/download/)
+
+- npm v6.4.1 (installs with node)
 
 ### Node Dependencies
 
