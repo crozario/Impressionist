@@ -21,6 +21,14 @@
 - need to compare with unknown phase shift **very important**
 - need to do the same with .htk (smaller files)
 
+# General definitions and research notes
+## Reading the paper - "Using Dynamic Time Warping to compute prosodic similarity measures"
+### Section 3 - (Dis)similarity measures
+**3 Objectives Measured** to evaluate prosodic differences 
+1. Hermes similarity measure applied on *interpolated pitch contours* of 2 sentences
+2. Hermes similarity measure on DTW-aligned pitch contours
+3. Alignment cost of the DTW considered as distance between the two prosodic continua
+
 # Other approaches / resources
 - [IMPORTANT concepts *Speech Recognition* (wiki)](https://en.wikipedia.org/wiki/Speech_recognition#Dynamic_time_warping_(DTW)-based_speech_recognition)
     - read HMM portion
@@ -46,3 +54,5 @@
 
 # Libraries / modules used
 - [scipy correlate](https://docs.scipy.org/doc/scipy/reference/generated/scipy.signal.correlate.html)
+- Also used scipy.stats.pearsonr - to calculate pearson correlation between signals
+

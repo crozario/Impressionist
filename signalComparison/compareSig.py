@@ -29,6 +29,7 @@ from modifySignals import pad_shorter, readCsvData, alignSignals, calcPearson, g
 
 # GLOBAL constants 
 SKIPCOLS = 1
+plot = False
 
 # TODO: get files from cmdline inputs OR get audiofile input and use SMILExtract from here to produce prosody feature files
 # orig_file = '../test-data/features/prosodyShs_opensmile.csv'
@@ -53,11 +54,11 @@ if __name__ == '__main__':
     else:
         exit()
     # initially
-    plotTwoFeaturesMatrices(data_orig, data_new, skipcols=SKIPCOLS, headers=headers)
+    if plot: plotTwoFeaturesMatrices(data_orig, data_new, skipcols=SKIPCOLS, headers=headers)
     # make them equal length
     data_orig, data_new = pad_shorter(data_orig, data_new)
     # compare
-    similarity = getPearsonSimilarity(data_orig, data_new, skipcols=SKIPCOLS)
+    similarity = getPearsonSimilarity(data_orig, data_new, skipcols=SKIPCOLS, headers=headers, plot=plot)
     print("Pearson similarity: ", similarity)
     # close any open plots
     cleanupPlots()
