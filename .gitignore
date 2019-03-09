@@ -2,3 +2,4 @@ frontend/content/
 speech-to-emotion/audio\ files/
 .vscode/*
 .DS_Store
+test-data/example-audio/*
