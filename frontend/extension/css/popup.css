@@ -1,5 +1,18 @@
 * {
     font-family: Arial;
+    
+}
+
+html, body {
+    margin:0px;
+    padding:0px;
+    height: 400px;
+    width: 300px;
+    background-color: #84a1be;
+}
+
+h1 {
+    margin:0;
 }
 
 button {
@@ -13,6 +26,10 @@ button {
     border: 0px;
 }
 
+button:hover {
+    opacity: 0.8;
+}
+
 textarea {
     font-size: 10pt;
     resize: none;
@@ -24,38 +41,49 @@ input {
     padding: 6px 6px;
 }
 
-button:hover {
-    opacity: 0.8;
+#title-contrainer {
+
+    text-align: center;
+    /* border-bottom: 2px solid grey; */
+    background-color: white;
+    margin: 0px;
+    padding: 0px;
+    
 }
 
-body {
-    height: 500px;
-    width: 300px
+#tab-container {
+    text-align: center;
+    background-color: white;
+    margin: 0px;
+    padding: 0px;
+}
+
+#authentication-container {
+    /* width: 95%; */
+    margin: 10px 5px;
+    padding: 5px 16px;
+    /* margin-bottom: 10px; */
+    border-radius: 2px;
+    
+    /* border: 4px solid #005792; */
+    border: 1px solid white;
+    background-color: white;
+    display: block;
 }
 
 #login-form {
-    width: 80%;
     margin: auto;
     text-align: center;
     color: #005792;
-    margin-top: 10%;
+    /* margin-top: 10%; */
 }
 
-.login-form-container {
-    padding: 5px 16px;
-    border: 4px solid #005792;
-    background-color: white;
-    display: block;
-    margin-top: 15px;
-    margin-bottom: 10px;
-    border-radius: 5px;
-}
 
 .login-button {
     width: 100%;
 }
 
-.login-input-username, .login-input-password {
+.login-input-email, .login-input-password {
     width: 100%;
     margin: 8px 0;
     border: 1px solid #ccc;
