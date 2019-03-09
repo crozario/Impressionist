@@ -12,6 +12,18 @@ window.onload = () => {
     video.appendChild(content);
     document.body.appendChild(video);
 
+    createButton(document.body, "Pause Video", function() {
+        video.pause();
+        console.log("video pause pressed");
+    });
+
+    createButton(document.body, "Play Video", function() {
+        // video.currentTime = 5; // goes to second on video
+        video.play();
+        console.log("video play pressed");
+    });
+
+
 };
 
 
@@ -20,7 +32,7 @@ if (navigator.mediaDevices) {
     console.log('getUserMedia supported.');
     var constraints = { audio: true };
     var chunks = [];
-  
+
     navigator.mediaDevices.getUserMedia(constraints)
     .then(function(stream) {
 
@@ -39,10 +51,27 @@ if (navigator.mediaDevices) {
             console.log(mediaRecorder.state);
             console.log("recorder ended");
         }
-        
+
         mediaRecorder.onstop = function(e) {
             const blob = new Blob(chunks, { type: 'audio/webm' });
             createAudioElement(URL.createObjectURL(blob));
+
+            fetch('http://127.0.0.1:5000/', {
+              method: "POST",
+              mode: "no-cors",
+              credentials: "same-origin",
+              body: blob
+            }).then(function(response) {
+              if(response.ok) {
+                return response.blob();
+              }
+              throw new Error('Network response was not ok.');
+            }).then(function(myBlob) {
+              var objectURL = URL.createObjectURL(myBlob);
+              myImage.src = objectURL;
+            }).catch(function(error) {
+              console.log('There has been a problem with your fetch operation: ', error.message);
+            });
         }
 
         mediaRecorder.ondataavailable = function(e) {
@@ -71,3 +100,6 @@ function createAudioElement(blobUrl) {
     document.body.appendChild(audioEl);
     document.body.appendChild(downloadEl);
   }
+
+//testing sending blob to python script
+//serverUrl=python script file path
