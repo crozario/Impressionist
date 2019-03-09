@@ -29,7 +29,7 @@ from modifySignals import pad_shorter, readCsvData, alignSignals, calcPearson, g
 
 # GLOBAL constants 
 SKIPCOLS = 1
-plot = False
+plot = True
 
 # TODO: get files from cmdline inputs OR get audiofile input and use SMILExtract from here to produce prosody feature files
 # orig_file = '../test-data/features/prosodyShs_opensmile.csv'

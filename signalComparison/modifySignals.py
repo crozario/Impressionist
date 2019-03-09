@@ -74,7 +74,7 @@ def readCsvData(fileA, fileB, delimiter=';', usecols=None, skipcols=0, skiprows=
 #         return np.append(np.zeros((data.shape[0], shift)), data, axis=1)
 
 def alignSignals(a, b, corrcol, skipcols=0, headers=None, plot=False):
-    """Align two signals
+    """Align two signals (only for 2D signals)
     @param `corrcol` : which column to use when correlating the features
     @param `skipcols` : number of beginning columns to skip for pearson coef calculation
     @param `a` : original signal
@@ -85,21 +85,22 @@ def alignSignals(a, b, corrcol, skipcols=0, headers=None, plot=False):
     if plot: plotTwoSignalsPartA(a, b, corrcol, headers=headers)
 
     # shift signals to align
-    shift = (correlate(a[corrcol], b[corrcol]
-                       ).argmax() - (a[corrcol].size - 1))
-    # print("Correlation before:",correlate(a[corrcol], b[corrcol]).argmax())
+    correlation = correlate(a[corrcol], b[corrcol])
+    shift = (correlation.argmax() - (a[corrcol].size - 1))
     # print("shift", shift)
     if (shift > 0):
         # move new signal RIGHT
-        # FIXME: the ALLIGNMENT might not be correct (check with sine function)
-        b = np.append(b, np.zeros((b.shape[0], shift//2)), axis=1)
-        a = np.append(np.zeros((a.shape[0], shift//2)), a, axis=1)
+        b = np.append(np.zeros((b.shape[0], shift)), b, axis=1)
+        a = np.append(a, np.zeros((a.shape[0], shift)), axis=1)
+        # b = np.append(b[:, -shift:], b[:, :-shift], axis=1)
+        # a = np.append(a[:, :-shift], a[:, -shift:], axis=1)
     elif(shift < 0):
         # move new signal LEFT
         shift = -shift
-        b = np.append(np.zeros((b.shape[0], shift//2)), b, axis=1)
-        a = np.append(a, np.zeros((a.shape[0], shift//2)), axis=1)
-
+        b = np.append(b, np.zeros((b.shape[0], shift)), axis=1)
+        a = np.append(np.zeros((a.shape[0], shift)), a, axis=1)
+        # b = np.append(b[:, :-shift], b[:, -shift:], axis=1)
+        # a = np.append(a[:, -shift:], a[:, :-shift], axis=1)
     # Plot After
     if plot: plotTwoSignalsPartB(a, b, corrcol, headers=headers)
 
@@ -119,14 +120,14 @@ def calcPearson(a, b, skipcols=0):
 def getPearsonSimilarity(a, b, skipcols=0, headers=None, plot=False):
     coeffs = []
     for col in range(skipcols, a.shape[0]):
-        # print("BEFORE alignment")
-        # _ = calcPearson(a, b, skipcols=skipcols)
-        tmpA, tmpB = alignSignals(a, b, col, skipcols=skipcols, headers=headers, plot=plot)
-        # print("AFTER alignment")
-        # coeffs.append(calcPearson(tmpA, tmpB, skipcols=skipcols))
-        rval, pval = pearsonr(tmpA[col], tmpB[col])
-        print("pearson rval:", rval)
-        coeffs.append(rval)
-        # print(coeffs[-1]*100)
+    #    rval, pval = pearsonr(a[col], b[col])
+    #    print("BEFORE pearson rval:", rval)
+       tmpA, tmpB = alignSignals(a, b, col, skipcols=skipcols, headers=headers, plot=plot)
+       # print("AFTER alignment")
+       # coeffs.append(calcPearson(tmpA, tmpB, skipcols=skipcols))
+       rval, pval = pearsonr(tmpA[col], tmpB[col])
+       print("Pearson rval:", rval)
+       coeffs.append(rval)
+       # print(coeffs[-1]*100)
 
     return max(coeffs)*100
