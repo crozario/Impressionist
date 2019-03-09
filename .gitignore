@@ -1,2 +1,3 @@
 frontend/content/
-.DS_Store
+speech-to-emotion/audio\ files/
+*.DS_Store*
