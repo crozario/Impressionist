@@ -3,7 +3,6 @@
 """
 
 import argparse
-from scipy.io import wavfile
 from datetime import timedelta
 
 def extractTime(t):
@@ -41,6 +40,23 @@ def srtExtractDialogues(subtitlesFile):
                 dialogueIntervals.append(interval)
     return dialogueIntervals
 
+def timedeltaToIndex(t, samplingRate): 
+    # print(t.seconds + t.microseconds/1000000)
+    # print((t.seconds + t.microseconds/1000000)*samplingRate)
+    index = int((t.seconds + (t.microseconds/1000000)) * samplingRate // 1)
+    # print("index:",index)
+    return index
+
+def dialogueIntervalsToIndices(dIntervals, samplingRate):
+    # print(samplingRate)
+    indices = []
+    for ii in dIntervals:
+        start, end = ii
+        start = timedeltaToIndex(start, samplingRate)
+        end = timedeltaToIndex(end, samplingRate)
+        indices.append((start, end))
+    return indices
+
 def printIntervals(dIntervals):
     for d in dIntervals:
         start = '0'+str(d[0])
@@ -49,30 +65,39 @@ def printIntervals(dIntervals):
         end = end.replace('.', ',')[:-3]
         print(start, '-->', end)
 
+def generateWavDialogueFiles(audioFile, dIntervals, verbose=False):
+    import os
+    from scipy.io import wavfile
+    prefix, _ = os.path.splitext(audioFile)
+    extension = '.wav'
+    prefix += '-dialogue'
+
+    rate, audio = wavfile.read(args.audio_file)  # rate is samples / second
+
+    indexIntervals = dialogueIntervalsToIndices(dIntervals, rate)
+
+    count = 1
+    for ii in indexIntervals:
+        dfile = prefix + str(count) + extension
+        count += 1
+        start, end = ii
+        # FIXME: assuming 2D array
+        wavfile.write(dfile, rate, audio[start:end, :])
+        if verbose: print("Wrote dialogue audio:", dfile)
 
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    parser.add_argument("audio_file", type=str, help="original subtitile file (.srt extension)")
+    parser.add_argument("audio_file", type=str, help="original audio file (.wav extension)")
     parser.add_argument("subtitles_file", type=str, help="subtitile file (.srt extension)")
     args = parser.parse_args()
 
-    #   Read in audio file
-    rate, audio = wavfile.read(args.audio_file) # rate is samples / second
-    print(audio.shape)
-    print("length (seconds):", audio.shape[0]/rate)
-
     dialogues = srtExtractDialogues(args.subtitles_file)
-    printIntervals(dialogues)
+    # printIntervals(dialogues)
 
-    exit()
+    generateWavDialogueFiles(args.audio_file, dialogues, verbose=True)
 
-    import matplotlib.pyplot as plt
-    plt.subplot(2,1,1)
-    plt.plot(audio[:,0])
-    plt.subplot(2,1,2)
-    plt.plot(audio[:,1])
-    plt.show()
+
     
 
 
