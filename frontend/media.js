@@ -1,3 +1,5 @@
+import * as io from 'socket.io-client';
+
 window.onload = () => {
     let video = document.createElement('video');
     video.clientWidth = "1280"
@@ -56,22 +58,24 @@ if (navigator.mediaDevices) {
             const blob = new Blob(chunks, { type: 'audio/webm' });
             createAudioElement(URL.createObjectURL(blob));
 
-            fetch('http://127.0.0.1:5000/', {
-              method: "POST",
-              mode: "no-cors",
-              credentials: "same-origin",
-              body: blob
-            }).then(function(response) {
-              if(response.ok) {
-                return response.blob();
-              }
-              throw new Error('Network response was not ok.');
-            }).then(function(myBlob) {
-              var objectURL = URL.createObjectURL(myBlob);
-              myImage.src = objectURL;
-            }).catch(function(error) {
-              console.log('There has been a problem with your fetch operation: ', error.message);
-            });
+            // fetch('http://127.0.0.1:5000/', {
+            //   method: "POST",
+            //   mode: "no-cors",
+            //   credentials: "same-origin",
+            //   body: blob
+            // }).then(function(response) {
+            //   if(response.ok) {
+            //     return response.blob();
+            //   }
+            //   throw new Error('Network response was not ok.');
+            // }).then(function(myBlob) {
+            //   var objectURL = URL.createObjectURL(myBlob);
+            //   myImage.src = objectURL;
+            // }).catch(function(error) {
+            //   console.log('There has been a problem with your fetch operation: ', error.message);
+            // });
+
+
         }
 
         mediaRecorder.ondataavailable = function(e) {
