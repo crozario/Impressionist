@@ -2,7 +2,7 @@
 
 [Tutorial](https://www.callicoder.com/node-js-express-mongodb-restful-crud-api-tutorial/)
 
-## Dependencies
+## Dependencies2
 
 - [mongodb v4.0.6](https://docs.mongodb.com/manual/installation/)
 
@@ -31,3 +31,7 @@ npm install
 ```bash
 node server.js 
 ```
+
+### AFS
+
+module load node.js/10.14.1
