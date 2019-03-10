@@ -1,5 +1,5 @@
 """Extracts dialogues from audio clips using subtitle file
-
+Author: Haard @ Impressionist
 """
 
 import argparse
@@ -33,7 +33,6 @@ def getInterval(line):
 def srtExtractDialogues(subtitlesFile):
     dialogueIntervals = []
     with open(subtitlesFile, 'r') as subfile:
-        count = 1
         for line in subfile:
             if '-->' in line:
                 interval = getInterval(line)
@@ -65,15 +64,16 @@ def printIntervals(dIntervals):
         end = end.replace('.', ',')[:-3]
         print(start, '-->', end)
 
-def generateWavDialogueFiles(audioFile, dIntervals, verbose=False):
+def generateWavDialogueFiles(audioFile, subtitlesFile, verbose=False):
     import os
     from scipy.io import wavfile
     prefix, _ = os.path.splitext(audioFile)
     extension = '.wav'
     prefix += '-dialogue'
-
+    #   read audio file
     rate, audio = wavfile.read(args.audio_file)  # rate is samples / second
-
+    #   read subtitles
+    dIntervals = srtExtractDialogues(subtitlesFile)
     indexIntervals = dialogueIntervalsToIndices(dIntervals, rate)
 
     count = 1
@@ -85,17 +85,14 @@ def generateWavDialogueFiles(audioFile, dIntervals, verbose=False):
         wavfile.write(dfile, rate, audio[start:end, :])
         if verbose: print("Wrote dialogue audio:", dfile)
 
-
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("audio_file", type=str, help="original audio file (.wav extension)")
     parser.add_argument("subtitles_file", type=str, help="subtitile file (.srt extension)")
     args = parser.parse_args()
 
-    dialogues = srtExtractDialogues(args.subtitles_file)
-    # printIntervals(dialogues)
-
-    generateWavDialogueFiles(args.audio_file, dialogues, verbose=True)
+    #   get dialogues
+    generateWavDialogueFiles(args.audio_file, args.subtitles_file, verbose=True)
 
 
     
