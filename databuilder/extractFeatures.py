@@ -14,10 +14,10 @@ import os
 def extractProsodyFeature(audioFile, csvOutFile, configFile):
     import subprocess
     # check SMILExtract is installed
-    result = subprocess.run("SMILExtract -h", stdout=subprocess.PIPE, stderr=subprocess.STDOUT, shell=True)
+    result = subprocess.run("./SMILExtract -h", stdout=subprocess.PIPE, stderr=subprocess.STDOUT, shell=True)
     assert 'command not found' not in result.stdout.decode('utf-8'), "OpenSMILE not installed properly"
     # Run feature extraction
-    cmd = "SMILExtract -C "+ configFile +" -I "+ audioFile +" -csvoutput " + csvOutFile
+    cmd = "./SMILExtract -C "+ configFile +" -I "+ audioFile +" -csvoutput " + csvOutFile
     result = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, shell=True)
     # print(result.stdout)
     if "Processing finished!" in result.stdout.decode('utf-8'):
