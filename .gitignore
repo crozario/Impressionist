@@ -1,5 +1,5 @@
 frontend/content/
 speech-to-emotion/audio\ files/
-backend/user-database/node_modules/
+node_modules/
 .vscode/*
 .DS_Store
