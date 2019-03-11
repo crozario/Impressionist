@@ -11,23 +11,12 @@ exports.signUp = (req,res) => {
 			message: "Need user data at sign-up"
 		});
 	}
-	
-	//encrypt user-provided password
-	const saltRounds = 10;
-	var hash_pass;
-	// console.log(req.body.password); //<-- prints out the user-provided password in plain-text
-
-	bcrypt.hash(req.body.password, saltRounds, function(err,hash) {
-		hash_pass = hash;
-		// console.log(hash);
-	});
-	// console.log(hash_pass); //<-- instead of printing out the encrypted password, this print out undefined
 
 	// create a new user
 	const cred = new schema.Cred({
 		emailAddress: req.body.email,
 		username: req.body.username,
-		password: hash_pass
+		password: req.body.password
 	});
 
 	const user = new schema.User({
