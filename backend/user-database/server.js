@@ -59,23 +59,25 @@ app.post("/requests", function(request, response) {
   
   const saltRounds = 10;
 
-
-
-    bcrypt.hash(password, saltRounds, function(err, hash){
-      hashPass = hash; 
-    });
-
-  MongoClient.connect(cred.url, { useNewUrlParser: true }, function(err, db) {
+  bcrypt.hash(password, saltRounds, function(err, hash){
+    hashPass = hash; 
+    console.log(hashPass);
+      MongoClient.connect(cred.url, { useNewUrlParser: true }, function(err, db) {
     if (err) throw err;
     var dbo = db.db("userDB");
     // var myobj = {firstName: userData[0], lastName: userData[1], credentials: {emailAddress: userData[2], username: userData[3], password: hashPass}, gameStats: {highScore: userData[5], rank: userData[6]}, lastLogin: userData[7]};
-    var myobj = { email: userData[0], password: hashPass };
+    var myobj = { email: email, password: hashPass };
     dbo.collection("users").insertOne(myobj, function(err, res) {
       if (err) throw err;
       console.log("one document inserted");
       db.close();
     });
   });
+  });
+
+  
+
+
 
   // response.end(request.body);
 });
