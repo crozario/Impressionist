@@ -1,18 +1,22 @@
 {
   "name": "user-database",
   "version": "1.0.0",
-  "description": "Rest API for user database",
+  "description": "Impressionist | User database will store all user information: first name, last name, credentials (email address, username, encrypted password), game stats, time of last login, and game history.",
   "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [
-    "Express",
-    "RestAPI",
     "MongoDB",
-    "Mongoose"
+    "NodeJS",
+    "RestAPI",
+    "Mongoose",
+    "Express",
+    "Impressionist",
+    "User",
+    "user-database"
   ],
-  "author": "Crossley Rozario",
+  "author": "Debbie @ Impressionist",
   "license": "MIT",
   "dependencies": {
     "bcrypt": "^3.0.4",

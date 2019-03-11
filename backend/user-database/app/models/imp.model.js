@@ -1,0 +1,46 @@
+const mongoose = require('mongoose');
+
+const CredentialsSchema = mongoose.Schema({
+	emailAddress: String,
+	username: String,
+	password: String //,
+	// OAuth: Boolean
+}, {
+	_id: false
+});
+
+const StatsSchema = mongoose.Schema({
+	highScore: Number,
+	rank: Number
+}, {
+	_id: false
+});
+
+const HistorySchema = mongoose.Schema({
+	mediaID: String,
+	difficulty: String,
+	completed: Boolean,
+	activity: Array,
+	score: Number,
+	averageAccuracy: Number
+}, {
+	_id: false
+});
+
+const UserSchema = mongoose.Schema({
+	firstName: String,
+	lastName: String,
+	credentials: CredentialsSchema,
+	gameStats: StatsSchema,
+	lastLogin: Date,
+	gameHistory: {type: [HistorySchema], default: undefined}
+}, {
+	collection: 'users'
+});
+
+module.exports = {
+	Cred: mongoose.model('Cred', CredentialsSchema),
+	Stat: mongoose.model('Stat', StatsSchema),
+	Hist: mongoose.model('Hist', HistorySchema),
+	User: mongoose.model('User', UserSchema)
+}
