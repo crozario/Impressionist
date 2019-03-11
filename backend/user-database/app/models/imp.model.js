@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const bcrypt = require('bcrypt');
 
 const CredentialsSchema = mongoose.Schema({
 	emailAddress: String,
@@ -36,6 +37,17 @@ const UserSchema = mongoose.Schema({
 	gameHistory: {type: [HistorySchema], default: undefined}
 }, {
 	collection: 'users'
+});
+
+CredentialsSchema.pre('save', async function(next) {
+	try {
+		const saltRounds = 10;
+		const hashPass = await bcrypt.hash(this.password,saltRounds);
+		this.password = hashPass;
+		next();
+	} catch(error) {
+		next(error);
+	}
 });
 
 module.exports = {
