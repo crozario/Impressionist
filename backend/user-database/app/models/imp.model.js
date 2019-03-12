@@ -33,7 +33,7 @@ const UserSchema = mongoose.Schema({
 	lastName: String,
 	credentials: CredentialsSchema,
 	gameStats: StatsSchema,
-	lastLogin: Date,
+	lastLogin: String,
 	gameHistory: {type: [HistorySchema], default: undefined}
 }, {
 	collection: 'users'
