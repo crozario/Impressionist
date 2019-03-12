@@ -35,3 +35,12 @@ node server.js
 ### AFS
 
 module load node.js/10.14.1
+
+
+### sign-up
+expecting from frontend:
+  firstName
+  lastName
+  email
+  username
+  password
