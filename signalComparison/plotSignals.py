@@ -30,7 +30,7 @@ def _plotTwoCols(a, b, corrcol):
     plt.plot(b[corrcol])
     plt.legend(['orig_signal', 'new_signal'], loc='upper left')
 
-def plotTwoSignalsPartA(a, b, corrcol):
+def plotTwoSignalsPartA(a, b, corrcol, headers=None):
     """Plots specific feature from input 2D input signal matrix (transposed). Intended to be used by `alignSignals()`
     __NOTE__ assumes input signal is transposed (each feature vector is a column)
     __NOTE__ call to `plotTwoSignalsPartB(a_new, b_new, corrcol)` should follow.
@@ -40,9 +40,11 @@ def plotTwoSignalsPartA(a, b, corrcol):
     """
     plt.subplot(2, 1, 1)
     _plotTwoCols(a, b, corrcol)
-    plt.title("Before alignment")
+    title = "Before Alignment" if headers == None else "Before Alignment (" + \
+        headers[corrcol]+")"
+    plt.title(title)
 
-def plotTwoSignalsPartB(a_new, b_new, corrcol):
+def plotTwoSignalsPartB(a_new, b_new, corrcol, headers=None):
     """Plots specific feature from input 2D input signal matrix (transposed)
     __NOTE__ assumes input signal is transposed (each feature vector is a column)
     @param `a_new` : 2D numpy.ndarray
@@ -51,7 +53,8 @@ def plotTwoSignalsPartB(a_new, b_new, corrcol):
     """
     plt.subplot(2, 1, 2)
     _plotTwoCols(a_new, b_new, corrcol)
-    plt.title("After alignment")
+    title = "After Alignment" if headers==None else "After Alignment ("+headers[corrcol]+")"
+    plt.title(title)
     plt.show()
     input("Displaying plot, press [enter] to continue...")
     plt.clf()

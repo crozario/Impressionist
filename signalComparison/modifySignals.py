@@ -65,9 +65,16 @@ def readCsvData(fileA, fileB, delimiter=';', usecols=None, skipcols=0, skiprows=
 
     return (dataA, dataB, headers)
 
+# def _shift_right(data, shift, pad=True):
+#     if pad:
+#         return np.append(data, np.zeros((data.shape[0], shift)), axis=1)
 
-def alignSignals(a, b, corrcol, skipcols=0):
-    """Align two signals
+# def _shift_left(data, shift, pad=True):
+#     if pad:
+#         return np.append(np.zeros((data.shape[0], shift)), data, axis=1)
+
+def alignSignals(a, b, corrcol, skipcols=0, headers=None, plot=False):
+    """Align two signals (only for 2D signals)
     @param `corrcol` : which column to use when correlating the features
     @param `skipcols` : number of beginning columns to skip for pearson coef calculation
     @param `a` : original signal
@@ -75,53 +82,52 @@ def alignSignals(a, b, corrcol, skipcols=0):
     """
     # print("Aligning signals...")
     # Plot Before
-    plotTwoSignalsPartA(a, b, corrcol)
-
-    # calculate pearson coefficient (INITIAL)
-    # pscore = 0
-    # for c in range(skipcols, a.shape[0]):
-    #     pscore += sum(pearsonr(a[c], b[c])) / (a.shape[0] - skipcols)
-    # print("pearson before: ", pscore, "out of 1")
+    if plot: plotTwoSignalsPartA(a, b, corrcol, headers=headers)
 
     # shift signals to align
-    shift = (correlate(a[corrcol], b[corrcol]
-                       ).argmax() - (a[corrcol].size - 1))
+    correlation = correlate(a[corrcol], b[corrcol])
+    shift = (correlation.argmax() - (a[corrcol].size - 1))
     # print("shift", shift)
     if (shift > 0):
         # move new signal RIGHT
-        b = np.append(b, np.zeros((b.shape[0], shift//2)), axis=1)
-        a = np.append(np.zeros((a.shape[0], shift//2)), a, axis=1)
+        b = np.append(np.zeros((b.shape[0], shift)), b, axis=1)
+        a = np.append(a, np.zeros((a.shape[0], shift)), axis=1)
+        # b = np.append(b[:, -shift:], b[:, :-shift], axis=1)
+        # a = np.append(a[:, :-shift], a[:, -shift:], axis=1)
     elif(shift < 0):
         # move new signal LEFT
         shift = -shift
-        b = np.append(np.zeros((b.shape[0], shift//2)), b, axis=1)
-        a = np.append(a, np.zeros((a.shape[0], shift//2)), axis=1)
-
+        b = np.append(b, np.zeros((b.shape[0], shift)), axis=1)
+        a = np.append(np.zeros((a.shape[0], shift)), a, axis=1)
+        # b = np.append(b[:, :-shift], b[:, -shift:], axis=1)
+        # a = np.append(a[:, -shift:], a[:, :-shift], axis=1)
     # Plot After
-    plotTwoSignalsPartB(a, b, corrcol)
-
-    # calculate pearson coefficient (NEW)
-    # pscore = 0
-    # for c in range(skipcols, a.shape[0]):
-    #     pscore += sum(pearsonr(a[c], b[c])) / (a.shape[0] - skipcols)
-    # print("pearson after: ", pscore, "out of 1")
-
-    # return pscore
+    if plot: plotTwoSignalsPartB(a, b, corrcol, headers=headers)
 
     return a, b
 
 
 def calcPearson(a, b, skipcols=0):
+    # rval = linear correlation coefficient [0, 1]
+    # pval = probability of no correlation [0, 1]
     pscore = 0
     for c in range(skipcols, a.shape[0]):
-        pscore += sum(pearsonr(a[c], b[c])) / (a.shape[0] - skipcols)
+        rval, pval = pearsonr(a[c]/a[c].sum(), b[c]/b[c].sum())
+        print("c =", c, "; rval:", rval, "; pval:", pval)
+        pscore += rval / (a.shape[0] - skipcols)
     return pscore
 
-def getPearsonSimilarity(a, b, skipcols=0):
+def getPearsonSimilarity(a, b, skipcols=0, headers=None, plot=False):
     coeffs = []
     for col in range(skipcols, a.shape[0]):
-        tmpA, tmpB = alignSignals(a, b, col, skipcols=skipcols)
-        coeffs.append(calcPearson(tmpA, tmpB, skipcols=skipcols))
-        print(coeffs[-1]*100)
+    #    rval, pval = pearsonr(a[col], b[col])
+    #    print("BEFORE pearson rval:", rval)
+       tmpA, tmpB = alignSignals(a, b, col, skipcols=skipcols, headers=headers, plot=plot)
+       # print("AFTER alignment")
+       # coeffs.append(calcPearson(tmpA, tmpB, skipcols=skipcols))
+       rval, pval = pearsonr(tmpA[col], tmpB[col])
+       print("Pearson rval:", rval)
+       coeffs.append(rval)
+       # print(coeffs[-1]*100)
 
     return max(coeffs)*100
