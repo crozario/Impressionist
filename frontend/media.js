@@ -1,6 +1,11 @@
-var socket = io.connect('http://localhost:80');
+/*
+Author: Crossley Rozario
 
-socket.emit('hello message', "hello i'm a user");
+Description: Prototype for frontend
+
+*/
+
+var socket = io.connect('http://localhost:80');
 
 window.onload = () => {
     let video = document.createElement('video');
@@ -90,15 +95,14 @@ let getAudioData = () => {
                 //   console.log('There has been a problem with your fetch operation: ', error.message);
                 // });
 
-                // console.log(chunks);
-
+                console.log(chunks);
                 
-                socket.emit("audio", blob);
+                socket.emit("audio buffer", { data : chunks });
     
             }
     
             mediaRecorder.ondataavailable = function(e) {
-                console.log(e);
+                // console.log(e);
                 chunks.push(e.data);
             }
     
