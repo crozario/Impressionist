@@ -3,3 +3,4 @@ speech-to-emotion/audio\ files/
 .vscode/*
 .DS_Store
 test-data/example-audio/*
+node_modules/
