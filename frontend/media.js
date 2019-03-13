@@ -20,7 +20,7 @@ window.onload = () => {
     video.autoplay = false;
 
     let content = document.createElement("source");
-    content.src = "content/friends_s02e12/clip_one.mp4";
+    content.src = "audio_three-dialogue1.wav";
     content.type = "video/mp4";
     video.appendChild(content);
     document.body.appendChild(video);

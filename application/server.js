@@ -26,7 +26,7 @@ io.on('connection', socket => {
         
         // new audio stream
         let buffer = Buffer.from(new Uint8Array(message.data[0]));
-
+        
         
         let writeStream = fs.createWriteStream("test.wav");
         writeStream.write(buffer);
@@ -36,6 +36,12 @@ io.on('connection', socket => {
         })
 
         writeStream.end();
+
+        // execute python dataBuilder.extractFeatures.py
+
+        // execute python signalComparison.compareSig.py
+
+
     })
 
 })

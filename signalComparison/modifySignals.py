@@ -117,7 +117,7 @@ def calcPearson(a, b, skipcols=0):
         pscore += rval / (a.shape[0] - skipcols)
     return pscore
 
-def getPearsonSimilarity(a, b, skipcols=0, headers=None, plot=False):
+def getPearsonSimilarity(a, b, skipcols=0, headers=None, plot=False, verbose=False):
     coeffs = []
     for col in range(skipcols, a.shape[0]):
     #    rval, pval = pearsonr(a[col], b[col])
@@ -126,7 +126,7 @@ def getPearsonSimilarity(a, b, skipcols=0, headers=None, plot=False):
        # print("AFTER alignment")
        # coeffs.append(calcPearson(tmpA, tmpB, skipcols=skipcols))
        rval, pval = pearsonr(tmpA[col], tmpB[col])
-       print("Pearson rval:", rval)
+       if verbose: print("Pearson rval:", rval)
        coeffs.append(rval)
        # print(coeffs[-1]*100)
 

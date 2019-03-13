@@ -22,18 +22,48 @@ Output:
 
 import argparse
 import numpy as np
-import matplotlib.pyplot as plt
+# import matplotlib.pyplot as plt
 
-from plotSignals import plotTwoFeaturesMatrices, cleanupPlots
 from modifySignals import pad_shorter, readCsvData, alignSignals, calcPearson, getPearsonSimilarity
-
-# GLOBAL constants 
-SKIPCOLS = 1
-plot = True
 
 # TODO: get files from cmdline inputs OR get audiofile input and use SMILExtract from here to produce prosody feature files
 # orig_file = '../test-data/features/prosodyShs_opensmile.csv'
 # new_file = '../test-data/features/prosodyShs_haardopensmile.csv'
+
+def compareSignals(fileA, fileB, feature_type, delimiter=';', verbose=False, plot=False):
+    """Compare features extracted using OpenSMILE
+    Uses `scipy.signal.correlate` and `scipy.stats.pearsonr` to get similarity
+    @params
+    `fileA`         feature file; should be .csv extension
+    `fileB`         feature file; should be .csv extension
+    `feature_type`  ('prosody' | 'chroma')
+    """
+    if plot: from plotSignals import plotTwoFeaturesMatrices, cleanupPlots
+    #   Read data
+    if (feature_type == 'prosody'):
+        # voicing - voicing probability ... TODO: understand this before using it to judge user signal's similarity
+        SKIPCOLS = 1
+        data_orig, data_new, headers = readCsvData(
+            fileA, fileB, delimiter=';', skipcols=SKIPCOLS, skiprows=1)
+    elif (feature_type == 'chroma'):
+        SKIPCOLS = 0
+        data_orig, data_new, headers = readCsvData(
+            fileA, fileB, delimiter=';', skipcols=SKIPCOLS, skiprows=0)
+    else:
+        exit()
+    # initially
+    if plot: plotTwoFeaturesMatrices(data_orig, data_new,
+                                skipcols=SKIPCOLS, headers=headers)
+    # make them equal length
+    data_orig, data_new = pad_shorter(data_orig, data_new)
+    # compare
+    similarity = getPearsonSimilarity(
+        data_orig, data_new, skipcols=SKIPCOLS, headers=headers, plot=plot)
+    if verbose: print("Pearson similarity: ", similarity)
+    # close any open plots
+    if plot: cleanupPlots()
+
+    return similarity
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
@@ -42,26 +72,17 @@ if __name__ == '__main__':
     parser.add_argument("feature_type", type=str, help="(prosody | chroma)")
     args = parser.parse_args()
 
-    #   Read data
-    if (args.feature_type == 'prosody'):
-        # voicing - voicing probability ... TODO: understand this before using it to judge user signal's similarity
-        SKIPCOLS=1
-        data_orig, data_new, headers = readCsvData(
-            args.fileA, args.fileB, delimiter=';', skipcols=SKIPCOLS, skiprows=1)
-    elif (args.feature_type == 'chroma'):
-        SKIPCOLS=0
-        data_orig, data_new, headers = readCsvData(args.fileA, args.fileB, delimiter=';', skipcols=SKIPCOLS, skiprows=0)
-    else:
-        exit()
-    # initially
-    if plot: plotTwoFeaturesMatrices(data_orig, data_new, skipcols=SKIPCOLS, headers=headers)
-    # make them equal length
-    data_orig, data_new = pad_shorter(data_orig, data_new)
-    # compare
-    similarity = getPearsonSimilarity(data_orig, data_new, skipcols=SKIPCOLS, headers=headers, plot=plot)
+    # constants
+    SKIPCOLS   = 1
+    # TODO: read as optionals
+    plot       = False 
+    verbose    = False 
+    delim      = ';' 
+
+    similarity = compareSignals(args.fileA, args.fileB, args.feature_type, verbose=verbose, plot=plot, delimiter=delim)
+
     print("Pearson similarity: ", similarity)
-    # close any open plots
-    cleanupPlots()
+    
 
 
 

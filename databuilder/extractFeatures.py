@@ -11,29 +11,45 @@ $ python extractFeatures.py data/dialogues/ configs/prosodyShs.conf --csv_out_fo
 import argparse
 import os
 
-def extractProsodyFeature(audioFile, csvOutFile, configFile):
+def extractFeature(audioFile, csvOutFile, configFile, verbose=False):
+    """Extract single features
+    `audioFile`     must be .wav audio file
+    `csvOutFile`    must be .csv 
+    `configFile`    .conf configuration file for OpenSMILE 
+    RETURNS:
+    status          (bool) True or False 
+    error           (str) contains error if False else empty
+    """
     import subprocess
+    error = ''
     # check SMILExtract is installed
     result = subprocess.run("SMILExtract -h", stdout=subprocess.PIPE, stderr=subprocess.STDOUT, shell=True)
-    assert 'command not found' not in result.stdout.decode('utf-8'), "OpenSMILE not installed properly"
+    if 'command not found' in result.stdout.decode('utf-8'): 
+        error = "OpenSMILE not installed properly"
+        if verbose: print(error)
+        return False, error
     # Run feature extraction
     cmd = "SMILExtract -C "+ configFile +" -I "+ audioFile +" -csvoutput " + csvOutFile
     result = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, shell=True)
     # print(result.stdout)
     if "Processing finished!" in result.stdout.decode('utf-8'):
-        print("Success! extracted features in:", csvOutFile)
+        if verbose: print("Success! extracted features in:", csvOutFile)
+        return True, error
     else:
-        # should we exit() ?
-        print("Feature extraction unsuccessful.")
-        print("stdout:", result.stdout)
+        error = "Feature extraction unsuccessful.\nstdout: "+result.stdout.decode('utf-8')
+        if verbose: print(error)
+        return False, error
 
 # extract prosody feature for all .wav files in folder
-def extractProsody_AllInFolder(folderPath, configFile, csvOutPath):
+def extractFeatures_AllInFolder(folderPath, configFile, csvOutPath):
     """Extract prosody feature for all .wav files in folder
     Names `csvOutFile` automatically from `audioFile` name
     """
     # print(folderPath)
     # print(csvOutPath)
+    gerror = ''
+    failed = False
+
     files = os.listdir(folderPath)
     for audioFile in files:
         prefix, ext = os.path.splitext(audioFile)
@@ -42,7 +58,13 @@ def extractProsody_AllInFolder(folderPath, configFile, csvOutPath):
             continue
         csvOutFile = os.path.join(csvOutPath, prefix + ".csv")
         fullAudioFile = os.path.join(folderPath, audioFile)
-        extractProsodyFeature(fullAudioFile, csvOutFile, configFile)
+        status, error = extractFeature(fullAudioFile, csvOutFile, configFile)
+        if not status:
+            failed = True
+            gerror += "Failed file " + fullAudioFile + "\n"
+            gerror += error + "\n"
+    print("Errors occured:")
+    print(gerror)
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(
@@ -59,8 +81,8 @@ if __name__ == '__main__':
     if not ext:
         # Multiple files at the same time 
         csvOutPath = args.csv_out_folder if args.csv_out_folder else prefix
-        extractProsody_AllInFolder(args.input_audio, args.config_file, csvOutPath)
+        extractFeatures_AllInFolder(args.input_audio, args.config_file, csvOutPath)
     else:
         # process single audio file
         csvOutFile = args.csv_out_file if args.csv_out_file else prefix+'.csv'
-        extractProsodyFeature(args.input_audio, csvOutFile, args.config_file)
+        status, error = extractFeature(args.input_audio, csvOutFile, args.config_file)
