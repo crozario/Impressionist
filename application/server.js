@@ -10,13 +10,6 @@ const app = require('express')();
 const server = require('http').Server(app);
 const io = require('socket.io')(server);
 const fs = require('fs');
-// const toWav = require('audiobuffer-to-wav');
-// const AudioContext = require('web-audio-api').AudioContext;
-// const audioContext = new AudioContext;
-
-// app.get('/', function(request, response) {
-//     return response.send("hello world");
-// })
 
 // client connected to server
 io.on('connection', socket => {
@@ -43,11 +36,6 @@ io.on('connection', socket => {
         })
 
         writeStream.end();
-
-        
-
-
-        // console.log(arraybuffer);
     })
 
 })

@@ -25,11 +25,13 @@ window.onload = () => {
     video.appendChild(content);
     document.body.appendChild(video);
 
+    // create button for video pausing
     createButton(document.body, "Pause Video", function() {
         video.pause();
         console.log("video pause pressed");
     });
 
+    // create button for video playing
     createButton(document.body, "Play Video", function() {
         // video.currentTime = 5; // goes to second on video
         video.play();
@@ -54,26 +56,30 @@ let getAudioData = () => {
         console.log('getUserMedia supported.');
         var constraints = { audio: true };
         var chunks = [];
-    
+
+        // Get mic audio
         navigator.mediaDevices.getUserMedia(constraints)
         .then(function(stream) {
     
             var mediaRecorder = new MediaRecorder(stream);
     
             var videoElement = document.getElementById("video-content");
-    
+            
+            // start recording on video play
             videoElement.onplay = () => {
                 mediaRecorder.start();
                 console.log(mediaRecorder.state);
                 console.log("recorder started");
             }
-    
+            
+            // stop recording on video pause
             videoElement.onpause = () => {
                 mediaRecorder.stop();
                 console.log(mediaRecorder.state);
                 console.log("recorder ended");
             }
-    
+            
+            // recording stopped
             mediaRecorder.onstop = function(e) {
                 // const blob = new Blob(chunks, { type: 'audio/webm' });
                 // createAudioElement(URL.createObjectURL(blob));
@@ -84,6 +90,7 @@ let getAudioData = () => {
     
             }
             
+            // recording data available
             mediaRecorder.ondataavailable = function(e) {
                 // console.log(e);
                 chunks = [];
@@ -114,5 +121,5 @@ function createAudioElement(blobUrl) {
     audioEl.appendChild(sourceEl);
     document.body.appendChild(audioEl);
     document.body.appendChild(downloadEl);
-  }
+}
 
