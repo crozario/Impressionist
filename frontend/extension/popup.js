@@ -25,5 +25,37 @@ Description: Popup window for chrome extension
 // };
 
 
+onload = () => {
+
+    var login_button = document.getElementById('login-button');
+
+    login_button.onclick = function() {
+        var email = document.getElementsByName("email")[0].value;
+        var password = document.getElementsByName("password")[0].value;
+
+        var vars = "login=true" + "&email=" + email + "&password=" + password;
+
+        var req = new XMLHttpRequest();
+
+        req.onreadystatechange = function () {
+            if (req.readyState == 4) {
+
+            if (req.status == 200) {
+                // var json_response = JSON.parse(req.responseText);   
+                console.log("response received");
+                console.log(req.responseText);
+
+            } else {
+                status_id.innerHTML = 'An error occurred during your request: ' + req.status + ' ' + req.statusText;
+            }
+            }
+        }
+
+        req.open("POST", "http://localhost:8080/requests", true);
+        req.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+        req.send(vars);
+    };
+
+}
 
 
