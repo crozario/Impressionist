@@ -1,8 +1,6 @@
 """Compare audioClip to previously stored featureFile
-// execute python dataBuilder.extractFeatures.py
-python ../databuilder/extractFeatures.py <test.wav> ../databuilder/configs/prosodyShs.conf -c test.csv
-// execute python signalComparison.compareSig.py
-$ python ../signalComparison/compareSig.py audio_three-dialogue1.csv test.csv prosody
+For testing with `test.wav`
+$ python3 compareAudio.py
 """
 
 import subprocess
@@ -30,4 +28,5 @@ def compareAudioToFeature(verbose=False):
     return similarity
 
 if __name__=='__main__':
-    compareAudioToFeature(verbose=True)
+    similarity = compareAudioToFeature(verbose=True)
+    print(similarity)
