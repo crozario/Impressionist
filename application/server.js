@@ -5,11 +5,11 @@ Description: Node.js server for application
 
 */
 
-
+const serverPort = 3000
 const app = require('express')();
 const server = require('http').Server(app);
 const io = require('socket.io')(server);
-// const fs = require('fs');
+const fs = require('fs');
 // const toWav = require('audiobuffer-to-wav');
 // const AudioContext = require('web-audio-api').AudioContext;
 // const audioContext = new AudioContext;
@@ -20,27 +20,39 @@ const io = require('socket.io')(server);
 
 // client connected to server
 io.on('connection', socket => {
-    console.log('a user has connected');
-
+    console.log("a user has connected");
 
     // client disconnected
     socket.on('disconnect', () => {
-        console.log('a user has disconnected');
+        console.log("a user has disconnected");
     });
     
     // audio buffer received
     socket.on('audio buffer', message => {
-        console.log("got blog data");
+        console.log("got blob data");
         
-        let buffer = Buffer.from(message.data);
-        let arraybuffer = Uint8Array.from(buffer).buffer;
-        console.log(message.data);
-        console.log(arraybuffer);
+        // new audio stream
+        let buffer = Buffer.from(new Uint8Array(message.data[0]));
+
+        
+        let writeStream = fs.createWriteStream("test.wav");
+        writeStream.write(buffer);
+        
+        writeStream.on("finish", () => {
+            console.log("wrote data");
+        })
+
+        writeStream.end();
+
+        
+
+
+        // console.log(arraybuffer);
     })
 
 })
 
 // host location
-server.listen(80, () => {
-    console.log("listening on port 80");
+server.listen(serverPort, () => {
+    console.log("listening on port : " + serverPort );
 })

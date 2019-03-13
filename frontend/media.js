@@ -5,7 +5,11 @@ Description: Prototype for frontend
 
 */
 
-var socket = io.connect('http://localhost:80');
+const serverPort = 3000
+const serverHost = "http://localhost"
+const socketAddress = serverHost + ":" + serverPort
+
+const socket = io.connect(socketAddress);
 
 window.onload = () => {
     let video = document.createElement('video');
@@ -31,10 +35,6 @@ window.onload = () => {
         video.play();
         console.log("video play pressed");
     });
-
-    // var socket = io.connect('http://localhost:80');
-
-    // socket.emit('hello message', "hello i'm a user");
 
     getAudioData();
 
@@ -75,34 +75,18 @@ let getAudioData = () => {
             }
     
             mediaRecorder.onstop = function(e) {
-                const blob = new Blob(chunks, { type: 'audio/webm' });
-                createAudioElement(URL.createObjectURL(blob));
+                // const blob = new Blob(chunks, { type: 'audio/webm' });
+                // createAudioElement(URL.createObjectURL(blob));
                 
-                // fetch('http://127.0.0.1:5000/', {
-                //   method: "POST",
-                //   mode: "no-cors",
-                //   credentials: "same-origin",
-                //   body: blob
-                // }).then(function(response) {
-                //   if(response.ok) {
-                //     return response.blob();
-                //   }
-                //   throw new Error('Network response was not ok.');
-                // }).then(function(myBlob) {
-                //   var objectURL = URL.createObjectURL(myBlob);
-                //   myImage.src = objectURL;
-                // }).catch(function(error) {
-                //   console.log('There has been a problem with your fetch operation: ', error.message);
-                // });
-
                 console.log(chunks);
                 
                 socket.emit("audio buffer", { data : chunks });
     
             }
-    
+            
             mediaRecorder.ondataavailable = function(e) {
                 // console.log(e);
+                chunks = [];
                 chunks.push(e.data);
             }
     
@@ -132,5 +116,3 @@ function createAudioElement(blobUrl) {
     document.body.appendChild(downloadEl);
   }
 
-//testing sending blob to python script
-//serverUrl=python script file path
