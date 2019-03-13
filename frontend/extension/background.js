@@ -1,5 +1,11 @@
-"use strict";
+/*
+Author: Crossley Rozario
 
+Description: Background script for chrome extension
+
+*/
+
+"use strict";
 
 // works only with URLs from www.netflix.com/watch/
 chrome.runtime.onInstalled.addListener(function() {

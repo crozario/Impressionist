@@ -1,3 +1,9 @@
+/*
+Author: Crossley Rozario
+
+Description: Popup window for chrome extension
+
+*/
 
 // tab one = search bar (search for wa)
 
