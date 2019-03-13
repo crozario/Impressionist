@@ -6,9 +6,9 @@
 html, body {
     margin:0px;
     padding:0px;
-    height: 400px;
-    width: 300px;
-    background-color: #84a1be;
+    height: 580px;
+    width: 320px;
+    background: linear-gradient(to bottom left, #3A4A64 0%, #141A31 100%);
 }
 
 h1 {
@@ -16,7 +16,7 @@ h1 {
 }
 
 button {
-    background-color:#1c819e;
+    background: linear-gradient(to right, #0BBFD6 0%, #5ACCC1 100%);
     color: white;
     cursor: pointer;
     padding: 6px 6px; 
