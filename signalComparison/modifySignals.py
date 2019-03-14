@@ -53,10 +53,9 @@ def readCsvData(fileA, fileB, delimiter=';', usecols=None, skipcols=0, skiprows=
         ##  Get headers
         headers = [features[f] for f in usecols] if (skiprows != 0) else [
             str(f) for f in usecols]
-    dataA, dataB = tuple(
-        [np.loadtxt(file, delimiter=delimiter, usecols=usecols, unpack=True, skiprows=skiprows)
-            for file in (fileA, fileB)]
-    )
+    # read number data
+    dataA, dataB = tuple([np.loadtxt(file, delimiter=delimiter, usecols=usecols, unpack=True, skiprows=skiprows) for file in (fileA, fileB)])
+    assert(dataA.size != 0 and dataB.size != 0), "received empty data file/s"
 
     # Sanity check
     assert(dataA.shape[0] == dataB.shape[0]

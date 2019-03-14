@@ -12,6 +12,13 @@
 
 - Socket.io
 
+### Python Dependencies
+- scipy
+- numpy
+
+### Other
+- OpenSMILE
+
 #### Setup
 
 ```bash

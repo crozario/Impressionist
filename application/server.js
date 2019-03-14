@@ -11,8 +11,10 @@ const server = require('http').Server(app);
 const io = require('socket.io')(server);
 const fs = require('fs');
 var spawn = require('child_process').spawn
-var toWav = require('audiobuffer-to-wav')
+// var toWav = require('audiobuffer-to-wav')
+const WaveFile = require('wavefile');
 
+const util = require('util');
 
 // client connected to server
 io.on('connection', socket => {
@@ -28,18 +30,29 @@ io.on('connection', socket => {
         console.log("got blob data");
         
         // new audio stream
-        let buffer = Buffer.from(new Uint8Array(message.data[0]));
-        
-        
-        // let writeStream = fs.createWriteStream("test.wav");
-        // writeStream.write(buffer);
-        
-        // writeStream.on("finish", () => {
-        //     console.log("wrote data");
-        // })
+        console.log("message.data");
+        console.log(message.data);
+        console.log("inspect message");
+        // console.log(util.inspect(message, false, null, true /* enable colors */));
+        let values = new Uint16Array(message.data);
+        let buffer = Buffer.from(values);
+        console.log("values uint16array");
+        console.log(values.length);
 
-        // writeStream.end();
+        let writeStream = fs.createWriteStream("test.webm");
+        writeStream.write(message.data);
         
+        // FIXME: callback doesn't work
+        writeStream.on("finish", () => {
+            console.log("wrote data");
+        })
+
+        // What's this for?
+        // writeStream.end(); 
+        
+        // Execute ffmpeg command here
+        // $ ffmpeg -i test.webm test.wav
+
         dataString = '';
         // execute python dataBuilder.extractFeatures.py
         py = spawn('python3', ['compareAudio.py']);
@@ -53,9 +66,6 @@ io.on('connection', socket => {
         py.stdout.on('end', () => {
             console.log(dataString);
         });
-        
-        // execute python signalComparison.compareSig.py
-
     })
 
 })

@@ -14,19 +14,21 @@ sys.path.insert(0, '../signalComparison/')
 from signalComparison.compareSig import compareSignals as compare
 
 def compareAudioToFeature(verbose=False):
-    # audioFile = 'test.wav' 
-    audioFile = '../frontend/audio_three-dialogue1.wav' # same file yields 100%
-    status, error = extract(audioFile, 'test.csv', '../databuilder/configs/prosodyShs.conf', verbose=False)
+    audioFile = 'test.wav' 
+    # audioFile = '../frontend/audio_three-dialogue1.wav' # same file yields 100%
+    status, error = extract(audioFile, 'test.csv', '../databuilder/configs/prosodyShs.conf', verbose=verbose)
     if not status: #failed
         print(error)
         exit()
 
-    similarity = compare('audio_three-dialogue1.csv', 'test.csv', 'prosody', delimiter=';', verbose=False, plot=False)
+    similarity = compare('audio_three-dialogue1.csv', 'test.csv', 'prosody', delimiter=';', verbose=verbose, plot=False)
 
     if verbose: print("Similarity: ", similarity)
 
     return similarity
 
 if __name__=='__main__':
-    similarity = compareAudioToFeature(verbose=True)
-    print(similarity)
+    similarity = compareAudioToFeature(verbose=False)
+    print("---------------------------------------")
+    print("Similarity score (out of 100.0):", round(similarity, ndigits=3))
+    print("---------------------------------------")
