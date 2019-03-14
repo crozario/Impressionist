@@ -10,6 +10,9 @@ const app = require('express')();
 const server = require('http').Server(app);
 const io = require('socket.io')(server);
 const fs = require('fs');
+var spawn = require('child_process').spawn
+var toWav = require('audiobuffer-to-wav')
+
 
 // client connected to server
 io.on('connection', socket => {
@@ -28,19 +31,30 @@ io.on('connection', socket => {
         let buffer = Buffer.from(new Uint8Array(message.data[0]));
         
         
-        let writeStream = fs.createWriteStream("test.wav");
-        writeStream.write(buffer);
+        // let writeStream = fs.createWriteStream("test.wav");
+        // writeStream.write(buffer);
         
-        writeStream.on("finish", () => {
-            console.log("wrote data");
-        })
+        // writeStream.on("finish", () => {
+        //     console.log("wrote data");
+        // })
 
-        writeStream.end();
-
+        // writeStream.end();
+        
+        dataString = '';
         // execute python dataBuilder.extractFeatures.py
+        py = spawn('python3', ['compareAudio.py']);
 
+        // append to dataString from python stdout
+        py.stdout.on('data', data =>{
+            dataString += data.toString();
+        });
+          
+        // print dataString after program end
+        py.stdout.on('end', () => {
+            console.log(dataString);
+        });
+        
         // execute python signalComparison.compareSig.py
-
 
     })
 

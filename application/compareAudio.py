@@ -14,8 +14,8 @@ sys.path.insert(0, '../signalComparison/')
 from signalComparison.compareSig import compareSignals as compare
 
 def compareAudioToFeature(verbose=False):
-    audioFile = 'test.wav' 
-    # audioFile = '../frontend/audio_three-dialogue1.wav' # same file yields 100%
+    # audioFile = 'test.wav' 
+    audioFile = '../frontend/audio_three-dialogue1.wav' # same file yields 100%
     status, error = extract(audioFile, 'test.csv', '../databuilder/configs/prosodyShs.conf', verbose=False)
     if not status: #failed
         print(error)
