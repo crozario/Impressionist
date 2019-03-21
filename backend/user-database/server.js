@@ -29,8 +29,8 @@ app.get('/', (req,res) => {
 	res.json({"message": "Welcome to Impressionist!"})
 });
 
-// require Imp routes
-require("./app/routes/imp.routes.js")(app);
+// require User routes
+require("./app/routes/user.routes.js")(app);
 
 // listen for requests
 app.listen(3000, () => {
