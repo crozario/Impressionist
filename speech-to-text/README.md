@@ -11,7 +11,7 @@ pip install --upgrade google-cloud-speech
 pip install pysubs2
 ```
 # Sample Call
-- compare_stt(subfile, subnum, audio_file)
+compare_stt(subfile, subnum, audio_file)
 - subfile: Subtitle file for the episode (could be sent by front end)
 - subnum: Subtitle number from the subtitle file that is being compared (provided by frontend)
 - audio_file: User's audio that will be provided by front end.
