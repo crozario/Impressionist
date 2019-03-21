@@ -1,13 +1,12 @@
 ## Google's Speech-to-text put together by Furqan aka Al
 
 ### Quick usage directions
-#### Python
 ## Dependencies
-- Need python `google-cloud-speech` package
+- Need `google-cloud-speech` package
 ```bash
 pip install --upgrade google-cloud-speech
 ```
-- Need python `pysubs2` package
+- Need `pysubs2` package
 ```bash
 pip install pysubs2
 ```
