@@ -1,4 +1,8 @@
 # Front-middle Integration Plan
+## Middle REST API
+
+### Front functionality assumptions
+- 
 
 # User stories
 ## *Append to content database*
