@@ -1,19 +1,25 @@
-## Google's Speech-to-text put together by Furquan aka Al
+## Google's Speech-to-text put together by Furqan aka Al
 
 ### Quick usage directions
 #### Python
+## Dependencies
 - Need python `google-cloud-speech` package
 ```bash
 pip install --upgrade google-cloud-speech
 ```
-- Run like this
+- Need python `pysubs2` package
 ```bash
-python transcribe_time_offsets_with_language_change.py -s "en-US" sample.flac
+pip install pysubs2
 ```
-- To run with `.wav` file extensions, delete the following line from python file or change `.FLAC` to `.LINEAR16`
-```python
-encoding=enums.RecognitionConfig.AudioEncoding.FLAC
+# Sample Call
+- compare_stt(subfile, subnum, audio_file)
+- subfile: Subtitle file for the episode (could be sent by front end)
+- subnum: Subtitle number from the subtitle file that is being compared (provided by frontend)
+- audio_file: User's audio that will be provided by front end.
+
+```Python
+compare_stt('friends.s02e12.720p.bluray.x264-psychd.srt', 32, 'user-audio_two-dialogue3.wav')
 ```
 
-#### Bash 
+#### Bash
 - [Uses curl and simple JSON](https://cloud.google.com/speech-to-text/docs/quickstart-protocol)
