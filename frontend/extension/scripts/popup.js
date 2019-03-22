@@ -52,8 +52,8 @@ let setup = () => {
     signupButton.onclick = signupButtonPressed;
 }
 
-let tabOnClick = (buttonId) =>  {
-    
+let tabOnClick = (buttonId) => {
+
 }
 
 let isLoggedIn = () => { return false; }
@@ -64,12 +64,19 @@ let loginButtonPressed = () => {
     let email = document.getElementById('login-input-email').value;
     let password = document.getElementById('login-input-password').value;
 
-        // let login_button = document.getElementById('login-button');
+    // let login_button = document.getElementById('login-button');
     // let sign_up_button = document.getElementById("signup-button");
 
 
-    var vars = "email=" + email + "&password=" + password;
+    let data = {
+        "email" : email,
+        "password" : password
+    }
 
+    let stringifedData = JSON.stringify(data);
+
+    // alert(stringifedData);
+    
     var req = new XMLHttpRequest();
 
     req.onreadystatechange = function () {
@@ -77,16 +84,35 @@ let loginButtonPressed = () => {
             if (req.status == 200) {  
                 console.log("response received");
                 console.log(req.responseText);
+                alert(req.responseText);
 
             } else {
-                status_id.innerHTML = 'An error occurred during your request: ' + req.status + ' ' + req.statusText;
+                alert("error");
+                alert(req.responseText)
             }
         }
     }
 
-    req.open("POST", "http://localhost:8080/requests", true);
-    req.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-    req.send(vars);
+    req.open("POST", "http://localhost:3000/user/signIn", true);
+    req.setRequestHeader("Content-Type", "application/json");
+    req.send(stringifedData);
+
+    // fetch("http://localhost:3000/user/signIn",
+    //     {
+    //         headers: {
+    //             'Content-Type': 'application/json',
+    //         },
+    //         method: "POST",
+    //         body: stringifedData
+    //     })
+    //     .then(function (res) { 
+    //         console.log('Request success: ', res) 
+    //         alert('Request success: ', res) 
+    //     })
+    //     .catch(function (error) { 
+    //         console.log('Request failure: ', error)
+    //         alert('Request failure: ', error) 
+    //     })
 
 }
 
@@ -96,30 +122,37 @@ let signupButtonPressed = () => {
     let password = document.getElementById('signup-input-password').value;
     let passwordConfirm = document.getElementById('signup-input-password-confirm').value;
 
-    if(password !== passwordConfirm) {
-        console.log("password and password confirm does not match");
-        return
+    // if (password !== passwordConfirm) {
+    //     console.log("password and password confirm does not match");
+    //     return
+    // }
+
+    let data = {
+        "firstName" : "bob",
+        "lastName" : "roz",
+        "username" : "bobroza",
+        "email" : "bobroz@gmail.com",
+        "password" : "password"
     }
 
-    var vars = "email=" + email + "&username=" + username + "&password=" + password;
+    let stringifedData = JSON.stringify(data);
 
     var req = new XMLHttpRequest();
 
     req.onreadystatechange = function () {
         if (req.readyState == 4) {
-            if (req.status == 200) {  
+            if (req.status == 200) {
                 console.log("response received");
                 console.log(req.responseText);
-
+                alert(req.responseText);
             } else {
-                status_id.innerHTML = 'An error occurred during your request: ' + req.status + ' ' + req.statusText;
+                alert("error");
+                alert(req.responseText)
             }
         }
     }
 
-    req.open("POST", "http://localhost:8080/requests", true);
-    req.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-    req.send(vars);
-
-
+    req.open("POST", "http://localhost:3000/user/signUp", true);
+    req.setRequestHeader("Content-Type", "application/json");
+    req.send(stringifedData);
 }
