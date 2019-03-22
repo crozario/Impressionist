@@ -7,6 +7,8 @@ Description: Background script for chrome extension
 
 "use strict";
 
+console.log("on background script");
+
 // works only with URLs from www.netflix.com/watch/
 chrome.runtime.onInstalled.addListener(function() {
     chrome.declarativeContent.onPageChanged.removeRules(undefined, function() {
