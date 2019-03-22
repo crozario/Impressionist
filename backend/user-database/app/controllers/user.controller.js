@@ -17,23 +17,52 @@ exports.isUniqueUsername = (req,res) => {
 		});
 	}
 	schema.User.findOne({'credentials.username': req.body.username})
-		.then(exists => {
-			if(!exists) {
-				return res.json({
-					status: "success"
-				});
-			} else {
-				return res.json({
-					status: "failure",
-					error: "the username provided is already taken"
-				});
-			}
-		}).catch(err => {
-			return res.status(500).json({
-				status: "failure",
-				error: err.message || "error retrieving information from the database"
+	.then(exists => {
+		if(!exists) {
+			return res.json({
+				status: "success"
 			});
+		} else {
+			return res.json({
+				status: "failure",
+				error: "the username provided is already taken"
+			});
+		}
+	}).catch(err => {
+		return res.status(500).json({
+			status: "failure",
+			error: err.message || "error retrieving information from the database"
 		});
+	});
+};
+
+// verify that user provided-email is unique
+exports.isUniqueEmail = (req,res) => {
+	// validate request
+	if(!req.body.username) {
+		return res.status(400).json({
+			status: "failure",
+			error: "a username was not provided"
+		});
+	}
+	schema.User.findOne({'credentials.username': req.body.username})
+	.then(exists => {
+		if(!exists) {
+			return res.json({
+				status: "success"
+			});
+		} else {
+			return res.json({
+				status: "failure",
+				error: "the username provided is already taken"
+			});
+		}
+	}).catch(err => {
+		return res.status(500).json({
+			status: "failure",
+			error: err.message || "error retrieving information from the database"
+		});
+	});
 };
 
 // user sign-up, store basic sign-up information 
@@ -105,7 +134,6 @@ exports.signIn = (req,res) => {
 				});
 			}
 			if(result == true) {
-				console.log(doc.credentials.password);
 				doc.lastLogin = Date("<YYYY-mm-ddTHH:MM:ss>");
 				doc.save();
 				return res.json({
@@ -113,12 +141,56 @@ exports.signIn = (req,res) => {
 					info: result
 				});
 			} else {
-				console.log(doc.credentials.password);
 				return res.json({
 					status: "failure",
 					error: "user-provided password does not match"
 				});
 			}
 		});
+	});
+};
+
+// initialize game
+exports.initializeGame = (req,res) => {
+	// validate request
+	if(!req.body.username || !req.body.contentID) {
+		return res.status(400).json({
+			status: "failure",
+			error: "a username or mediaID was not provided"
+		});
+	}
+	// find user's document in the userDB
+	var query = schema.User.findOne({'credentials.username': req.body.username});
+	query.exec(function(err,doc) {
+		if(err) {
+			return res.status(500).json({
+				status: "failure",
+				error: err.message || "error occured when retrieving information from the database"
+			});
+		}
+		// create game History schema to update user's document with
+		const history = new schema.Hist({
+			contentID: req.body.contentID,
+			mediaType: req.body.mediaType,
+			difficulty: req.body.difficulty,
+			completed: false,
+			activity: Date("<YYYY-mm-ddTHH:MM:ss>"),
+			score: 0,
+			averageAccuracy: 0
+		});
+		// save data in gameHistory field array
+		doc.gameHistory = history;
+		doc.save()
+		.then(data => {
+			return res.json({
+				status: "success",
+				gameID: data.gameHistory[0]._id
+			});
+		}).catch(err => {
+			return res.status(500).json({
+				status: "failure",
+				error: err.message || "error occured when saving user game data into database"
+			});
+		}); 
 	});
 };
