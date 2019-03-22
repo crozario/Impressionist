@@ -20,6 +20,7 @@ WORDS
 - sockets (compareAudio)
 - http req (JSON)
 - message queue 
+----------------------
 - "rooms and stuff" 
     - what has this? - socket.io
 
@@ -28,6 +29,7 @@ WORDS
 - [append to content DB](#append-to-content-database) 
     - SEND to contentDB
         {
+            "reqType" : "appendContentDB"
             "title" : String,
             "season" : Number, (0 if its a movie)
             "episode" : Number, (0 if its a movie)
