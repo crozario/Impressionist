@@ -8,7 +8,7 @@
             "gameID" : 2,  // info about user (connected with contentID on userDatabase)
             "contentID" : 43, // info about tvshow/movie
             "dialogueID" : 23, // which dialogue to compare the audioBuffer against
-            "audioBuffer" : blob 
+            "data" : blob 
         }
     - json SEND to contentDB
         {
@@ -16,16 +16,21 @@
             "contentID" : 43,
             "dialogueID" : 23
         }
+WORDS
+- sockets (compareAudio)
+- http req (JSON)
+- message queue 
+- "rooms and stuff" 
+    - what has this? - socket.io
+
 ## ContentProcessor
 > STATUS: DOING
 - [append to content DB](#append-to-content-database) 
     - SEND to contentDB
         {
             "title" : String,
-            "season" : Number,
-            "title" : String,
-            "season" : Number,
-            "episode" : Number,
+            "season" : Number, (0 if its a movie)
+            "episode" : Number, (0 if its a movie)
             "length" : Number,
             "mediaFileLocation" : String,
             "captionFile" : String,
