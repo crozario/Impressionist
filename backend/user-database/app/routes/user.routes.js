@@ -5,11 +5,11 @@ module.exports = (app) => {
 	app.post('/user/signUp', user.signUp);
 
 	// verify that user-provided username is unique
-	app.get('/user', user.isUniqueUsername);
+	app.post('/user', user.isUniqueUsername);
 
 	// user sign-in
-	app.get('/user/signIn', user.signIn);
+	app.post('/user/signIn', user.signIn);
 
 	// game initialization
-	app.get('/user/initializeGame', user.initializeGame);
+	app.post('/user/initializeGame', user.initializeGame);
 }
