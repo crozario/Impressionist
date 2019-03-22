@@ -17,52 +17,23 @@ exports.isUniqueUsername = (req,res) => {
 		});
 	}
 	schema.User.findOne({'credentials.username': req.body.username})
-	.then(exists => {
-		if(!exists) {
-			return res.json({
-				status: "success"
-			});
-		} else {
-			return res.json({
+		.then(exists => {
+			if(!exists) {
+				return res.json({
+					status: "success"
+				});
+			} else {
+				return res.json({
+					status: "failure",
+					error: "the username provided is already taken"
+				});
+			}
+		}).catch(err => {
+			return res.status(500).json({
 				status: "failure",
-				error: "the username provided is already taken"
+				error: err.message || "error retrieving information from the database"
 			});
-		}
-	}).catch(err => {
-		return res.status(500).json({
-			status: "failure",
-			error: err.message || "error retrieving information from the database"
 		});
-	});
-};
-
-// verify that user provided-email is unique
-exports.isUniqueEmail = (req,res) => {
-	// validate request
-	if(!req.body.username) {
-		return res.status(400).json({
-			status: "failure",
-			error: "a username was not provided"
-		});
-	}
-	schema.User.findOne({'credentials.username': req.body.username})
-	.then(exists => {
-		if(!exists) {
-			return res.json({
-				status: "success"
-			});
-		} else {
-			return res.json({
-				status: "failure",
-				error: "the username provided is already taken"
-			});
-		}
-	}).catch(err => {
-		return res.status(500).json({
-			status: "failure",
-			error: err.message || "error retrieving information from the database"
-		});
-	});
 };
 
 // user sign-up, store basic sign-up information 
@@ -182,9 +153,10 @@ exports.initializeGame = (req,res) => {
 		doc.gameHistory = history;
 		doc.save()
 		.then(data => {
+			console.log(data.gameHistory[0]._id+"       "+data.gameHistory[0].contentID);
 			return res.json({
 				status: "success",
-				gameID: data.gameHistory[0]._id
+				gameID: data.gameHistory[0]
 			});
 		}).catch(err => {
 			return res.status(500).json({
