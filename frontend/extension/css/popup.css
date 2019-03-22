@@ -1,22 +1,19 @@
 * {
-    font-family: Arial;
-    
+    font-family: Heiti TC;
+    color: gray;
 }
 
 html, body {
     margin:0px;
     padding:0px;
-    height: 400px;
-    width: 300px;
-    background-color: #84a1be;
+    height: 580px;
+    width: 320px;
+    background: linear-gradient(to bottom left, #3A4A64 0%, #141A31 100%);
 }
 
-h1 {
-    margin:0;
-}
 
 button {
-    background-color:#1c819e;
+    background: linear-gradient(to right, #0BBFD6 0%, #5ACCC1 100%);
     color: white;
     cursor: pointer;
     padding: 6px 6px; 
@@ -39,35 +36,65 @@ textarea {
 input {
     font-size: 10pt;
     padding: 6px 6px;
+    margin: 10px 0px;
+    border: 0;
+    background: transparent;
+    outline: 0;
+    border-bottom: 1px solid gray;
+    width: 100%;
 }
 
-#title-contrainer {
 
+.search-tab {
+    background-color: #555;
+    color: white;
+    float: left;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    padding: 14px 16px;
+    font-size: 17px;
+    width: 50%;
+}
+
+.user-tab {
+    background-color: #555;
+    color: white;
+    float: left;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    padding: 14px 16px;
+    font-size: 17px;
+    width: 50%;
+}
+
+.title-contrainer {
     text-align: center;
-    /* border-bottom: 2px solid grey; */
-    background-color: white;
-    margin: 0px;
+    margin: 20px 0px;
     padding: 0px;
+    /* position: fixed;
+    top: 0; */
+    width: 100%;
+    height: 50px;
     
-}
+} 
 
-#tab-container {
+.tab-container {
     text-align: center;
-    background-color: white;
     margin: 0px;
     padding: 0px;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    height: 50px;
 }
 
-#authentication-container {
-    /* width: 95%; */
-    margin: 10px 5px;
+.authentication-container {
+    margin-top: 40px;
     padding: 5px 16px;
-    /* margin-bottom: 10px; */
     border-radius: 2px;
     
-    /* border: 4px solid #005792; */
-    border: 1px solid white;
-    background-color: white;
     display: block;
 }
 
@@ -75,24 +102,31 @@ input {
     margin: auto;
     text-align: center;
     color: #005792;
-    /* margin-top: 10%; */
 }
 
+
+#signup-form {
+    margin: auto;
+    text-align: center;
+    color: #005792;
+}
 
 #login-button {
     width: 100%;
+    margin: 10px 0;
 }
 
-.login-input-email, .login-input-password {
+#signup-button {
     width: 100%;
-    margin: 8px 0;
-    border: 1px solid #ccc;
-    box-sizing: border-box;
-    border-radius: 5px;
-    color: #005792;
-} 
+    margin: 10px 0;
+}
 
-#status {
+.logo-container {
+    text-align: center;
+}
+
+
+#status { 
     display: block;
     padding: 10px;
     background-color: #ff5959;

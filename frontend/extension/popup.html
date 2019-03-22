@@ -3,38 +3,48 @@
   <head>
       <title>Impressionist</title>
       <link rel="stylesheet" type="text/css" media="screen" href="css/popup.css"/>
-      <script src="popup.js"></script>
+      <link rel="stylesheet" href="css/all.css" >
+      <script src="scripts/popup.js"></script>
+      
   </head>
   <body>
-    <!-- <div id="title-contrainer">
-      <h1>Impressionist</h1>
-    </div> -->
+    <div class="page-container">
+        <div class="title-contrainer">
+            <h1>Impressionist</h1>
+          </div>
+         
 
-    <div id="authentication-container">
-      <form id="login-form">
-        <div class="login-form-container">
-          <h1>Log in</h1>
-          <input class="login-input-email" type="text" placeholder="Enter Email" name="email" required>
+          <div class="contents-container">
+            <div class="logo-container">
+                <img src="images/logo.png" alt="Impressionist Logo">
+            </div>
+            
 
-          <input class="login-input-password" type="password" placeholder="Enter Password" name="password" required>
+            <div class="authentication-container">
+              <form id="login-form">
+                <div class="login-form-container">
+                  <input id="login-input-email" type="text" placeholder="Enter Email" name="email" required>
+        
+                  <input id="login-input-password" type="password" placeholder="Enter Password" name="password" required>
+        
+                  <button id="login-button" type="submit" >Log in with email</button>
+                  
+                </div>  
 
-          <button id="login-button" type="submit" >Log in with email</button>
-          
-        </div>   
-        <button class="signup-button">Sign up</button>
+                <a href="signup.html" id="signup-button">Don't have any account? Sign up</a>
+        
+        
+                <div id="status" style="display: none;"><strong>Incorrect email or password<strong></div>   
+                      
+              </form>
+            </div>
 
-        <div>
-          
-        </div>
-
-        <div id="status" style="display: none;"><strong>Incorrect email or password<strong></div>   
-              
-      </form>
+          </div>
+      
+          <div class="tab-container">
+            <button class="search-tab" ></button>
+            <button class="user-tab" ></button>
+          </div>
     </div>
-
-    <!-- <div id="tab-container">
-        <h1>Tab Placeholder</h1>
-    </div> -->
-
   </body>
 </html>
