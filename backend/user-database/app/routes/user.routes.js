@@ -8,7 +8,7 @@ module.exports = (app) => {
 	app.get('/user', user.isUniqueUsername);
 
 	// user sign-in
-	app.get('/user/signIn', user.signIn);
+	app.post('/user/signIn', user.signIn);
 
 	// game initialization
 	app.get('/user/initializeGame', user.initializeGame);
