@@ -17,23 +17,23 @@ exports.isUniqueUsername = (req,res) => {
 		});
 	}
 	schema.User.findOne({'credentials.username': req.body.username})
-		.then(exists => {
-			if(!exists) {
-				return res.json({
-					status: "success"
-				});
-			} else {
-				return res.json({
-					status: "failure",
-					error: "the username provided is already taken"
-				});
-			}
-		}).catch(err => {
-			return res.status(500).json({
-				status: "failure",
-				error: err.message || "error retrieving information from the database"
+	.then(exists => {
+		if(!exists) {
+			return res.json({
+				status: "success"
 			});
+		} else {
+			return res.json({
+				status: "failure",
+				error: "the username provided is already taken"
+			});
+		}
+	}).catch(err => {
+		return res.status(500).json({
+			status: "failure",
+			error: err.message || "error retrieving information from the database"
 		});
+	});
 };
 
 // user sign-up, store basic sign-up information 
@@ -45,6 +45,22 @@ exports.signUp = (req,res) => {
 			error: "some or all required fields were not provided"
 		});
 	}
+
+	schema.User.findOne({'credentials.emailAddress': req.body.email})
+	.then(exists => {
+		if(exists) {
+			return res.json({
+				status: "failure",
+				error: "an account with the user-provided email address already exists"
+			});
+		}
+	}).catch(err => {
+		return res.status(500).json({
+			status: "failure",
+			error: err.message || "error retrieving information from the database"
+		});
+	});
+
 	// create a new user
 	const cred = new schema.Cred({
 		emailAddress: req.body.email,
@@ -153,10 +169,9 @@ exports.initializeGame = (req,res) => {
 		doc.gameHistory = history;
 		doc.save()
 		.then(data => {
-			console.log(data.gameHistory[0]._id+"       "+data.gameHistory[0].contentID);
 			return res.json({
 				status: "success",
-				gameID: data.gameHistory[0]
+				gameID: data.gameHistory[0]._id
 			});
 		}).catch(err => {
 			return res.status(500).json({
