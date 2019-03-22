@@ -1,6 +1,7 @@
 """Adds content to mongoDB contentDB
 For testing with `test.wav`
-$ python3 appendContentDB.py <mediaFile> <subtitle file>
+$ python3 appendContentDB.py <parentFolder>
+NOTE: argument is `parentFolder` containing video and subtitle files NOT individual files
 
 Rules / notes
 - parent directory of videoFile ????
@@ -134,15 +135,31 @@ def getVideoFileDuration(mediaFile):
         print("Couldn't get length of media")
         return -1
 
+def getMediaAndCaptionFiles(mediaDirectory):
+    mediaFile = ''
+    captionFile = ''
+    error = ''
+    allfiles = os.listdir(mediaDirectory)
+    for file in allfiles:
+        root, ext = os.path.splitext(file)
+        if ext in ['.mkv', '.mp4', '.avi', '.flv']:
+            if mediaFile != '': error += 'multiple video files found\n'
+            mediaFile = os.path.join(mediaDirectory, file)
+        elif ext == '.vtt':
+            if captionFile !=  '': error += 'multiple caption files found\n'
+            captionFile = os.path.join(mediaDirectory, file)
+    if error != '':
+        print(error)
+        exit()
+    return mediaFile, captionFile
+
 if __name__=='__main__':
     parser = argparse.ArgumentParser(
         description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    parser.add_argument("mediaFile", type=str, help="Location to media file")
-    parser.add_argument("captionFile", type=str, help="caption file (.vtt)")
+    parser.add_argument("mediaDirectory", type=str, help="parent folder containing video file (.mkv or .mp4(tested)) and subtitle file (.vtt ; .srt WON'T work)")
     args = parser.parse_args()
 
-    mediaFile = args.mediaFile
-    captionFile = args.captionFile
+    mediaFile, captionFile = getMediaAndCaptionFiles(args.mediaDirectory)
     dirName = os.path.dirname(mediaFile)
     tmpFullAudio = os.path.join(dirName, "tmpFullAudio.wav")
     tmpDialogue = os.path.join(dirName, "tmpDialogue.wav")
@@ -167,10 +184,6 @@ if __name__=='__main__':
     # first make sure feature folder doesn't exist
     if (not os.path.isdir(featuresDir)):
         os.makedirs(featuresDir)
-    
-        # print(mediaFile)
-        
-        # print(os.path.splitext(mediaFile))
 
         # convert video to audio
         cmd = "ffmpeg -y -i " + mediaFile + " -ab 160k -ac 2 -ar "+str(samplingRate)+" -vn " + tmpFullAudio
