@@ -235,6 +235,15 @@ if __name__=='__main__':
     # convert to JSON
     import json
     contentJSON = json.dumps(contentdict)
-    print(contentJSON)
+
+    # SEND jSON
+    import urllib.request
+    backURL = "localhost:8000/page"
+    req = urllib.request.Request(backURL)
+    req.add_header('Content-Type', 'application/json; charset=utf-8')
+    jsondataasbytes = contentJSON.encode('utf-8') # convert to bytes
+    req.add_header('Content-Length', len(jsondataasbytes))
+    print(jsondataasbytes)
+    response = urllib.request.urlopen(req, jsondataasbytes)
 
 
