@@ -1,5 +1,42 @@
 # Front-middle Integration Plan
-## Middle REST API
+# Middle REST API
+## Application Server
+- [gameplay story](#during-game-play)
+    - example json (RECEIVE from FRONT)
+        {
+            "reqType" : "compareAudio"
+            "gameID" : 2,  // info about user (connected with contentID on userDatabase)
+            "contentID" : 43, // info about tvshow/movie
+            "dialogueID" : 23, // which dialogue to compare the audioBuffer against
+            "audioBuffer" : blob 
+        }
+    - json SEND to contentDB
+        {
+            "reqType" : "getFeatureURL",
+            "contentID" : 43,
+            "dialogueID" : 23
+        }
+## ContentProcessor
+> STATUS: DOING
+- [append to content DB](#append-to-content-database) 
+    - SEND to contentDB
+        {
+            "title" : String,
+            "season" : Number,
+            "title" : String,
+            "season" : Number,
+            "episode" : Number,
+            "length" : Number,
+            "mediaFileLocation" : String,
+            "captionFile" : String,
+            "dialogueFileLocations" : array of String values
+        }
+    - RECEIVE status from contentDB
+        {
+            "status" : "success"|"failure"
+            "error" : empty String | String
+        }
+
 
 ### Front functionality assumptions
 - 
