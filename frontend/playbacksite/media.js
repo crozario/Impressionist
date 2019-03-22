@@ -20,7 +20,7 @@ window.onload = () => {
     video.autoplay = false;
 
     let content = document.createElement("source");
-    content.src = "content/friends_s02e12/clip_one.mp4";
+    content.src = "audio_three-dialogue1.wav";
     content.type = "video/mp4";
     video.appendChild(content);
     document.body.appendChild(video);
@@ -54,15 +54,45 @@ let createButton = (context, value, onclick) => {
 let getAudioData = () => {
     if (navigator.mediaDevices) {
         console.log('getUserMedia supported.');
-        var constraints = { audio: true };
+        var constraints = { 
+            audio: /*true*/ {
+                sampleRate : {
+                    exact : 44100 // 44.1KHz (DW)
+                },
+                sampleSize : {
+                    exact : 8    // bit-depth (# bits per sample) DW
+                },
+                echoCancellation : true // this WORKS
+            } 
+        };
         var chunks = [];
+
+        // console.log("supported consraints");
+        // console.log(navigator.mediaDevices.getSupportedConstraints())
 
         // Get mic audio
         navigator.mediaDevices.getUserMedia(constraints)
         .then(function(stream) {
-    
-            var mediaRecorder = new MediaRecorder(stream);
-    
+            
+            // myconstraints = {
+            //     sampleRate : { ideal : 44100 }, 
+            //     sampleSize : { exact : 8}
+            // }
+            // console.log("constraints")
+            // console.log(myconstraints);
+            // console.log("Tracks");
+            // stream.getTracks().forEach(function(track) {
+            //     track.applyConstraints(myconstraints); // doesn't do anything
+            //     console.log(track.getSettings());
+            //     console.log(track.getCapabilities());
+            // })
+
+            var options = {
+                audioBitsPerSecond : 128000,
+                mimeType: 'audio/webm;codec=pcm'
+            };
+            var mediaRecorder = new MediaRecorder(stream, options);
+            
             var videoElement = document.getElementById("video-content");
             
             // start recording on video play
@@ -81,13 +111,10 @@ let getAudioData = () => {
             
             // recording stopped
             mediaRecorder.onstop = function(e) {
-                // const blob = new Blob(chunks, { type: 'audio/webm' });
-                // createAudioElement(URL.createObjectURL(blob));
+                const blob0 = new Blob(chunks);
+                createAudioElement(URL.createObjectURL(blob0));
                 
-                console.log(chunks);
-                
-                socket.emit("audio buffer", { data : chunks });
-    
+                socket.emit("audio buffer", { data : blob0 });
             }
             
             // recording data available
@@ -95,18 +122,26 @@ let getAudioData = () => {
                 // console.log(e);
                 chunks = [];
                 chunks.push(e.data);
+                console.log("e ondataavailable");
+                console.log(e);
+                console.log("e.data ondataavailable");
+                console.log(e.data);
             }
     
         })
         .catch(function(err) {
             console.log('The following error occurred: ' + err);
-        })
+        });
     };
 } 
-
-
-
-
+  
+function blobToFile(theBlob, fileName) {
+    //A Blob() is almost a File() - it's just missing the two properties below which we will add
+    theBlob.lastModifiedDate = new Date();
+    theBlob.name = fileName;
+    return theBlob;
+}
+  
 function createAudioElement(blobUrl) {
     const downloadEl = document.createElement('a');
     downloadEl.style = 'display: block';
@@ -122,4 +157,37 @@ function createAudioElement(blobUrl) {
     document.body.appendChild(audioEl);
     document.body.appendChild(downloadEl);
 }
+
+// function createWAVElement(blobUrl) {
+//     const downloadEl = document.createElement('a');
+//     downloadEl.style = 'display: block';
+//     downloadEl.innerHTML = 'download_wav';
+//     downloadEl.download = 'audio.wav';
+//     downloadEl.href = blobUrl;
+//     const audioEl = document.createElement('audio');
+//     audioEl.controls = true;
+//     const sourceEl = document.createElement('source');
+//     sourceEl.src = blobUrl;
+//     sourceEl.type = 'audio/wav';
+//     audioEl.appendChild(sourceEl);
+//     document.body.appendChild(audioEl);
+//     document.body.appendChild(downloadEl);
+// }
+
+// function createWEBMElement(blobUrl) {
+//     const downloadEl = document.createElement('a');
+//     downloadEl.style = 'display: block';
+//     downloadEl.innerHTML = 'download_webm';
+//     downloadEl.download = 'audio.webm';
+//     downloadEl.href = blobUrl;
+//     const audioEl = document.createElement('audio');
+//     audioEl.controls = true;
+//     const sourceEl = document.createElement('source');
+//     sourceEl.src = blobUrl;
+//     sourceEl.type = 'audio/webm';
+//     audioEl.appendChild(sourceEl);
+//     document.body.appendChild(audioEl);
+//     document.body.appendChild(downloadEl);
+// }
+
 

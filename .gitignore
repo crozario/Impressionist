@@ -4,3 +4,6 @@ node_modules/
 .vscode/*
 .DS_Store
 test-data/example-audio/*
+
+application/output.htk
+application/smile.log

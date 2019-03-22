@@ -1,14 +1,44 @@
 # Installing OpenSMILE (for macOS)
 
+## Downloading OpenSMILE
+- Download `opensmile-2.3.0.tar.gz` (or whatever is the current version)
+    - from https://www.audeering.com/opensmile/
+- Copy tar file from `Downloads/` to your project directory like this (using terminal)
+```bash
+$ cd /somewhere/on/your/computer
+$ mv ~/Downloads/opensmile-2.3.0.tar.gz .
+# then untar 
+$ tar xvf opensmile-2.3.0.tar.gz
+# go into opensmile directory
+$ cd opensmile-2.3.0
+```
+- DONE! [follow installation instructions](#successful-install)
+
 ## Successful install
-## Doing the long way now (section 2.2.2)
+### Doing the long way now (section 2.2.2)
 
 - Installed autotools with 
 ```bash
 brew install autoconf automake libtool
 ```
+    
+- To check already installed
+    - NEED `automake 1.10` and `autoconf 2.61`
 
-- Ran `bash autogen.sh` twice then ran the `./configure` script (provide options to install in different place)
+```bash
+$ automake --version
+automake (GNU automake) 1.16.1
+<more printouts>
+```
+```bash
+$ autoconf --version
+autoconf (GNU Autoconf) 2.69
+<more printouts>
+```
+
+> NOTE: OpenSMILE docs didn't say anything about versions for `libtool` or `m4`
+
+- Ran `bash autogen.sh` **twice** then ran the `./configure` script (provide options to install in different place)
 - raw bash output and input
 ```bash
 haardshah~/developement/Impressionist/opensmile-2.3.0$ bash autogen.sh 
