@@ -1,14 +1,34 @@
 console.log("on contentScript script");
 
-var s = document.createElement('script');
-s.src = chrome.extension.getURL('scripts/netflixApiScript.js');
-(document.head||document.documentElement).appendChild(s);
+setup() 
 
-s.onload = function() {
-    s.remove();
-};
+let setup = () => {
+    injectNetflixScript();
 
-// Event listener
+    // pause video after 10 seconds
+    setTimeout(function() {
+        console.log("pausing video")
+        pauseVideo()
+    }, 10000);
+}
+
+
+
+// inject netflixApiScript.js into netflix DOM
+let injectNetflixScript = () => {
+    var script = document.createElement('script');
+    script.src = chrome.extension.getURL('scripts/netflixApiScript.js');
+    (document.head||document.documentElement).appendChild(s);
+
+    script.onload = function() {
+        script.remove();
+    };
+
+    console.log("injected netflixApiScript");
+}
+
+
+// Netflix API
 
 // document.addEventListener('RW759_connectExtension', function(e) {
 //     alert(e.detail);
@@ -26,7 +46,3 @@ let playVideo = () => {
 }
 
 
-setTimeout(function() {
-    console.log("pausing video")
-    pauseVideo()
-}, 10000);

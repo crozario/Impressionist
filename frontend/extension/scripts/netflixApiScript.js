@@ -1,13 +1,16 @@
+/*
+Author: Crossley Rozario
+
+Description: Injected Netflix Api Script
+
+*/
+
 console.log("on netflixApi script");
-
-
 
 let getSessionSummary = () => {
     var videoPlayer = netflix.appContext.state.playerApp.getAPI().videoPlayer.getVideoPlayerBySessionId(netflix.appContext.state.playerApp.getAPI().videoPlayer.getAllPlayerSessionIds()[0])
-    console.log(videoPlayer.getSessionSummary())
-    return videoPlayer.getSessionSummary().playdelay
+    return videoPlayer.getSessionSummary()
 }
-
 
 let pauseVideo = () => {
     var videoPlayer = netflix.appContext.state.playerApp.getAPI().videoPlayer.getVideoPlayerBySessionId(netflix.appContext.state.playerApp.getAPI().videoPlayer.getAllPlayerSessionIds()[0])
