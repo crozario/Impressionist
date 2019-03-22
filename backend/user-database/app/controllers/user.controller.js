@@ -49,7 +49,7 @@ exports.signUp = (req,res) => {
 	schema.User.findOne({'credentials.emailAddress': req.body.email})
 	.then(exists => {
 		if(exists) {
-			return res.json({
+			return res.status(400).json({
 				status: "failure",
 				error: "an account with the user-provided email address already exists"
 			});
