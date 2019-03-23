@@ -25,6 +25,17 @@ io.on('connection', socket => {
         console.log("a user has disconnected");
     });
     
+    // newEvent = "dialogueCompare"
+    // expected message
+    /*
+    message = {
+        gameID : 
+        contentID : 
+        dialogueID : 
+        blob : 
+    }
+     */
+    
     // audio buffer received
     socket.on('audio buffer', message => {
         console.log("got blob data");
@@ -69,6 +80,7 @@ io.on('connection', socket => {
         });
     })
 
+    
 })
 
 // host location
