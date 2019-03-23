@@ -209,46 +209,39 @@ if __name__=='__main__':
         featureFiles = getFeatureFilesFromDir(featuresDir)
 
     # construct JSON to send to contentDB
+    # get mediaFile length
+    secondsDuration = getVideoFileDuration(mediaFile)
+    emotions = []  # for now
+    contentdict = {
+        "reqType" : "appendContentDB",
+        "mediaFileLocation" : mediaFile,
+        "length" : secondsDuration, # NOTE: notify debbie its seconds
+        "featureFileLocations" : featureFiles, 
+        "captionFile" : captionFile,
+        "emotionsList" : emotions # NOTE: add this to docs
+    }
     if "contentData/movies" in dirName:
-        title = os.path.basename(dirName)
-        season = episodeNum = 0
-        episodeTitle = '' 
+        contentdict["title"] = os.path.basename(dirName)
     else:
         split = dirName.split(sep='/')
         episode = split[-1].split('-')
-        episodeNum = int(episode[0])
-        episodeTitle = " ".join(episode[1:])
-        season = int(split[-2])
-        title = split[-3]
-    # get mediaFile length
-    secondsDuration = getVideoFileDuration(mediaFile)
-    # print(secondsDuration)
-    emotions = [] # for now
-    contentdict = {
-        "reqType": "appendContentDB",
-        "title" : title,
-        "episode" : episodeNum,
-        "episodeTitle": episodeTitle,  # NOTE: notify debbie of this addendum
-        "season" : season,
-        "mediaFileLocation" : mediaFile,
-        "captionFile" : captionFile,
-        "length" : secondsDuration, # FIXME: What kind of number is she expecting? may fail if above enters else (think she might be expecting minutes (if so divide by 60))
-        "featureFiles" : featureFiles,
-        "emotionsList" : emotions # NOTE: notify debbie; will be array of strings, same size as `featureFiles` array
-    }
+        contentdict["episode"] = int(episode[0])
+        contentdict["episodeTitle"] = " ".join(episode[1:]) # NOTE: add this addendum to docs
+        contentdict["season"] = int(split[-2])
+        contentdict["title"] = split[-3]
 
     # convert to JSON
     import json
     contentJSON = json.dumps(contentdict)
 
     # SEND jSON
-    import urllib.request
-    backURL = "localhost:8000/page"
-    req = urllib.request.Request(backURL)
+    import urllib.request #ref: https://stackoverflow.com/a/26876308/7303112
+    backURL = "http://localhost:3000/cont/"
+    req = urllib.request.Request(backURL, method='POST')
     req.add_header('Content-Type', 'application/json; charset=utf-8')
     jsondataasbytes = contentJSON.encode('utf-8') # convert to bytes
     req.add_header('Content-Length', len(jsondataasbytes))
-    print(jsondataasbytes)
+    # print("sent jsonbytes:", jsondataasbytes)
     response = urllib.request.urlopen(req, jsondataasbytes)
-
+    print("response:", response.status)
 
