@@ -17,15 +17,20 @@ const StatsSchema = mongoose.Schema({
 	_id: false
 });
 
-const HistorySchema = mongoose.Schema({
-	mediaID: String,
-	difficulty: String,
-	completed: Boolean,
-	activity: Array,
-	score: Number,
-	averageAccuracy: Number
+const ScoreSchema = mongoose.Schema({
+	score: Array,
+	dialogueID: Array
 }, {
 	_id: false
+});
+
+const HistorySchema = mongoose.Schema({
+	contentID: mongoose.Schema.Types.ObjectId, 
+	// difficulty: String,
+	completed: Boolean,
+	activity: Array,
+	score: {type: [ScoreSchema], default: undefined}
+	// averageAccuracy: Number
 });
 
 const UserSchema = mongoose.Schema({
@@ -67,6 +72,7 @@ CredentialsSchema.pre('save', function(next) {
 module.exports = {
 	Cred: mongoose.model('Cred', CredentialsSchema),
 	Stat: mongoose.model('Stat', StatsSchema),
+	Score: mongoose.model('Score', ScoreSchema),
 	Hist: mongoose.model('Hist', HistorySchema),
 	User: mongoose.model('User', UserSchema)
 }
