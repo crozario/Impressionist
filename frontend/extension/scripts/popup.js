@@ -26,6 +26,7 @@ Description: Popup window for chrome extension
 
 
 onload = () => {
+    console.log("on popup script");
     setup();
 
     // let searchTab = document.getElementById('search-tab');

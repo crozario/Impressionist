@@ -13,7 +13,14 @@
       "scripts": ["scripts/background.js"],
       "persistent": false
     },
-    "browser_action": {
+    "content_scripts": [
+      {
+        "matches": ["https://www.netflix.com/watch/*"],
+        "js": ["scripts/contentScript.js"]
+      }
+    ],
+    "web_accessible_resources": ["scripts/netflixApiScript.js"],
+    "page_action": {
       "default_popup": "popup.html",
       "default_icon": {
         "16": "images/logo16.png",
