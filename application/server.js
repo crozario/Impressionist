@@ -34,6 +34,16 @@ io.on('connection', socket => {
         dialogueID : 
         blob : 
     }
+    SEND to contentDB
+        contentID
+        dialogueID
+    RECEIVE from contentDB
+        featureFileURL  (for signal similarity)
+        emotion         (for emotion similarity)
+        subtitleFileURL (for lyrical similarity)
+    - run
+    python compareAudio.py blob.webm featureFileURL emotion subtitleFileURL
+    
      */
     
     // audio buffer received

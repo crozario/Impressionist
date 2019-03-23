@@ -182,7 +182,7 @@ def getMediaAndCaptionFiles(mediaDirectory):
     error = ''
     allfiles = os.listdir(mediaDirectory)
     for file in allfiles:
-        root, ext = os.path.splitext(file)
+        _, ext = os.path.splitext(file)
         if ext in ['.mkv', '.mp4', '.avi', '.flv']:
             if mediaFile != '': error += 'multiple video files found\n'
             mediaFile = os.path.join(mediaDirectory, file)
