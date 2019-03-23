@@ -1,16 +1,19 @@
 const mongoose = require('mongoose');
 
 const ContentSchema = mongoose.Schema({
-	mediaType: String,
+	mediaType: Number,
 	title: String,
-	season: Number,
-	episode: Number,
+	seasonNumber: Number,
+	episodeNumber: Number,
 	episodeTitle: String,
-	length: Number, // store length of movie/tv show in minutes
+	length: Number, // store length of movie/tv show in seconds
 	mediaFileLocation: String,
 	captionFile: String,
-	featureFiles: Array,
-	emotionsList: Array
+	featureFileLocations: Array,
+	emotionsList: Array // ,
+	// netflixTitleID: String,
+	// netflixWatchID: String,
+	// netflixMediaURL: String
 }, {
 	collection: 'content'
 });
