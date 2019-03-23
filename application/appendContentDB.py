@@ -177,6 +177,9 @@ if __name__=='__main__':
         - produce features from tmp.wav
         - save to /features/PREFIX.csv
         - add to feature file paths
+        TODO:
+        - extract emotion
+        - save to list
     - delete temp audio files
     - send post JSON to contentDB
     """
@@ -209,7 +212,7 @@ if __name__=='__main__':
     if "contentData/movies" in dirName:
         title = os.path.basename(dirName)
         season = episodeNum = 0
-        episodeTitle = '' # NOTE: notify debbie of this addendum
+        episodeTitle = '' 
     else:
         split = dirName.split(sep='/')
         episode = split[-1].split('-')
@@ -220,16 +223,18 @@ if __name__=='__main__':
     # get mediaFile length
     secondsDuration = getVideoFileDuration(mediaFile)
     # print(secondsDuration)
+    emotions = [] # for now
     contentdict = {
         "reqType": "appendContentDB",
         "title" : title,
         "episode" : episodeNum,
-        "episodeTitle" : episodeTitle,
+        "episodeTitle": episodeTitle,  # NOTE: notify debbie of this addendum
         "season" : season,
         "mediaFileLocation" : mediaFile,
         "captionFile" : captionFile,
         "length" : secondsDuration, # FIXME: What kind of number is she expecting? may fail if above enters else (think she might be expecting minutes (if so divide by 60))
-        "featureFiles" : featureFiles
+        "featureFiles" : featureFiles,
+        "emotionsList" : emotions # NOTE: notify debbie; will be array of strings, same size as `featureFiles` array
     }
 
     # convert to JSON
