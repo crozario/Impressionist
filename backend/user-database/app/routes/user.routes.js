@@ -12,4 +12,7 @@ module.exports = (app) => {
 
 	// game initialization
 	app.post('/user/initializeGame', user.initializeGame);
+
+	// store user score data
+	app.post('/user/score', user.storeScoreData);
 }
