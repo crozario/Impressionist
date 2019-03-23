@@ -209,7 +209,6 @@ if __name__=='__main__':
     # used when converting video to audio
     samplingRate = 44100
 
-    # 
     # intervals = vttExtractDialogues(captionFile)
     # millidialogues = convertIntervalsToMilliseconds(intervals)
     # twoDmilli = []
@@ -276,9 +275,9 @@ if __name__=='__main__':
     else:
         split = dirName.split(sep='/')
         episode = split[-1].split('-')
-        contentdict["episode"] = int(episode[0])
+        contentdict["episodeNumber"] = int(episode[0])
         contentdict["episodeTitle"] = " ".join(episode[1:]) # NOTE: add this addendum to docs
-        contentdict["season"] = int(split[-2])
+        contentdict["seasonNumber"] = int(split[-2])
         contentdict["title"] = split[-3]
 
     # convert to JSON
@@ -295,5 +294,5 @@ if __name__=='__main__':
     req.add_header('Content-Length', len(jsondataasbytes))
     # print("sent jsonbytes:", jsondataasbytes)
     response = urllib.request.urlopen(req, jsondataasbytes)
-    print("response:", response.status)
+    print("response:", response.data)
 
