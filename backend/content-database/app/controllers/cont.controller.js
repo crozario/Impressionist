@@ -16,17 +16,17 @@ exports.insertIntoContentDB = (req,res) => {
 	// mediaType :
 	// 		0  -->  tv show
 	// 		1  -->  movie
-	if(req.body.season && req.body.episode) {
+	if(req.body.seasonNumber && req.body.episodeNumber &&req.body.episodeTitle) {
 		global.content = new schema.Cont({
 			mediaType: 0,
 			title: req.body.title,
-			season: req.body.season,
-			episode: req.body.episode,
+			seasonNumber: req.body.seasonNumber,
+			episodeNumber: req.body.episodeNumber,
 			episodeTitle: req.body.episodeTitle,
 			length: req.body.length,
 			mediaFileLocation: req.body.mediaFileLocation,
 			captionFile: req.body.captionFile,
-			featureFiles: req.body.featureFileLocations,
+			featureFileLocations: req.body.featureFileLocations,
 			emotionsList: req.body.emotionsList
 		});
 	} else {
@@ -36,7 +36,7 @@ exports.insertIntoContentDB = (req,res) => {
 			length: req.body.length,
 			mediaFileLocation: req.body.mediaFileLocation,
 			captionFile: req.body.captionFile,
-			featureFiles: req.body.featureFileLocations,
+			featureFileLocations: req.body.featureFileLocations,
 			emotionsList: req.body.emotionsList
 		});
 	}
@@ -67,7 +67,7 @@ exports.gamePlay = (req,res) => {
 	schema.Cont.findById(mongoose.Types.ObjectId(req.body.contentID))
 	.then(result => {
 		if(result) {
-			var url = result.featureFiles[req.body.dialogueID];
+			var url = result.featureFileLocations[req.body.dialogueID];
 			return res.json({
 				status: "success",
 				featureURL: url
