@@ -4,6 +4,7 @@
 > VERY important to follow this to ensure seemless extraction of features and saving to database
 
 HOME = `Impressionist/`
+
 CONTENT_HOME = `Impressionist/contentData`
 
 ### *movies*
