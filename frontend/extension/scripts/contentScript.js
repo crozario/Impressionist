@@ -7,10 +7,10 @@ Description: Content script to interact with the webpage
 
 let setupContentScript = () => {
     // pause video after 10 seconds
-    // setTimeout(function() {
-    //     console.log("pausing video");
-    //     pauseVideo();
-    // }, 10000);
+    setTimeout(function() {
+        console.log("seek video");
+        seek(getCurrentTime() + 100000)
+    }, 10000);
 
     setTimeout(function() {
         injectNetflixScript();
@@ -74,10 +74,11 @@ let injectSideBar = () => {
 
 }
 
-let updateCurrentTimeElement = (e) => {
+let updateCurrentTimeElement = (currentTime) => {
     let currentTimeElement = document.getElementById('current-time-container');
-    currentTimeElement.innerHTML = "Current Time : " + e;
+    currentTimeElement.innerHTML = "Current Time : " + currentTime / 1000;
 }
+
 
 // Netflix API
 
@@ -85,21 +86,38 @@ let updateCurrentTimeElement = (e) => {
 //     alert(e.detail);
 // });
 
+// let getCurrentTime = () => {
+//     document.dispatchEvent(new CustomEvent('getCurrentTime',  (res) => {
+//         return res;
+//     }));
+// }
 
-document.addEventListener('currentTimeLoop', function(e) {
-    updateCurrentTimeElement(e.detail);
-});
+let currentTime = 0;
 
 let pauseVideo = () => {
-    document.dispatchEvent(new CustomEvent('pauseVideo', {
-    }));
+    document.dispatchEvent(new CustomEvent('pauseVideo', {}));
 }
 
 
 let playVideo = () => {
-    document.dispatchEvent(new CustomEvent('playVideo', {
+    document.dispatchEvent(new CustomEvent('playVideo', {}));
+}
+
+let seek = (time) => {
+    document.dispatchEvent(new CustomEvent('seek', {
+        detail : time
     }));
 }
+
+let getCurrentTime = () => {
+    return currentTime;
+}
+
+// listen to events injected to Netflix DOM
+document.addEventListener('getCurrentTime', (response) => {
+    currentTime = response.detail
+    updateCurrentTimeElement(response.detail);
+});
 
 
 window.onload = () => {

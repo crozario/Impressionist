@@ -7,6 +7,7 @@ Description: Injected Netflix Api Script
 
 console.log("on netflixApi script");
 
+// Encapsulation of Netflix API from webpage
 let getSessionSummary = () => {
     let videoPlayer = netflix.appContext.state.playerApp.getAPI().videoPlayer.getVideoPlayerBySessionId(netflix.appContext.state.playerApp.getAPI().videoPlayer.getAllPlayerSessionIds()[0]);
     return videoPlayer.getSessionSummary();
@@ -24,9 +25,15 @@ let playVideo = () => {
     videoPlayer.play();
 }
 
+let seek = (time) => {
+    let videoPlayer = netflix.appContext.state.playerApp.getAPI().videoPlayer.getVideoPlayerBySessionId(netflix.appContext.state.playerApp.getAPI().videoPlayer.getAllPlayerSessionIds()[0]);
+    console.log("seek video");
+    videoPlayer.seek(time);
+}
+
 let getCurrentTime = () => {
     let videoPlayer = netflix.appContext.state.playerApp.getAPI().videoPlayer.getVideoPlayerBySessionId(netflix.appContext.state.playerApp.getAPI().videoPlayer.getAllPlayerSessionIds()[0]);
-    return ((videoPlayer.getCurrentTime() / 1000) / 60);
+    return videoPlayer.getCurrentTime(); // in ms
 }
 
 // setTimeout(function() {
@@ -37,17 +44,23 @@ let getCurrentTime = () => {
 // }, 5000);
 
 
+// dispatch events by time interval
 window.setInterval(() => {
-    document.dispatchEvent(new CustomEvent('currentTimeLoop', {
+    document.dispatchEvent(new CustomEvent('getCurrentTime', {
         detail: getCurrentTime()
     }));
-}, 100);
+}, 50);
+
 
 // event listeners for Netflix API
-document.addEventListener('pauseVideo', function(e) {
+document.addEventListener('pauseVideo', () => {
     pauseVideo();
 });
 
-document.addEventListener('playVideo', function(e) {
+document.addEventListener('playVideo', () => {
     playVideo();
+});
+
+document.addEventListener('seek', (event) => {
+    seek(event.detail);
 });
