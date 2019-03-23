@@ -16,7 +16,7 @@ const WaveFile = require('wavefile');
 
 const util = require('util');
 
-app.get("/", (req, res) => res.send("Hello Crossley!"));
+// app.get("/", (req, res) => res.send("Hello Crossley!"));
 
 
 // client connected to server
@@ -65,20 +65,18 @@ io.on('connection', socket => {
         console.log(message.dialogueID);
         console.log("inspect message");
         console.log(util.inspect(message, false, null, true /* enable colors */));
-        let values = new Uint16Array(message.audioBlob);
-        let buffer = Buffer.from(values);
+        // let values = new Uint16Array(message.audioBlob);
+        // let buffer = Buffer.from(values);
         // console.log("values uint16array");
         // console.log(values.length);
 
         let writeStream = fs.createWriteStream("test.webm");
-        writeStream.write(message.data);
+        writeStream.write(message.audioBlob);
         
-        // FIXME: callback doesn't work
         writeStream.on("finish", () => {
             console.log("wrote data");
         });
 
-        // What's this for?
         writeStream.end(); 
         
         // Execute ffmpeg command here

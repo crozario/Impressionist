@@ -40,3 +40,7 @@ node server.js
 
 **`server.js`**
 - 
+
+### Socket.IO
+
+https://stackoverflow.com/questions/38506952/how-to-send-response-back-to-client-using-socket-io

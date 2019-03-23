@@ -7,6 +7,7 @@ Description: Injected Netflix Api Script
 
 console.log("on netflixApi script");
 
+
 // Encapsulation of Netflix API from webpage
 let getSessionSummary = () => {
     let videoPlayer = netflix.appContext.state.playerApp.getAPI().videoPlayer.getVideoPlayerBySessionId(netflix.appContext.state.playerApp.getAPI().videoPlayer.getAllPlayerSessionIds()[0]);
@@ -50,6 +51,7 @@ window.setInterval(() => {
         detail: getCurrentTime()
     }));
 }, 50);
+
 
 
 // event listeners for Netflix API

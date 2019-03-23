@@ -22,6 +22,11 @@ https://stackoverflow.com/questions/32807720/how-to-invoke-javascript-function-o
 
 https://stackoverflow.com/questions/10526995/can-a-site-invoke-a-browser-extension/10527809#10527809
 
+**Message Passing**
+
+https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/runtime/connect
+
+
 ### Netflix Integration
 
 https://stackoverflow.com/questions/42105028/netflix-video-player-in-chrome-how-to-seek
@@ -34,7 +39,9 @@ https://stackoverflow.com/questions/42105028/netflix-video-player-in-chrome-how-
 - class="VideoContainer" (video container)
 
 
-Notes
+**Notes**
+
+Encrypt message passing between content script and injected script using asymmetric cryptography?
 
 Record audio from netflix video player
 - Virtual Pulsewave device
@@ -42,24 +49,28 @@ Record audio from netflix video player
 - get audio file location/stream from webpage
 
 
-Worker 
+
+Web Worker 
 
 - Current Time 
 - Play/Pause
 
-TODO
+**TODO**
+
+setup state variable for isplaying, isPaused, 
+
 
 videoPlayer.setVolume() : volume between 0 and 1
 videoPlayer.setPlaybackRate : 
 
-___________
+
+**DOM Netflix API**
 
 netflix.appContext.state.playerApp.getAPI().videoPlayer
 
 - get video player => netflix.appContext.state.playerApp.getAPI().videoPlayer.getVideoPlayerBySessionId(netflix.appContext.state.playerApp.getAPI().videoPlayer.getAllPlayerSessionIds()[0])
 
 - get session id => netflix.appContext.state.playerApp.getAPI().videoPlayer.getAllPlayerSessionIds()[0]
-
 
 
 netflix.appContext.state.playerApp.getAPI().videoPlayer.getVideoPlayerBySessionId(netflix.appContext.state.playerApp.getAPI().videoPlayer.getAllPlayerSessionIds()[0])
