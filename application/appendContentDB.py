@@ -1,10 +1,9 @@
 """Adds content to mongoDB contentDB
 For testing with `test.wav`
 $ python3 appendContentDB.py <parentFolder>
-NOTE: argument is `parentFolder` containing video and subtitle files NOT individual files
+NOTE: arg `parentFolder` is NOT individual file
 
 Rules / notes
-- parent directory of videoFile ????
 - using configFile -> `databuilder/configs/prosodyShs.conf`
 - MOST IMPORTANT: using relative paths so this file has to be in the same folder as `server.js` and `compareAudio.py` (VERY DELICATE STUFF)
 - When adding files to database, convention should be followed (inside `contentData/README.md`)
@@ -79,15 +78,33 @@ def printIntervals(dIntervals):
         end = end[:-3]
         print(start, '-->', end)
 
-def extractFeatures(captionFile, audioFile, tmpWave, featuresDir, configFile, verbose=False):
+def writeStringLstToCSV(strLst, fileName):
+    line = ",".join(strLst)
+    with open(fileName, "w") as emoFile:
+        emoFile.write(line)
+    
+def readCSVtoStringLst(fileName):
+    lst = []
+    with open(fileName, "r") as emoFile:
+        line = emoFile.readlines()
+        assert(len(line) == 1), "expecting one line csv file"
+        lst = line[0].split(',')
+    return lst
+
+def extractFeatures(captionFile, audioFile, tmpWave, featuresDir, configFile, emotionsLogFile, verbose=False):
     """Extract features using OpenSMILE to folder LOCATION/features/ (`featuresDir`)
     """
     from scipy.io import wavfile
     samplingRate, audio = wavfile.read(audioFile)
     # get dialogue intervals
     indices = dialogueIntervalsToIndices(vttExtractDialogues(captionFile), samplingRate)
-
     featureFiles = []
+    # get emotion
+    from speech_to_emotion.emotion_classifier_nn import livePredictions
+    emoPredictor = livePredictions(path='speech_to_emotion/Emotion_Voice_Detection_Model.h5', file='speech-to-text/dummy.wav')
+    emoPredictor.load_model()
+
+    emotionsLst = []
     for count, ii in enumerate(indices):
         # split audioFile to tmpName
         start, end = ii
@@ -104,14 +121,23 @@ def extractFeatures(captionFile, audioFile, tmpWave, featuresDir, configFile, ve
             error = "Feature extraction unsuccessful.\nstdout: "+result.stdout.decode('utf-8')
             if verbose: print(error)
             exit()
+        
+        # extract emotion
+        emoPredictor.file = tmpWave
+        emotionsLst.append(emoPredictor.makepredictions())
+    # log the emotions
+    emotionsLogFile
+    writeStringLstToCSV(emotionsLst, emotionsLogFile)
 
-    return featureFiles
+    return featureFiles, emotionsLst
 
 def deleteFiles(filesLst):
     for file in filesLst:
         if os.path.exists(file): os.remove(file)
 
 def getFeatureFilesFromDir(featuresDir):
+    """Expects that files are labeled 0.csv, ..., n.csv
+    """
     allfiles = os.listdir(featuresDir)
     featureFiles = []
     count = 0
@@ -122,7 +148,8 @@ def getFeatureFilesFromDir(featuresDir):
     return featureFiles
 
 def getVideoFileDuration(mediaFile):
-    """Command: ffmpeg -i file.flv 2>&1 | grep "Duration"| cut -d ' ' -f 4 | sed s/,// | sed 's@\..*@@g' | awk '{ split($1, A, ":"); split(A[3], B, "."); print 3600*A[1] + 60*A[2] + B[1] }'
+    """returns duration of file in seconds as int
+    uses ffmpeg
     """
     cmd = "ffmpeg -i "+mediaFile+""" 2>&1 | grep "Duration" | cut -d ' ' -f 4 | sed s/,// | sed 's@\..*@@g' | awk '{ split($1, A, ":"); split(A[3], B, "."); print 3600*A[1] + 60*A[2] + B[1] }'"""
     # print(cmd)
@@ -136,6 +163,8 @@ def getVideoFileDuration(mediaFile):
         return -1
 
 def getMediaAndCaptionFiles(mediaDirectory):
+    """get videoFile and captionFile full path locations
+    """
     mediaFile = ''
     captionFile = ''
     error = ''
@@ -164,6 +193,7 @@ if __name__=='__main__':
     tmpFullAudio = os.path.join(dirName, "tmpFullAudio.wav")
     tmpDialogue = os.path.join(dirName, "tmpDialogue.wav")
     featuresDir = os.path.join(dirName, "features")
+    emotionsLogFile = os.path.join(dirName, "emotions.csv")
     # used when converting video to audio
     samplingRate = 44100
 
@@ -177,9 +207,9 @@ if __name__=='__main__':
         - produce features from tmp.wav
         - save to /features/PREFIX.csv
         - add to feature file paths
-        TODO:
         - extract emotion
         - save to list
+    - log emtions to csv file
     - delete temp audio files
     - send post JSON to contentDB
     """
@@ -200,18 +230,19 @@ if __name__=='__main__':
 
         # get dialogue intervals
         # indices = dialogueIntervalsToIndices(vttExtractDialogues(captionFile), samplingRate)
-        featureFiles = extractFeatures(captionFile, tmpFullAudio, tmpDialogue, featuresDir, configFile, verbose=VERBOSE)
+        featureFiles, emotions = extractFeatures(captionFile, tmpFullAudio, tmpDialogue, featuresDir, configFile, emotionsLogFile, verbose=VERBOSE)
         deleteFiles([tmpFullAudio, tmpDialogue])
     else:
         # get featureFiles array
         if VERBOSE: print("features/ already exist, not extracting features again. Please delete the `features/` folder to extract.")
         # get featureFiles
         featureFiles = getFeatureFilesFromDir(featuresDir)
+        emotions = readCSVtoStringLst(emotionsLogFile)
 
     # construct JSON to send to contentDB
     # get mediaFile length
     secondsDuration = getVideoFileDuration(mediaFile)
-    emotions = []  # for now
+    
     contentdict = {
         "reqType" : "appendContentDB",
         "mediaFileLocation" : mediaFile,
@@ -233,6 +264,7 @@ if __name__=='__main__':
     # convert to JSON
     import json
     contentJSON = json.dumps(contentdict)
+    # print(contentJSON)
 
     # SEND jSON
     import urllib.request #ref: https://stackoverflow.com/a/26876308/7303112

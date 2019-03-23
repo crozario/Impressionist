@@ -30,3 +30,13 @@ npm install
 ```bash
 node server.js 
 ```
+
+## Individual file descriptions
+**`appendContentDB.py`**
+- 
+
+**`compareAudio.py`**
+- 
+
+**`server.js`**
+- 
