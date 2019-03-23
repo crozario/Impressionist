@@ -22,4 +22,10 @@ https://stackoverflow.com/questions/32807720/how-to-invoke-javascript-function-o
 
 https://stackoverflow.com/questions/10526995/can-a-site-invoke-a-browser-extension/10527809#10527809
 
-### Netflix Api 
+### Netflix API
+
+https://stackoverflow.com/questions/42105028/netflix-video-player-in-chrome-how-to-seek
+
+position: absolute; top: 0px; bottom: 0px; right: 0px; left: 0px; z-index: 1; overflow: hidden; font-size: 1.26921em;
+
+position: absolute; top: 0px; bottom: 0px; right: 288px; left: 0px; z-index: 1; overflow: hidden; font-size: 1.26921em;

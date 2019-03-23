@@ -8,20 +8,20 @@ Description: Injected Netflix Api Script
 console.log("on netflixApi script");
 
 let getSessionSummary = () => {
-    var videoPlayer = netflix.appContext.state.playerApp.getAPI().videoPlayer.getVideoPlayerBySessionId(netflix.appContext.state.playerApp.getAPI().videoPlayer.getAllPlayerSessionIds()[0])
-    return videoPlayer.getSessionSummary()
+    let videoPlayer = netflix.appContext.state.playerApp.getAPI().videoPlayer.getVideoPlayerBySessionId(netflix.appContext.state.playerApp.getAPI().videoPlayer.getAllPlayerSessionIds()[0]);
+    return videoPlayer.getSessionSummary();
 }
 
 let pauseVideo = () => {
-    var videoPlayer = netflix.appContext.state.playerApp.getAPI().videoPlayer.getVideoPlayerBySessionId(netflix.appContext.state.playerApp.getAPI().videoPlayer.getAllPlayerSessionIds()[0])
-    console.log("pause video")
-    videoPlayer.pause()
+    let videoPlayer = netflix.appContext.state.playerApp.getAPI().videoPlayer.getVideoPlayerBySessionId(netflix.appContext.state.playerApp.getAPI().videoPlayer.getAllPlayerSessionIds()[0]);
+    console.log("pause video");
+    videoPlayer.pause();
 }
 
 let playVideo = () => {
-    var videoPlayer = netflix.appContext.state.playerApp.getAPI().videoPlayer.getVideoPlayerBySessionId(netflix.appContext.state.playerApp.getAPI().videoPlayer.getAllPlayerSessionIds()[0])
-    console.log("play video")
-    videoPlayer.play()
+    let videoPlayer = netflix.appContext.state.playerApp.getAPI().videoPlayer.getVideoPlayerBySessionId(netflix.appContext.state.playerApp.getAPI().videoPlayer.getAllPlayerSessionIds()[0]);
+    console.log("play video");
+    videoPlayer.play();
 }
 
 // setTimeout(function() {
@@ -31,11 +31,11 @@ let playVideo = () => {
 //     }));
 // }, 5000);
 
-
+// event listeners for Netflix API
 document.addEventListener('pauseVideo', function(e) {
-    pauseVideo()
+    pauseVideo();
 });
 
 document.addEventListener('playVideo', function(e) {
-    playVideo()
+    playVideo();
 });
