@@ -1,6 +1,8 @@
 """Compare audioClip to previously stored featureFile
 For testing with `test.wav`
 $ python3 compareAudio.py
+
+Author: Haard @ Impressionist
 """
 
 import subprocess

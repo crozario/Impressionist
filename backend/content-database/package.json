@@ -1,0 +1,24 @@
+{
+  "name": "content-database",
+  "version": "1.0.0",
+  "description": "Content database for Impressionist. Contains all media content data.",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "Express",
+    "RestAPI",
+    "MongoDB",
+    "Mongoose",
+    "Content",
+    "Impressionist"
+  ],
+  "author": "Debbie @ Impressionist",
+  "license": "MIT",
+  "dependencies": {
+    "body-parser": "^1.18.3",
+    "express": "^4.16.4",
+    "mongoose": "^5.4.19"
+  }
+}

@@ -1,4 +1,52 @@
 # Front-middle Integration Plan
+# Middle REST API
+## Application Server
+- [gameplay story](#during-game-play)
+    - example json (RECEIVE from FRONT)
+        {
+            "reqType" : "compareAudio"
+            "gameID" : 2,  // info about user (connected with contentID on userDatabase)
+            "contentID" : 43, // info about tvshow/movie
+            "dialogueID" : 23, // which dialogue to compare the audioBuffer against
+            "data" : blob 
+        }
+    - json SEND to contentDB
+        {
+            "reqType" : "getFeatureURL",
+            "contentID" : 43,
+            "dialogueID" : 23
+        }
+WORDS
+- sockets (compareAudio)
+- http req (JSON)
+- message queue 
+----------------------
+- "rooms and stuff" 
+    - what has this? - socket.io
+
+## ContentProcessor
+> STATUS: DOING
+- [append to content DB](#append-to-content-database) 
+    - SEND to contentDB
+        {
+            "reqType" : "appendContentDB"
+            "title" : String,
+            "season" : Number, (0 if its a movie)
+            "episode" : Number, (0 if its a movie)
+            "length" : Number,
+            "mediaFileLocation" : String,
+            "captionFile" : String,
+            "dialogueFileLocations" : array of String values
+        }
+    - RECEIVE status from contentDB
+        {
+            "status" : "success"|"failure"
+            "error" : empty String | String
+        }
+
+
+### Front functionality assumptions
+- 
 
 # User stories
 ## *Append to content database*

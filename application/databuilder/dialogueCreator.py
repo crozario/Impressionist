@@ -1,4 +1,4 @@
-"""Extracts dialogues from audio clips using subtitle file
+"""Generates individual dialogue audio clips from original audio clip using subtitle file
 Author: Haard @ Impressionist
 """
 
