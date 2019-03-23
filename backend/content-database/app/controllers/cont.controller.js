@@ -6,17 +6,13 @@ const schema = require('../models/cont.model.js');
 // verify that user-provided username is unique
 exports.insertIntoContentDB = (req,res) => {
 	// validate request
-	if(!req.body.title || !req.body.length || !req.body.mediaFileLocation || !req.body.captionFile || !req.body.featureFileLocations) {
+	if(!req.body.title || !req.body.length || !req.body.mediaFileLocation || !req.body.captionFile || !req.body.featureFileLocations || !req.body.emotionsList) {
 		return res.status(400).json({
 			status: "failure",
-			error: "a username was not provided"
+			error: "one of the required fields was not provided"
 		});
 	}
 	// create a new content document
-	global.features = new schema.Feat({
-		numOfDialogues: req.body.featureFileLocations.length,
-		featureFileLocations: req.body.featureFileLocations
-	});
 	// mediaType :
 	// 		0  -->  tv show
 	// 		1  -->  movie
@@ -26,10 +22,12 @@ exports.insertIntoContentDB = (req,res) => {
 			title: req.body.title,
 			season: req.body.season,
 			episode: req.body.episode,
+			episodeTitle: req.body.episodeTitle,
 			length: req.body.length,
 			mediaFileLocation: req.body.mediaFileLocation,
 			captionFile: req.body.captionFile,
-			featureFiles: features
+			featureFiles: req.body.featureFileLocations,
+			emotionsList: req.body.emotionsList
 		});
 	} else {
 		global.content = new schema.Cont({
@@ -38,7 +36,8 @@ exports.insertIntoContentDB = (req,res) => {
 			length: req.body.length,
 			mediaFileLocation: req.body.mediaFileLocation,
 			captionFile: req.body.captionFile,
-			featureFiles: features
+			featureFiles: req.body.featureFileLocations,
+			emotionsList: req.body.emotionsList
 		});
 	}
 	// store content information in the database
@@ -68,8 +67,7 @@ exports.gamePlay = (req,res) => {
 	schema.Cont.findById(mongoose.Types.ObjectId(req.body.contentID))
 	.then(result => {
 		if(result) {
-			var url = result.featureFiles.featureFileLocations[req.body.dialogueID];
-			console.log(url);
+			var url = result.featureFiles[req.body.dialogueID];
 			return res.json({
 				status: "success",
 				featureURL: url
