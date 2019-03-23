@@ -53,6 +53,18 @@ def vttExtractDialogues(subtitlesFile):
                 dialogueIntervals.append(interval)
     return dialogueIntervals
 
+def timedeltaToMilli(t):
+    return (t.days * 86400000) + (t.seconds * 1000) + (t.microseconds / 1000)
+
+def convertIntervalsToMilliseconds(dIntervals):
+    dMilliIntervals = []
+    for interval in dIntervals:
+        start, end = interval
+        start = timedeltaToMilli(start)
+        end = timedeltaToMilli(end)
+        dMilliIntervals.append((start, end))
+    return dMilliIntervals
+
 def timedeltaToIndex(t, samplingRate):
     # print(t.seconds + t.microseconds/1000000)
     # print((t.seconds + t.microseconds/1000000)*samplingRate)
@@ -196,6 +208,14 @@ if __name__=='__main__':
     emotionsLogFile = os.path.join(dirName, "emotions.csv")
     # used when converting video to audio
     samplingRate = 44100
+
+    # 
+    # intervals = vttExtractDialogues(captionFile)
+    # millidialogues = convertIntervalsToMilliseconds(intervals)
+    # twoDmilli = []
+    # _ = [twoDmilli.append([start, end]) for start, end in millidialogues]
+    # print(twoDmilli)
+    # exit()
 
     """
     Plan
