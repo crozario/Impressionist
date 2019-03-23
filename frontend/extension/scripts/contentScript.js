@@ -6,9 +6,6 @@ Description: Content script to interact with the webpage
 */
 
 let setupContentScript = () => {
-    // injectNetflixScript();
-    
-
     // pause video after 10 seconds
     // setTimeout(function() {
     //     console.log("pausing video");
@@ -16,6 +13,7 @@ let setupContentScript = () => {
     // }, 10000);
 
     setTimeout(function() {
+        injectNetflixScript();
         injectSideBar();
     }, 5000);
 }
@@ -62,7 +60,7 @@ let injectSideBar = () => {
 
     sideBarContainerDivElement.appendChild(titleElement)
 
-    let currentTimeElement = document.createElement('p')
+    let currentTimeElement = document.createElement('p');
     currentTimeElement.id = "current-time-container";
     currentTimeElement.innerHTML = "Current Time : "
     currentTimeElement.style.textAlign = "center";
@@ -76,12 +74,21 @@ let injectSideBar = () => {
 
 }
 
+let updateCurrentTimeElement = (e) => {
+    let currentTimeElement = document.getElementById('current-time-container');
+    currentTimeElement.innerHTML = "Current Time : " + e;
+}
 
 // Netflix API
 
 // document.addEventListener('RW759_connectExtension', function(e) {
 //     alert(e.detail);
 // });
+
+
+document.addEventListener('currentTimeLoop', function(e) {
+    updateCurrentTimeElement(e.detail);
+});
 
 let pauseVideo = () => {
     document.dispatchEvent(new CustomEvent('pauseVideo', {
