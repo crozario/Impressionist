@@ -1,26 +1,23 @@
 const mongoose = require('mongoose');
 
-const FeatureSchema = mongoose.Schema({
-	numOfDialogues: Number,
-	featureFileLocations: Array
-}, {
-	_id: false
-});
-
 const ContentSchema = mongoose.Schema({
-	mediaType: String,
+	mediaType: Number,
 	title: String,
-	season: Number,
-	episode: Number,
-	length: Number, // store length of movie/tv show in minutes
+	seasonNumber: Number,
+	episodeNumber: Number,
+	episodeTitle: String,
+	length: Number, // store length of movie/tv show in seconds
 	mediaFileLocation: String,
 	captionFile: String,
-	featureFiles: FeatureSchema
+	featureFileLocations: Array,
+	emotionsList: Array // ,
+	// netflixTitleID: String,
+	// netflixWatchID: String,
+	// netflixMediaURL: String
 }, {
 	collection: 'content'
 });
 
 module.exports = {
-	Feat: mongoose.model('Feat', FeatureSchema),
 	Cont: mongoose.model('Cont', ContentSchema)
 }

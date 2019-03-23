@@ -32,6 +32,24 @@ npm install
 node server.js 
 ```
 
+If that fails with ```connection failed``` error
+- have run MongoDB
+- Options (from [mongodb website](link)): 
+```
+Run MongoDB
+
+From a terminal, issue the following to run MongoDB (i.e. the mongod process) in the foreground.
+$ mongod --config /usr/local/etc/mongod.conf
+# to stop 
+CTRL + C
+
+Alternatively, to run MongoDB as a macOS service, issue the following (the process uses the /usr/local/etc/mongod.conf file, created during the install):
+
+$ brew services start mongodb-community@4.0
+# to stop run
+$ brew services stop mongodb-community@4.0
+```
+
 ### AFS
 
 module load node.js/10.14.1

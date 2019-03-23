@@ -16,25 +16,56 @@ const WaveFile = require('wavefile');
 
 const util = require('util');
 
+app.get("/", (req, res) => res.send("Hello Crossley!"));
+
+
 // client connected to server
 io.on('connection', socket => {
     console.log("a user has connected");
+
+    // local variables for current state of current gameID and contentID
+    /*
+
+    */
 
     // client disconnected
     socket.on('disconnect', () => {
         console.log("a user has disconnected");
     });
     
+    // newEvent = "compareDialogue" (replacing "audio buffer")
+    // will be executed per dialogue
+    // expected message
+    /*
+    message = {
+        gameID : 
+        contentID : 
+        dialogueID : 
+        audioBlob : 
+    }
+    SEND to contentDB
+        contentID
+        dialogueID
+    RECEIVE from contentDB
+        featureFileURL  (for signal similarity)
+        emotion         (for emotion similarity)
+        subtitleFileURL (for lyrical similarity)
+    - run
+    python compareAudio.py blob.webm featureFileURL emotion subtitleFileURL dialogueID
+
+     */
+    
     // audio buffer received
-    socket.on('audio buffer', message => {
-        console.log("got blob data");
+    socket.on('compareDialogue', message => {
+        console.log("got dialogue data");
         
         // new audio stream
-        // console.log("message.data");
-        // console.log(message.data);
-        // console.log("inspect message");
-        // console.log(util.inspect(message, false, null, true /* enable colors */));
-        let values = new Uint16Array(message.data);
+        console.log(message.gameID);
+        console.log(message.contentID);
+        console.log(message.dialogueID);
+        console.log("inspect message");
+        console.log(util.inspect(message, false, null, true /* enable colors */));
+        let values = new Uint16Array(message.audioBlob);
         let buffer = Buffer.from(values);
         // console.log("values uint16array");
         // console.log(values.length);
@@ -53,22 +84,23 @@ io.on('connection', socket => {
         // Execute ffmpeg command here
         // $ ffmpeg -i test.webm test.wav
 
-        dataString = '';
-        // execute python dataBuilder.extractFeatures.py
-        console.log('spawning process');
-        py = spawn('python', ['compareAudio.py']);
+        // dataString = '';
+        // // execute python dataBuilder.extractFeatures.py
+        // console.log('spawning process');
+        // py = spawn('python', ['compareAudio.py']);
 
-        // append to dataString from python stdout
-        py.stdout.on('data', data =>{
-            dataString += data.toString(); // send back this similarity score
-        });
+        // // append to dataString from python stdout
+        // py.stdout.on('data', data =>{
+        //     dataString += data.toString(); // send back this similarity score
+        // });
           
-        // print dataString after program end
-        py.stdout.on('end', () => {
-            console.log(dataString);
-        });
+        // // print dataString after program end
+        // py.stdout.on('end', () => {
+        //     console.log(dataString);
+        // });
     })
 
+    
 })
 
 // host location

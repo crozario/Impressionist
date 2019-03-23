@@ -15,7 +15,7 @@ from databuilder.extractFeatures import extractFeature as extract
 sys.path.insert(0, '../signalComparison/')
 from signalComparison.compareSig import compareSignals as compare
 
-def compareAudioToFeature(audioFile, featureFile, verbose=False):
+def validateAudioFileFormat(audioFile):
     assert (".wav" in audioFile or ".webm" in audioFile), "Error: only supports comparing audio for .wav and .webm files."
         
     # TODO: convert this step to bash script
@@ -32,6 +32,10 @@ def compareAudioToFeature(audioFile, featureFile, verbose=False):
         assert ("size=" in out), "Error: unknown error in converting `.webm` file to `.wav`"
         audioFile = newFile
     
+    return audioFile
+
+def comparePhoneticSimilarity(audioFile, featureFile, verbose=False):
+    assert(".wav" in audioFile), "Expected .wav as audioFile"
     # audioFile = '../frontend/audio_three-dialogue1.wav' # same file yields 100%
     status, error = extract(audioFile, 'test.csv', '../databuilder/configs/prosodyShs.conf', verbose=verbose)
     if not status: #failed
@@ -45,10 +49,26 @@ def compareAudioToFeature(audioFile, featureFile, verbose=False):
     return similarity
 
 if __name__=='__main__':
-    audioFile = 'test.webm'
+    import sys
+    # audioFile = sys.argv[1]
+    audioFile = 'test.webm' 
+    audioFile = validateAudioFileFormat(audioFile)
+    # featureFile = sys.argv[2]
     featureFile = 'audio_three-dialogue1.csv'
-    # print("Running feature comparison...(python)")
-    similarity = compareAudioToFeature(audioFile, featureFile, verbose=False)
+    # emotion = sys.argv[3]
+    emotion = "" 
+    # subtitleFile = sys.argv[4]
+    subtitleFile = ""
+    # dialogueId = sys.argv[5]
+    dialogueId = 1
+
+    signalSimilarity = comparePhoneticSimilarity(audioFile, featureFile, verbose=False)
     print("---------------------------------------")
-    print("Similarity score (out of 100.0):", round(similarity, ndigits=3))
+    print("Similarity score (out of 100.0):", round(signalSimilarity, ndigits=3))
     print("---------------------------------------")
+
+    # Next compare emotion
+    # emotionSimilarity = compareEmotionSimilarity(audioFile, emotion, verbose=False)
+
+    # Next compare lyrical similarity
+    # lyricalSimilarity = compareLyricalSimilarity(audioFile, subtitleFile, dialogueId, verbose=False)

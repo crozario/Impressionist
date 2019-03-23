@@ -143,7 +143,7 @@ exports.initializeGame = (req,res) => {
 	if(!req.body.username || !req.body.contentID) {
 		return res.status(400).json({
 			status: "failure",
-			error: "a username or mediaID was not provided"
+			error: "a username or contentID was not provided"
 		});
 	}
 	// find user's document in the userDB
@@ -156,14 +156,13 @@ exports.initializeGame = (req,res) => {
 			});
 		}
 		// create game History schema to update user's document with
+		global.objectID = mongoose.Types.ObjectId(req.body.contentID);
 		const history = new schema.Hist({
-			contentID: req.body.contentID,
-			mediaType: req.body.mediaType,
-			difficulty: req.body.difficulty,
+			contentID: objectID,
+			// difficulty: req.body.difficulty,
 			completed: false,
-			activity: Date("<YYYY-mm-ddTHH:MM:ss>"),
-			score: 0,
-			averageAccuracy: 0
+			activity: Date("<YYYY-mm-ddTHH:MM:ss>")
+			// averageAccuracy: 0
 		});
 		// save data in gameHistory field array
 		doc.gameHistory = history;
@@ -171,7 +170,7 @@ exports.initializeGame = (req,res) => {
 		.then(data => {
 			return res.json({
 				status: "success",
-				gameID: data.gameHistory[0]._id
+				gameID: mongoose.Types.ObjectId(data.gameHistory[0]._id)
 			});
 		}).catch(err => {
 			return res.status(500).json({
@@ -179,5 +178,43 @@ exports.initializeGame = (req,res) => {
 				error: err.message || "error occured when saving user game data into database"
 			});
 		}); 
+	});
+};
+
+// store user score data
+exports.storeScoreData = (req,res) => {
+	// validate request
+	if(!req.body.username || !req.body.dialogueID || !req.body.score || !req.body.gameID) {
+		return res.status(400).json({
+			status: "failure",
+			error: "username, dialogueID, gameID, or score were not provided"
+		});
+	}
+	// find the user's game document connected to the given gameID and store/update data
+	var query = schema.User.findOne({'credentials.username': req.body.username});
+	query.exec(function(err,doc) {
+		if(err) {
+			return res.status(500).json({
+				status: "failure",
+				error: err.message || "error occured when retrieving information from the database"
+			});
+		}
+		// save data in the document
+		const score_data = new schema.Score({
+			score: req.body.score,
+			dialogueID: req.body.dialogueID
+		});
+		doc.gameHistory.id(mongoose.Types.ObjectId(req.body.gameID)).score = score_data;
+		doc.save()
+		.then(data => {
+			return res.json({
+				status: "success"
+			});
+		}).catch(err => {
+			return res.status(500).json({
+				status: "failure",
+				error: err.message || "error occured when saving user score data into database"
+			});
+		});
 	});
 };
