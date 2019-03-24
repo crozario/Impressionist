@@ -49,9 +49,9 @@ io.on('connection', socket => {
     RECEIVE from contentDB
         featureFileURL  (for signal similarity)
         emotion         (for emotion similarity)
-        subtitleFileURL (for lyrical similarity)
+        captionsFileURL (for lyrical similarity)
     - run
-    python compareAudio.py blob.webm featureFileURL emotion subtitleFileURL dialogueID
+    python compareAudio.py audioFile(.webm), contentID(str), dialogueID(number), gameID(str)
 
      */
     
@@ -60,46 +60,36 @@ io.on('connection', socket => {
         console.log("got dialogue data");
         
         // new audio stream
-        console.log(message.gameID);
-        console.log(message.contentID);
-        console.log(message.dialogueID);
+        // console.log(message.gameID);
+        // console.log(message.contentID);
+        // console.log(message.dialogueID);
         console.log("inspect message");
         console.log(util.inspect(message, false, null, true /* enable colors */));
-        // let values = new Uint16Array(message.audioBlob);
-        // let buffer = Buffer.from(values);
-        // console.log("values uint16array");
-        // console.log(values.length);
 
-        let writeStream = fs.createWriteStream("test.webm");
+        let audioFile = "tmpFiles/test.webm";
+        let writeStream = fs.createWriteStream(audioFile);
         writeStream.write(message.audioBlob);
         
         writeStream.on("finish", () => {
             console.log("wrote data");
+
+            //* Perform comparison
+            dataString = '';
+            console.log('spawning process');
+            // $ python compareAudio.py audioFile, contentID, dialogueID, gameID
+            py = spawn('python', ['compareAudio.py', audioFile, message.contentID, message.dialogueID, message.gameID]);
+            // append to dataString from python stdout
+            py.stdout.on('data', data => {
+                dataString += data.toString(); 
+            });
+            // print dataString after program ends
+            py.stdout.on('end', () => {
+                console.log(dataString);
+                response(dataString); // send back this similarity score
+            });
         });
 
         writeStream.end(); 
-        
-
-        return;
-        // Execute ffmpeg command here
-
-        dataString = '';
-        // execute python dataBuilder.extractFeatures.py
-        console.log('spawning process');
-        py = spawn('python', ['compareAudio.py']);
-
-        // append to dataString from python stdout
-        py.stdout.on('data', data =>{
-            dataString += data.toString(); // send back this similarity score
-
-            
-        });
-          
-        // print dataString after program end
-        py.stdout.on('end', () => {
-            console.log(dataString);
-            response(dataString);
-        });
     })
 
     
