@@ -14,6 +14,7 @@ sys.path.insert(0, 'databuilder/')
 from databuilder.extractFeatures import extractFeature as extract
 sys.path.insert(0, 'signalComparison/')
 from signalComparison.compareSig import compareSignals as compare
+sys.path.insert(0, 'speech_to_text/')
 
 def validateAudioFileFormat(audioFile):
     assert (".wav" in audioFile or ".webm" in audioFile), "Error: only supports comparing audio for .wav and .webm files."
@@ -46,28 +47,96 @@ def comparePhoneticSimilarity(audioFile, featureFile, verbose=False):
     if verbose: print("Similarity: ", similarity)
     return similarity
 
+def getCaptionFromVTTcaptionFile(vttFile, dialogueID):
+    """Returns the dialogueID-th caption from vttFile
+    """
+    import webvtt
+    return webvtt.read(vttFile)[dialogueID].text
+
+def getProcessedFromContentDB(contentID, dialogueID):
+    """Requests 
+    """
+    featureFileURL = ''
+    emotion = '' 
+    originalCaption = '' # dialogueID-th dialogue from captionFile
+    originalCaptionFile = '' # entire caption file URL
+    # construct json
+    import json
+    reqdict = {
+        "contentID" : contentID,
+        "dialogueID" : dialogueID
+    }
+    reqjson = json.dumps(reqdict)
+    reqbytes = reqjson.encode('utf-8') # convert to bytes
+    # prepare request
+    import urllib.request
+    backURL = "http://localhost:3000/cont/play"
+    req = urllib.request.Request(backURL, method='POST')
+    req.add_header('Content-Type', 'application/json; charset=utf-8')
+    req.add_header('Content-Length', len(reqbytes))
+    # send request
+    response = urllib.request.urlopen(req, reqbytes)
+    resString = response.read().decode('utf-8')
+    resjson = json.loads(resString)
+
+    # parse json
+    assert(resjson['status'] == "success"), "Error - requesting gameplay data\n"+resjson['error']
+    assert('featureURL' in resjson and 'dialogueEmotion' in resjson and 'captionsFileURL' in resjson), "Error - Network response not containing one of the expected keys."
+    featureFileURL = resjson['featureURL']
+    emotion = resjson['dialogueEmotion']
+    originalCaptionFile = resjson['captionsFileURL']
+    originalCaption = getCaptionFromVTTcaptionFile(originalCaptionFile, dialogueID)
+
+    return featureFileURL, emotion, originalCaption
+
+def compareEmotionSimilarity(audioFile, emotion, verbose=False):
+    """returns True (if same emotion)"""
+    from speech_to_emotion.emotion_classifier_nn import livePredictions
+    emoPredictor = livePredictions(path='speech_to_emotion/Emotion_Voice_Detection_Model.h5', file=audioFile)
+    emoPredictor.load_model()
+    prediction = emoPredictor.makepredictions()
+    if verbose: print("user emotion -", prediction)
+    return (prediction == emotion)
+
+def compareLyricalSimilarity(audioFile, originalCaption, verbose=False):
+    """Convert audioFile to text and compares against originalCaption string"""
+    from speech_to_text.transcribe_return_only_one_line import transcribe_file_with_word_time_offsets as transcribe
+    print('import worked')
+    exit()
+    return 0
+
 if __name__=='__main__':
     import sys
-    # audioFile = sys.argv[1]
-    audioFile = 'test.webm' 
+    """
+    NEW system
+    $ python compareAudio.py audioFile(.webm), contentID(str), dialogueID(number), gameID(str)
+        - NOTE: gameID to report to userDB
+    1. get processed data from contentDB
+        featureFileURL  (for signal similarity)
+        emotion         (for emotion similarity)
+        captionsFileURL (for lyrical similarity)
+    2. validate audioFile
+    3. comparePhonetic
+    4. compareEmotion
+    5. compareLyrical
+    """
+    # dummy data
+    contentID = "5c971e36f4d9beaaf9ab6a87"
+    dialogueID = 1
+    audioFile = 'tmpFiles/test.webm'
+    # gameID = 
+    # 1. get processed data from contentDB
+    featureFileURL, emotion, originalCaption = getProcessedFromContentDB(contentID, dialogueID)
+    print(featureFileURL, emotion, originalCaption)
+    # 2. Validate audioFile
     audioFile = validateAudioFileFormat(audioFile)
-    # featureFile = sys.argv[2]
-    featureFile = 'arbitrary-featurefile.csv'
-    # emotion = sys.argv[3]
-    emotion = "" 
-    # subtitleFile = sys.argv[4]
-    subtitleFile = ""
-    # dialogueId = sys.argv[5]
-    dialogueId = 1
+    # 3. comparePhonetic
+    # phoneticSimilarity = comparePhoneticSimilarity(audioFile, featureFileURL, verbose=False)
+    # print("Phonetic similarity -", phoneticSimilarity)
+    # # 4. Compare Emotion
+    # emotionSimilarity = compareEmotionSimilarity(audioFile, emotion, verbose=True)
+    # print("Similar emotion -", emotionSimilarity)
+    # 5. Compare Lyrics
+    lyricalSimilarity = compareLyricalSimilarity(audioFile, originalCaption, verbose=False)
 
-    signalSimilarity = comparePhoneticSimilarity(audioFile, featureFile, verbose=False)
-    print("---------------------------------------")
-    print("Similarity score (out of 100.0):", round(signalSimilarity, ndigits=3))
-    print("---------------------------------------")
 
-    # Next compare emotion
-    # emotionSimilarity = compareEmotionSimilarity(audioFile, emotion, verbose=False)
-
-    # Next compare lyrical similarity
-    # NOTE: now that the subtitleFile is .vtt and has character names, Al's comparison might need to be altered accordingly
-    # lyricalSimilarity = compareLyricalSimilarity(audioFile, subtitleFile, dialogueId, verbose=False)

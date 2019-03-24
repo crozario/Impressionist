@@ -68,9 +68,13 @@ exports.gamePlay = (req,res) => {
 	.then(result => {
 		if(result) {
 			var url = result.featureFileLocations[req.body.dialogueID];
+			var emotion = result.emotionsList[req.body.dialogueID];
+			var captions = result.captionFile;
 			return res.json({
 				status: "success",
-				featureURL: url
+				featureURL: url,
+				dialogueEmotion: emotion,
+				captionsFileURL: captions
 			});
 		}
 	}).catch(err => {
