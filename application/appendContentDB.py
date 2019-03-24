@@ -294,5 +294,11 @@ if __name__=='__main__':
     req.add_header('Content-Length', len(jsondataasbytes))
     # print("sent jsonbytes:", jsondataasbytes)
     response = urllib.request.urlopen(req, jsondataasbytes)
-    print("response:", response.data)
+    resultJSON = response.read().decode('utf-8')
+    res = json.loads(resultJSON)
+    if res['status'] == 'success':
+        print("Successfully added to contentDB")
+    else:
+        print("Some error occured while adding to database")
+        print(res['error'])
 

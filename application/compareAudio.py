@@ -42,11 +42,8 @@ def comparePhoneticSimilarity(audioFile, featureFile, verbose=False):
         print(error)
         exit()
 
-
     similarity = compare("test.csv", featureFile, 'prosody', delimiter=';', verbose=verbose, plot=False)
-
     if verbose: print("Similarity: ", similarity)
-
     return similarity
 
 if __name__=='__main__':
@@ -72,4 +69,5 @@ if __name__=='__main__':
     # emotionSimilarity = compareEmotionSimilarity(audioFile, emotion, verbose=False)
 
     # Next compare lyrical similarity
+    # NOTE: now that the subtitleFile is .vtt and has character names, Al's comparison might need to be altered accordingly
     # lyricalSimilarity = compareLyricalSimilarity(audioFile, subtitleFile, dialogueId, verbose=False)
