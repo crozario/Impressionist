@@ -9,10 +9,10 @@ import subprocess
 
 # add Impressionist HOME path
 import sys
-sys.path.insert(0, '../')
-sys.path.insert(0, '../databuilder/')
+# sys.path.insert(0, '../')
+sys.path.insert(0, 'databuilder/')
 from databuilder.extractFeatures import extractFeature as extract
-sys.path.insert(0, '../signalComparison/')
+sys.path.insert(0, 'signalComparison/')
 from signalComparison.compareSig import compareSignals as compare
 
 def validateAudioFileFormat(audioFile):
@@ -37,12 +37,12 @@ def validateAudioFileFormat(audioFile):
 def comparePhoneticSimilarity(audioFile, featureFile, verbose=False):
     assert(".wav" in audioFile), "Expected .wav as audioFile"
     # audioFile = '../frontend/audio_three-dialogue1.wav' # same file yields 100%
-    status, error = extract(audioFile, 'test.csv', '../databuilder/configs/prosodyShs.conf', verbose=verbose)
+    status, error = extract(audioFile, 'test.csv', 'databuilder/configs/prosodyShs.conf', verbose=verbose)
     if not status: #failed
         print(error)
         exit()
 
-    similarity = compare('audio_three-dialogue1.csv', 'test.csv', 'prosody', delimiter=';', verbose=verbose, plot=False)
+    similarity = compare(audioFile, featureFile, 'prosody', delimiter=';', verbose=verbose, plot=False)
 
     if verbose: print("Similarity: ", similarity)
 
@@ -54,7 +54,7 @@ if __name__=='__main__':
     audioFile = 'test.webm' 
     audioFile = validateAudioFileFormat(audioFile)
     # featureFile = sys.argv[2]
-    featureFile = 'audio_three-dialogue1.csv'
+    featureFile = 'arbitrary-featurefile.csv'
     # emotion = sys.argv[3]
     emotion = "" 
     # subtitleFile = sys.argv[4]
