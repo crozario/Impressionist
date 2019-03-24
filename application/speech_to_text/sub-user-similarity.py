@@ -6,19 +6,26 @@ dependencies: google-cloud-speech, pysubs2
 """
 import pysubs2
 import sys
+import os
+import transcribe_return_only_one_line as gstt
+import re
 
 from difflib import SequenceMatcher
 
 def compare_stt(subfile, subnum, audio_file):
+    #load and format subtitle string
     subs = pysubs2.load(subfile)
     sub_line = subs[subnum].plaintext
+    sub_line = re.sub(r'\W+', ' ', sub_line.lower()).strip(' ')
 
-    sys.argv = [ '-s', 'en-US', audio_file'.flac', '>', transcript ]
-    execfile('transcribe_return_only_one_line.py')
+    #make call to google api for speech to text for user audio
+    stt = str(gstt.transcribe_file_with_word_time_offsets(audio_file, 'en-US'))
+    stt = stt.replace('\n', '').lower()
 
-    transcript = open("transcript","r")
-    stt = transcript.read().replace('\n', '')
+    print('stt: ', len(stt))
+    print('\nsubs: ', len(sub_line))
 
+    #return comparison score using the two strings above
     return similar(sub_line, stt)
 
 def similar(a, b):

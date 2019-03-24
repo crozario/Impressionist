@@ -56,7 +56,7 @@ def transcribe_file_with_word_time_offsets(speech_file,language):
 
     #print("config start")
     config = types.RecognitionConfig(
-            encoding=enums.RecognitionConfig.AudioEncoding.FLAC,
+            encoding=enums.RecognitionConfig.AudioEncoding.LINEAR16,
             language_code=language,
             enable_word_time_offsets=True)
 
@@ -67,7 +67,7 @@ def transcribe_file_with_word_time_offsets(speech_file,language):
     #return only transcript
     for result in response.results:
         alternative = result.alternatives[0]
-        print((alternative.transcript))
+        return((alternative.transcript))
     # for result in response.results:
     #     alternative = result.alternatives[0]
     #     print('Transcript: {}'.format(alternative.transcript))
@@ -93,7 +93,7 @@ def transcribe_gcs_with_word_time_offsets(gcs_uri,language):
 
     audio = types.RecognitionAudio(uri=gcs_uri)
     config = types.RecognitionConfig(
-        encoding=enums.RecognitionConfig.AudioEncoding.FLAC,
+        encoding=enums.RecognitionConfig.AudioEncoding.LINEAR16,
         sample_rate_hertz=16000,
         language_code=language,
         enable_word_time_offsets=True)
