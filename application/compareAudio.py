@@ -100,10 +100,9 @@ def compareEmotionSimilarity(audioFile, emotion, verbose=False):
 
 def compareLyricalSimilarity(audioFile, originalCaption, verbose=False):
     """Convert audioFile to text and compares against originalCaption string"""
-    from speech_to_text.transcribe_return_only_one_line import transcribe_file_with_word_time_offsets as transcribe
-    print('import worked')
-    exit()
-    return 0
+    sys.path.insert(0, 'speech_to_text/')
+    from speech_to_text.sub_user_similarity import compareToDialogue
+    return compareToDialogue(audioFile, originalCaption, verbose=verbose)
 
 if __name__=='__main__':
     import sys
@@ -127,16 +126,19 @@ if __name__=='__main__':
     # gameID = 
     # 1. get processed data from contentDB
     featureFileURL, emotion, originalCaption = getProcessedFromContentDB(contentID, dialogueID)
-    print(featureFileURL, emotion, originalCaption)
+    # print(featureFileURL, emotion, originalCaption)
     # 2. Validate audioFile
     audioFile = validateAudioFileFormat(audioFile)
     # 3. comparePhonetic
-    # phoneticSimilarity = comparePhoneticSimilarity(audioFile, featureFileURL, verbose=False)
-    # print("Phonetic similarity -", phoneticSimilarity)
-    # # 4. Compare Emotion
-    # emotionSimilarity = compareEmotionSimilarity(audioFile, emotion, verbose=True)
-    # print("Similar emotion -", emotionSimilarity)
+    phoneticSimilarity = comparePhoneticSimilarity(audioFile, featureFileURL, verbose=False)
+    print("Phonetic similarity:", phoneticSimilarity)
+    # 4. Compare Emotion
+    emotionSimilarity = compareEmotionSimilarity(audioFile, emotion, verbose=True)
+    print("Similar emotion:", emotionSimilarity)
     # 5. Compare Lyrics
     lyricalSimilarity = compareLyricalSimilarity(audioFile, originalCaption, verbose=False)
+    print("Lyrical Similarity:", lyricalSimilarity)
+
+    # next send back scores to front and back (userDB)
 
 

@@ -58,7 +58,9 @@ def transcribe_file_with_word_time_offsets(speech_file,language):
     config = types.RecognitionConfig(
             encoding=enums.RecognitionConfig.AudioEncoding.LINEAR16,
             language_code=language,
-            enable_word_time_offsets=True)
+            enable_word_time_offsets=True,
+            audio_channel_count=2)
+            # enableSeparateRecognitionPerChannel=True)
 
     #print("Recognizing:")
     response = client.recognize(config, audio)

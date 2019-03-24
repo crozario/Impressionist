@@ -8,3 +8,5 @@ test-data/example-audio/*
 contentData/tvShows/Friends/02/12-The-One-After-The-Superbowl-Part1/*
 application/speech_to_text/__pycache__/transcribe_return_only_one_line.cpython-36.pyc
 application/speech_to_emotion/__pycache__/emotion_classifier_nn.cpython-36.pyc
+application/speech_to_text/transcribe_return_only_one_line.py
+application/speech_to_text/__pycache__/sub_user_similarity.cpython-36.pyc

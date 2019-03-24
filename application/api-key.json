@@ -1,0 +1,12 @@
+{
+  "type": "service_account",
+  "project_id": "fruit-prediction",
+  "private_key_id": "d12d7233b53bf4c039b80a33a5f202bc4479bb64",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQDTcMHlSGKrf2rA\nwcyM323ykBG0x4nBupUVXL5vJYc8OZ/O20kKMMivqDmeWuNqLvfsK/afRVNYPLEd\nUCofR3N8YXJT4QrrrpjdH9pCp12V8XsS6BpqJBGXGjUT4nFj1aSJxWUxjiGDbctI\nDZHcQSSxa6h7N43Aerlt9041f0qQt+fKFChM0u1+z+5gsxeEpB3TU3Rshv7FDKjb\nPIYMItfIqFkC6ryzNudWVmCaQ16tWgA4VS4YaBnS3wjaNx5w8rdFPGfNdCuni9h5\npwLIumgx+7BTCf/ci1juk0FA84OJLRyWW6Dk2Ku70ofeDT1MAFs92I4VUSm2I1BJ\nPk6Lt6n/AgMBAAECggEAVtzWUybTHkhIp2qWaXMqnIEyPPXScot/zphcxZWBwqyb\nqePtVCnpcDxoe1U0Yv1rrZL8DL9yt2erjXLO8y2r1HfF+46SqXL/aqw4wrQ2HrDn\nUkOXAm7R6SUDlCktUwnEQDMfWOXef7tdzTqB5x2+AMNNIl2WtvHT9sin0RN7owqj\nEyoahyEg3QHy48aWSt2FXMjMc/cgM+UFYVlk66G3m+UftcDCtkkRDP44qtOTjC66\nOihLhRTVx3xLLIkTWhgrtnL3V+YdpKisnnBZ6g9dGiGDc17gNbSZMjAIytdAa6ze\n2BMxZsYJhr20MkUnWxmJR7lM+Bp8AuIej/4f2ETZpQKBgQDtrfxhKpidKI/AEsjF\nRuqQu+Q6RBYOkp96w/AU4ZycUzroWa5yQLfyixXvY2je8OfU9JNROSI7M9fI9zq3\nLF83lMFDNUyf3gMzh4vuKeuGbbJlfr37SR5vo5j4jC4DLbTICMlp5nXkevSvk9hC\nNEnCg8aOZGkyGDAvYEkogIAmGwKBgQDjvQHIdnFA6IBkaO8IMxFRA7GG80KDBWWw\nhiZhzN110gEIl7KPyD/uY7PSFyLHR591XqHzab2euLgpZ9cKhp8XZSYbOZ9EJLdt\niMk5VBVj2zSLTV/EH00HzrSFWh9eJY30/m+OjWSiZp4Z3DXPxkxl7iz6I5enPSI7\n2d2wKM9Z7QKBgEfXG/6+okx2cyTKSLcgXUwMDsrxw3z6Iow35zxYiT7TBW4vlUPh\nffgoxCOMd6lTRa+fkVuumkMsw19yIuQ03D7vjo7i8Fst/ue3Y7tEHnWOeKqm6YOn\nsTRrTZRqwomhahBAX6jLyPybkZP0axxvs4/AxuZJQWar2vym7NX6KUHbAoGBANu2\n8g1xF/rDVXuKMXL7se0zXwcPkk/N2Tnhcw5QFCkjnpOnp0JItEVOM6KxZ4BTfWhD\nEIRCtAp5tFNeN32UO9DaaVVC1oFr2vv2SAzjLm/UgHEVCRuyByNNLaSqOjEekkKX\nZxFlIH39+vKAHfqDGhoNG5+IzzsuI+USYGsgNExRAoGAeB7lYM2U0YxwxSOcrh34\nPO5/Z2Spsp+7Nbi3rFnywz9fiUYoSg7zdpC0Mod7UNmsdTrEicVm5Xk6P6S17l/X\nNGgi8UsyecX1FV8B9TeIRfQnaOSGyrrJ+PJgATURzAREFyuoAE8ULFWeFnVtb/aK\n5HmH9A/FYK9NLXN5L/IDazU=\n-----END PRIVATE KEY-----\n",
+  "client_email": "speechtotext@fruit-prediction.iam.gserviceaccount.com",
+  "client_id": "105760356673860662352",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/speechtotext%40fruit-prediction.iam.gserviceaccount.com"
+}
