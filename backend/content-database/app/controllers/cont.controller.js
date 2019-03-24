@@ -17,6 +17,26 @@ exports.insertIntoContentDB = (req,res) => {
 	// 		0  -->  tv show
 	// 		1  -->  movie
 	if(req.body.seasonNumber && req.body.episodeNumber &&req.body.episodeTitle) {
+		// search the db to see if a document already exists for the same tv show/season/episode
+		schema.Cont.findOne({'title': req.body.title, 'seasonNumber': req.body.seasonNumber, 'episodeNumber': req.body.episodeNumber})
+		.then(result => {
+			if(result) {
+				// delete existing record --> the data from req will be saved in a new document in the db later
+				schema.Cont.deleteOne({'title': req.body.title, 'seasonNumber': req.body.seasonNumber, 'episodeNumber': req.body.episodeNumber}, function(err,raw) {
+					if(err) {
+						return res.status(500).json({
+							status: "failure",
+							error: err.message || "error occured when updating tv show document"
+						});
+					}
+				});
+			}
+		}).catch(err => {
+			return res.status(500).json({
+				status: "failure",
+				error: err.message || "error occured when searching for similar tv show document in db"
+			});
+		});
 		global.content = new schema.Cont({
 			mediaType: 0,
 			title: req.body.title,
@@ -30,6 +50,26 @@ exports.insertIntoContentDB = (req,res) => {
 			emotionsList: req.body.emotionsList
 		});
 	} else {
+		// search the db to see if a document already exists for the same movie
+		schema.Cont.findOne({'title': req.body.title})
+		.then(result => {
+			if(result) {
+				// delete existing record --> the data from req will be saved in a new document in the db later
+				schema.Cont.deleteOne({'title': req.body.title}, function(err,raw) {
+					if(err) {
+						return res.status(500).json({
+							status: "failure",
+							error: err.message || "error occured when updating tv show document"
+						});
+					}
+				});
+			}
+		}).catch(err => {
+			return res.status(500).json({
+				status: "failure",
+				error: err.message || "error occured when searching for similar tv show document in db"
+			});
+		});
 		global.content = new schema.Cont({
 			mediaType: 1,
 			title: req.body.title,
