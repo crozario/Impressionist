@@ -54,7 +54,7 @@ def getCaptionFromVTTcaptionFile(vttFile, dialogueID):
     return webvtt.read(vttFile)[dialogueID].text
 
 def getProcessedFromContentDB(contentID, dialogueID):
-    """Requests 
+    """Requests contentDB for data using urllib
     """
     featureFileURL = ''
     emotion = '' 
@@ -104,10 +104,8 @@ def compareLyricalSimilarity(audioFile, originalCaption, verbose=False):
     from speech_to_text.sub_user_similarity import compareToDialogue
     return compareToDialogue(audioFile, originalCaption, verbose=verbose)
 
-if __name__=='__main__':
-    import sys
-    """
-    NEW system
+def performThreeComparisons(contentID, dialogueID, audioFile, gameID, verbose=False):
+    """Perform comparison 
     $ python compareAudio.py audioFile(.webm), contentID(str), dialogueID(number), gameID(str)
         - NOTE: gameID to report to userDB
     1. get processed data from contentDB
@@ -119,11 +117,6 @@ if __name__=='__main__':
     4. compareEmotion
     5. compareLyrical
     """
-    # dummy data
-    contentID = "5c971e36f4d9beaaf9ab6a87"
-    dialogueID = 1
-    audioFile = 'tmpFiles/test.webm'
-    # gameID = 
     # 1. get processed data from contentDB
     featureFileURL, emotion, originalCaption = getProcessedFromContentDB(contentID, dialogueID)
     # print(featureFileURL, emotion, originalCaption)
@@ -131,14 +124,27 @@ if __name__=='__main__':
     audioFile = validateAudioFileFormat(audioFile)
     # 3. comparePhonetic
     phoneticSimilarity = comparePhoneticSimilarity(audioFile, featureFileURL, verbose=False)
-    print("Phonetic similarity:", phoneticSimilarity)
+    if verbose: print("Phonetic similarity:", phoneticSimilarity)
     # 4. Compare Emotion
     emotionSimilarity = compareEmotionSimilarity(audioFile, emotion, verbose=True)
-    print("Similar emotion:", emotionSimilarity)
+    if verbose: print("Similar emotion:", emotionSimilarity)
     # 5. Compare Lyrics
     lyricalSimilarity = compareLyricalSimilarity(audioFile, originalCaption, verbose=False)
-    print("Lyrical Similarity:", lyricalSimilarity)
+    if verbose: print("Lyrical Similarity:", lyricalSimilarity)
+    return phoneticSimilarity, emotionSimilarity, lyricalSimilarity
+
+if __name__=='__main__':
+    import sys
+    
+    # dummy data
+    contentID = "5c971e36f4d9beaaf9ab6a87"
+    dialogueID = 1
+    audioFile = 'tmpFiles/test.webm'
+    gameID = "" # don't have this yet to report score
+    pSim, eSim, lSim = performThreeComparisons(contentID, dialogueID, audioFile, gameID, verbose=False)
+    print(pSim, eSim, lSim)
 
     # next send back scores to front and back (userDB)
+    
 
 
