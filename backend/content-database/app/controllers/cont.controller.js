@@ -94,6 +94,7 @@ exports.insertIntoContentDB = (req,res) => {
 	});
 };
 
+// retrieve content for game play
 exports.gamePlay = (req,res) => {
 	// validate request
 	console.log(req.body.contentID+ "   "+req.body.dialogueID);
