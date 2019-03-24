@@ -14,7 +14,7 @@ const serverPort = 3000
 const serverHost = "http://localhost"
 // const serverHost = "https://impressionist.localtunnel.me"
 const socketAddress = serverHost + ":" + serverPort
-const socket = io.connect(socketAddress);
+// const socket = io.connect(socketAddress);
 
 // video states
 let currentTime = 0;
@@ -28,8 +28,9 @@ let contentInfo = {
     dialogueTimeArray : null, // format => [[startTime, endTime], ...]
     gameID : null, // associated with the specific user and contentID
     contentID : null, // id for the specific content (movie, episode)
-    dialogueID : null, // index of the current dialogue in the dialogue array
-    previousDialogueID : null
+    previousDialogueID : null, // index of previous dialogue in the dialogue array
+    currentDialogueID : null, // index of the current dialogue in the dialogue array
+    nextDialogueID : null // index of the next dialogue in the dialogue array
 }
 
 const timeDelay = 50;
@@ -144,10 +145,10 @@ let injectSideBar = () => {
     dialogueContainerElement.appendChild(dialogueTitleElement);
     
     let previousDialogueButton = createButton("Previous", dialogueContainerElement);
-    previousDialogueButton.onclick = previousDialogueButtonOnClick();
+    previousDialogueButton.addEventListener("click", goToPreviousDialogue)
 
     let nextDialogueButton = createButton("Next", dialogueContainerElement);
-    nextDialogueButton.onclick = nextDialogueButtonOnClick();
+    nextDialogueButton.addEventListener("click", goToNextDialogue)
 
     sideBarContainerDivElement.appendChild(currentTimeElement);
     sideBarContainerDivElement.appendChild(currentDialogueElement);
@@ -170,19 +171,153 @@ let updateCurrentTimeElement = () => {
 
 let updateDialogueElement = () => {
     let currentDialogueElement = document.getElementById('current-dialogue-container');
-    currentDialogueElement.innerHTML = "Current Dialogue : " + contentInfo.dialogueID;
+    currentDialogueElement.innerHTML = "Current Dialogue : " + contentInfo.currentDialogueID;
 }
 
-let previousDialogueButtonOnClick = () => {
-    goToPreviousDialogue();
+let goToPreviousDialogue = () => {
+    if (contentInfo.previousDialogueID !== null) {
+        const previousStartDialogue = contentInfo.dialogueTimeArray[contentInfo.previousDialogueID][0];
+        pauseVideo();
+        seek(previousStartDialogue);
+        playVideo();
+    } else {
+        return
+    }
 }
 
-let nextDialogueButtonOnClick = () => {
-    goToNextDialogue();
+let goToNextDialogue = () => {
+    if (contentInfo.nextDialogueID !== null) {
+        const nextStartDialogue = contentInfo.dialogueTimeArray[contentInfo.nextDialogueID][0];
+        pauseVideo();
+        seek(nextStartDialogue);
+        playVideo();
+    } else {
+        return
+    }
 }
 
-goToPreviousDialogue
+let updateDialogueID = () => {
+    let currentDialogueID = contentInfo.currentDialogueID
+    
+    if (currentDialogueID !== null) {
+        const currentStartDialogue = contentInfo.dialogueTimeArray[currentDialogueID][0];
+        const currentEndDialogue = contentInfo.dialogueTimeArray[currentDialogueID][1];
 
+            // check if still in current dialogue
+        if (currentTime > currentStartDialogue && currentTime < currentEndDialogue) {
+            return;
+        } 
+
+        if (!(currentDialogueID + 1 >= contentInfo.dialogueTimeArray.length)) { // check if next dialogue exists
+            const nextStartDialogue = contentInfo.dialogueTimeArray[currentDialogueID + 1][0];
+            const nextEndDialogue = contentInfo.dialogueTimeArray[currentDialogueID + 1][1];
+
+            if (currentTime > currentEndDialogue && currentTime < nextStartDialogue) {
+                contentInfo.previousDialogueID = previousDialogueID + 1;
+                contentInfo.currentDialogueID = null
+            } else if (currentTime > nextStartDialogue && currentTime < nextEndDialogue) {
+                contentInfo.currentDialogueID = currentDialogueID + 1;
+                contentInfo.previousDialogueID = contentInfo.currentDialogueID;
+                contentInfo.nextDialogueID = currentDialogueID + 2
+            } else { // check all dialogues from start
+                checkAllDialogues()
+            }
+        } else { // check all dialogues from start
+            checkAllDialogues()
+        }
+
+    } else { 
+        if (contentInfo.dialogueTimeArray.length > 0) {
+            const firstStartDialogue = contentInfo.dialogueTimeArray[0][0];
+            const firstEndDialogue = contentInfo.dialogueTimeArray[0][1];
+
+            // check if in first dialogue
+            if (currentTime > firstStartDialogue && currentTime < firstEndDialogue) {
+                contentInfo.currentDialogueID = 0
+                contentInfo.previousDialogueID = 0
+                contentInfo.previousDialogueID = 1
+            } else if (!(contentInfo.previousDialogueID + 1 >= contentInfo.dialogueTimeArray.length)) {
+                const nextStartDialogue = contentInfo.dialogueTimeArray[contentInfo.previousDialogueID + 1][0];
+                const nextEndDialogue = contentInfo.dialogueTimeArray[contentInfo.previousDialogueID + 1][1];
+
+                if (currentTime > nextStartDialogue && currentTime < nextEndDialogue) {
+                    contentInfo.currentDialogueID = contentInfo.previousDialogueID + 1;
+                    contentInfo.previousDialogueID = contentInfo.currentDialogueID;
+                    contentInfo.nextDialogueID = contentInfo.currentDialogueID + 1
+    
+                } else { // go through all dialogues
+                    checkAllDialogues()
+                }
+                
+            } else { // go through all dialogues
+                checkAllDialogues()
+            }
+        }
+    }
+}
+
+let doesDialogueExist = (dialogueIndex, dialogueArray) => {
+    if(dialogueIndex !== null || dialogueArray !== null) {
+        if(dialogueIndex >= 0 && dialogueIndex < dialogueArray.length) {
+            return true;
+        } else {
+            return false;
+        }
+    } else {
+        return false;
+    }
+}
+
+let isInBetweenDialogues = (timeOne, timeTwo) => {
+    if(currentTime > timeOne && currentTime < timeTwo) {
+        return true;
+    } else {
+        return false
+    }
+}
+
+let setPreviousAndNextIfExists = (currentDialogueID) => {
+    if (doesDialogueExist(currentDialogueID - 1, contentInfo.dialogueTimeArray)) { // if previous exists
+        contentInfo.previousDialogueID = currentDialogueID - 1;
+    } else {
+        contentInfo.previousDialogueID = null
+    }
+
+    if (doesDialogueExist(currentDialogueID + 1, contentInfo.dialogueTimeArray)) { // if next exists
+        contentInfo.nextDialogueID = currentDialogueID + 1;
+    } else {
+        contentInfo.nextDialogueID = null
+    }
+}
+
+let checkAllDialogues = () => {
+    let found = false;
+
+    for (const [currentDialogueID, currentDialogueArray] of contentInfo.dialogueTimeArray.entries()) {
+        if(isInBetweenDialogues(currentDialogueArray[0], currentDialogueArray[1])) {
+            contentInfo.currentDialogueID = currentDialogueID;
+            found = true;
+
+            if (doesDialogueExist(currentDialogueID - 1, contentInfo.dialogueTimeArray)) { // if previous exists
+                contentInfo.previousDialogueID = currentDialogueID - 1;
+            } else {
+                contentInfo.previousDialogueID = null
+            }
+        
+            if (doesDialogueExist(currentDialogueID + 1, contentInfo.dialogueTimeArray)) { // if next exists
+                contentInfo.nextDialogueID = currentDialogueID + 1;
+            } else {
+                contentInfo.nextDialogueID = null
+            }
+            
+            break;
+        }
+    }
+
+    if(found === false) {
+        contentInfo.currentDialogueID = null;
+    }
+}
 
 let createButton = (value, parentElement) => {
     let buttonElement = document.createElement('input');
@@ -210,78 +345,64 @@ let createButton = (value, parentElement) => {
 
 // NOTE: update with checking if its paused 
 
-let updateDialogueID = () => {
-    let currentDialogueID = contentInfo.dialogueID
+// let updateDialogueID = () => {
+//     let currentDialogueID = contentInfo.currentDialogueID
     
-    if (currentDialogueID !== null) {
-        const currentStartDialogue = contentInfo.dialogueTimeArray[currentDialogueID][0];
-        const currentEndDialogue = contentInfo.dialogueTimeArray[currentDialogueID][1];
+//     if (currentDialogueID !== null) {
+//         const currentStartDialogue = contentInfo.dialogueTimeArray[currentDialogueID][0];
+//         const currentEndDialogue = contentInfo.dialogueTimeArray[currentDialogueID][1];
 
-            // check if still in current dialogue
-        if (currentTime > currentStartDialogue && currentTime < currentEndDialogue) {
-            return;
-        } 
+//             // check if still in current dialogue
+//         if (currentTime > currentStartDialogue && currentTime < currentEndDialogue) {
+//             return;
+//         } 
 
-        if (!(currentDialogueID + 1 >= contentInfo.dialogueTimeArray.length)) { // check if next dialogue exists
-            const nextStartDialogue = contentInfo.dialogueTimeArray[currentDialogueID + 1][0];
-            const nextEndDialogue = contentInfo.dialogueTimeArray[currentDialogueID + 1][1];
+//         if (!(currentDialogueID + 1 >= contentInfo.dialogueTimeArray.length)) { // check if next dialogue exists
+//             const nextStartDialogue = contentInfo.dialogueTimeArray[currentDialogueID + 1][0];
+//             const nextEndDialogue = contentInfo.dialogueTimeArray[currentDialogueID + 1][1];
 
-            if (currentTime > currentEndDialogue && currentTime < nextStartDialogue) {
-                contentInfo.dialogueID = null
-            } else if (currentTime > nextStartDialogue && currentTime < nextEndDialogue) {
-                contentInfo.dialogueID = currentDialogueID + 1;
-                contentInfo.previousDialogueID = contentInfo.dialogueID;
+//             if (currentTime > currentEndDialogue && currentTime < nextStartDialogue) {
+//                 contentInfo.currentDialogueID = null
+//             } else if (currentTime > nextStartDialogue && currentTime < nextEndDialogue) {
+//                 contentInfo.currentDialogueID = currentDialogueID + 1;
+//                 contentInfo.previousDialogueID = contentInfo.currentDialogueID;
 
-            } else { // check all dialogues from start
-                checkAllDialogues()
-            }
-        } else { // check all dialogues from start
-            checkAllDialogues()
-        }
+//             } else { // check all dialogues from start
+//                 checkAllDialogues()
+//             }
+//         } else { // check all dialogues from start
+//             checkAllDialogues()
+//         }
 
-    } else { 
-        if (contentInfo.dialogueTimeArray.length > 0) {
-            const firstStartDialogue = contentInfo.dialogueTimeArray[0][0];
-            const firstEndDialogue = contentInfo.dialogueTimeArray[0][1];
+//     } else { 
+//         if (contentInfo.dialogueTimeArray.length > 0) {
+//             const firstStartDialogue = contentInfo.dialogueTimeArray[0][0];
+//             const firstEndDialogue = contentInfo.dialogueTimeArray[0][1];
 
-            // check if in first dialogue
-            if (currentTime > firstStartDialogue && currentTime < firstEndDialogue) {
-                contentInfo.dialogueID = 0
-                contentInfo.previousDialogueID = 0
-            } else if (!(contentInfo.previousDialogueID + 1 >= contentInfo.dialogueTimeArray.length)) {
-                const nextStartDialogue = contentInfo.dialogueTimeArray[contentInfo.previousDialogueID + 1][0];
-                const nextEndDialogue = contentInfo.dialogueTimeArray[contentInfo.previousDialogueID + 1][1];
+//             // check if in first dialogue
+//             if (currentTime > firstStartDialogue && currentTime < firstEndDialogue) {
+//                 contentInfo.currentDialogueID = 0
+//                 contentInfo.previousDialogueID = 0
+//             } else if (!(contentInfo.previousDialogueID + 1 >= contentInfo.dialogueTimeArray.length)) {
+//                 const nextStartDialogue = contentInfo.dialogueTimeArray[contentInfo.previousDialogueID + 1][0];
+//                 const nextEndDialogue = contentInfo.dialogueTimeArray[contentInfo.previousDialogueID + 1][1];
 
-                if (currentTime > nextStartDialogue && currentTime < nextEndDialogue) {
-                    contentInfo.dialogueID = contentInfo.previousDialogueID + 1;
-                    contentInfo.previousDialogueID = contentInfo.dialogueID;
+//                 if (currentTime > nextStartDialogue && currentTime < nextEndDialogue) {
+//                     contentInfo.currentDialogueID = contentInfo.previousDialogueID + 1;
+//                     contentInfo.previousDialogueID = contentInfo.currentDialogueID;
     
-                } else { // go through all dialogues
-                    checkAllDialogues()
-                }
+//                 } else { // go through all dialogues
+//                     checkAllDialogues()
+//                 }
                 
-            } else { // go through all dialogues
-                checkAllDialogues()
-            }
-        }
-    }
-}
+//             } else { // go through all dialogues
+//                 checkAllDialogues()
+//             }
+//         }
+//     }
+// }
 
-let checkAllDialogues = () => {
-    let found = false;
 
-    for (const [currentDialogueID, currentDialogueArray] of contentInfo.dialogueTimeArray.entries()) {
-        if(currentTime > currentDialogueArray[0] && currentTime < currentDialogueArray[1]) {
-            contentInfo.dialogueID = currentDialogueID;
-            found = true;
-            break;
-        }
-    }
-
-    if(found === false) {
-        contentInfo.dialogueID = null;
-    }
-}
 
 // Netflix API
 
@@ -347,7 +468,7 @@ let compareDialogue = (currentAudioBlob) => {
     socket.emit("compareDialogue", { 
         gameID : contentInfo.gameID,
         contentID : contentInfo.contentID,
-        dialogueID :  contentInfo.dialogueID,
+        dialogueID :  contentInfo.currentDialogueID,
         audioBlob : currentAudioBlob
     }, (response) => {
         console.log("response");
@@ -427,7 +548,7 @@ let micInitialization = () => {
             // recording stopped
             mediaRecorder.onstop = function(e) {
                 const currentChunkBlob = new Blob(chunks);
-                compareDialogue(currentChunkBlob);
+                // compareDialogue(currentChunkBlob);
             }
 
             
