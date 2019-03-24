@@ -34,7 +34,11 @@ let seek = (time) => {
 
 let getCurrentTime = () => {
     let videoPlayer = netflix.appContext.state.playerApp.getAPI().videoPlayer.getVideoPlayerBySessionId(netflix.appContext.state.playerApp.getAPI().videoPlayer.getAllPlayerSessionIds()[0]);
-    return videoPlayer.getCurrentTime(); // in ms
+    if (videoPlayer) {
+        return videoPlayer.getCurrentTime(); // in ms
+    } else {
+        return 0;
+    }
 }
 
 // setTimeout(function() {
