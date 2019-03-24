@@ -42,7 +42,8 @@ def comparePhoneticSimilarity(audioFile, featureFile, verbose=False):
         print(error)
         exit()
 
-    similarity = compare(audioFile, featureFile, 'prosody', delimiter=';', verbose=verbose, plot=False)
+
+    similarity = compare("test.csv", featureFile, 'prosody', delimiter=';', verbose=verbose, plot=False)
 
     if verbose: print("Similarity: ", similarity)
 
