@@ -1,12 +1,18 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-
+const cors = require('cors');
 // create express app
 const app = express();
+
+
+app.use(cors())
+app.options('*', cors())
+
 // parse requests of content-type - application/x-www-form-urlencoded
 app.use(bodyParser.urlencoded({ extended: true }))
 // parse application/json
 app.use(bodyParser.json())
+
 
 // configuring the database
 const dbConfig = require('./config/database.config.js');
@@ -29,10 +35,11 @@ app.get('/', (req,res) => {
 	res.json({"message": "Welcome to Impressionist!"})
 });
 
-// require Imp routes
-require("./app/routes/imp.routes.js")(app);
+// require User routes
+require("./app/routes/user.routes.js")(app);
 
 // listen for requests
 app.listen(3000, () => {
 	console.log("Server is listening on port 3000");
 });
+

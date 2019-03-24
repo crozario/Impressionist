@@ -24,7 +24,6 @@ MongoClient.connect(cred.url, { useNewUrlParser: true }, function(err, db)
 				console.log(res);
 			});
 		});	
-
 });
 
 

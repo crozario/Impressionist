@@ -1,0 +1,5 @@
+data/*
+features/*
+*htk
+*log
+__pycache__/*

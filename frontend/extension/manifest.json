@@ -3,34 +3,37 @@
     "version": "1.0",
     "description": "an extension to make impressions of actors in your favorite video content.",
     "options_page": "options.html",
-    "permissions": ["activeTab", "declarativeContent", "storage"],
+    "permissions": [
+      "http://localhost:3000/",
+      "activeTab", 
+      "declarativeContent", 
+      "storage"
+    ],
     "background": {
-      "scripts": ["background.js"],
+      "scripts": ["scripts/background.js"],
       "persistent": false
     },
-    // "page_action": {
-    //   "default_popup": "popup.html",
-    //   "default_icon": {
-    //     "16": "images/get_started16.png",
-    //     "32": "images/get_started32.png",
-    //     "48": "images/get_started48.png",
-    //     "128": "images/get_started128.png"
-    //   }
-    // },
-    "browser_action": {
+    "content_scripts": [
+      {
+        "matches": ["https://www.netflix.com/watch/*"],
+        "js": ["scripts/contentScript.js"]
+      }
+    ],
+    "web_accessible_resources": ["scripts/netflixApiScript.js"],
+    "page_action": {
       "default_popup": "popup.html",
       "default_icon": {
-        "16": "images/get_started16.png",
-        "32": "images/get_started32.png",
-        "48": "images/get_started48.png",
-        "128": "images/get_started128.png"
+        "16": "images/logo16.png",
+        "32": "images/logo32.png",
+        "48": "images/logo48.png",
+        "128": "images/logo128.png"
       }
     },
     "icons": {
-      "16": "images/get_started16.png",
-      "32": "images/get_started32.png",
-      "48": "images/get_started48.png",
-      "128": "images/get_started128.png"
+      "16": "images/logo16.png",
+      "32": "images/logo32.png",    
+      "48": "images/logo48.png",
+      "128": "images/logo128.png"
     },
     "manifest_version": 2
   }
