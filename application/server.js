@@ -56,7 +56,7 @@ io.on('connection', socket => {
      */
     
     // audio buffer received
-    socket.on('compareDialogue', message => {
+    socket.on('compareDialogue', (message, response) => {
         console.log("got dialogue data");
         
         // new audio stream
@@ -79,23 +79,27 @@ io.on('connection', socket => {
 
         writeStream.end(); 
         
+
+        return;
         // Execute ffmpeg command here
-        // $ ffmpeg -i test.webm test.wav
 
-        // dataString = '';
-        // // execute python dataBuilder.extractFeatures.py
-        // console.log('spawning process');
-        // py = spawn('python', ['compareAudio.py']);
+        dataString = '';
+        // execute python dataBuilder.extractFeatures.py
+        console.log('spawning process');
+        py = spawn('python', ['compareAudio.py']);
 
-        // // append to dataString from python stdout
-        // py.stdout.on('data', data =>{
-        //     dataString += data.toString(); // send back this similarity score
-        // });
+        // append to dataString from python stdout
+        py.stdout.on('data', data =>{
+            dataString += data.toString(); // send back this similarity score
+
+            
+        });
           
-        // // print dataString after program end
-        // py.stdout.on('end', () => {
-        //     console.log(dataString);
-        // });
+        // print dataString after program end
+        py.stdout.on('end', () => {
+            console.log(dataString);
+            response(dataString);
+        });
     })
 
     
