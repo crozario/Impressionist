@@ -46,7 +46,8 @@ def readCsvData(fileA, fileB, delimiter=';', usecols=None, skipcols=0, skiprows=
     # FIXME: always get headers from first line
     ##  Initialize variables
     with open(fileA) as file:
-        line1 = file.readline().strip()
+        # line1 = file.readline().strip()
+        line1 = file.readline()
         features = line1.split(delimiter)
         usecols = [f for f in range(skipcols, len(features))]
 
