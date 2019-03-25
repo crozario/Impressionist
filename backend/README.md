@@ -1,4 +1,4 @@
-# User Database 
+# User Database & Content Database
 
 [Tutorial](https://www.callicoder.com/node-js-express-mongodb-restful-crud-api-tutorial/)
 
@@ -9,6 +9,11 @@
 - [node v10.15.2](https://nodejs.org/en/download/)
 
 - npm v6.4.1 (installs with node)
+
+## Ports
+
+- User DB - 3001
+- Content DB - 3002
 
 ### Node Dependencies
 

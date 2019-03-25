@@ -4,6 +4,7 @@ const cors = require('cors');
 // create express app
 const app = express();
 
+const PORT = 3001;
 
 app.use(cors())
 app.options('*', cors())
@@ -39,7 +40,7 @@ app.get('/', (req,res) => {
 require("./app/routes/user.routes.js")(app);
 
 // listen for requests
-app.listen(3000, () => {
-	console.log("Server is listening on port 3000");
+app.listen(PORT, () => {
+	console.log("Server is listening on port "+PORT);
 });
 
