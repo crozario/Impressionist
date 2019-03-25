@@ -97,7 +97,7 @@ exports.insertIntoContentDB = (req,res) => {
 // retrieve content for game play
 exports.gamePlay = (req,res) => {
 	// validate request
-	if(!req.body.contentID || !req.body.dialogueID) {
+	if(!req.body.contentID) {
 		return res.status(400).json({
 			status: "failure",
 			error: "contentID or dialogueID was not provided"
