@@ -74,10 +74,21 @@ io.on('connection', socket => {
     message.character = ("all" | "Ross" | "Chandler")
     */
     socket.on('getDialogue', message => {
+
+    });
+
+    // get unique characters
+    socket.on('getUniqueCharacters', () => {
         
     });
 
-    // 
+    // calibrate vtt file with netflix subtitles
+    /*
+    NOTE: depends on whether Crossley can get time of a subtitle from Netlix
+    */
+    socket.on('calibrate', message => {
+
+    });
 });
 
 // host location

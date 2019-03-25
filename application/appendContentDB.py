@@ -260,7 +260,11 @@ if __name__=='__main__':
     # construct JSON to send to contentDB
     # get mediaFile length
     secondsDuration = getVideoFileDuration(mediaFile)
-    
+    # get dialogue information of vtt file
+    from dialogueExtraction.dialogueExtraction import getUniqueCharacter, getDialogueIntervalsWithCaptions, getCharacterDialogueIdsDict
+    uniqueCharacterNames = getUniqueCharacter(captionFile)
+    dialogues2Darray = getDialogueIntervalsWithCaptions(captionFile)
+    characterDialogueIDsDict = getCharacterDialogueIdsDict(captionFile)
     contentdict = {
         "reqType" : "appendContentDB",
         "mediaFileLocation" : mediaFile,

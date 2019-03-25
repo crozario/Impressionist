@@ -85,6 +85,7 @@ def getProcessedFromContentDB(contentID, dialogueID):
     featureFileURL = resjson['featureURL']
     emotion = resjson['dialogueEmotion']
     originalCaptionFile = resjson['captionsFileURL']
+    # FIXME: this will change if storing 2D dialogue array in database
     originalCaption = getCaptionFromVTTcaptionFile(originalCaptionFile, dialogueID)
 
     return featureFileURL, emotion, originalCaption
@@ -134,7 +135,6 @@ def performThreeComparisons(contentID, dialogueID, audioFile, gameID, verbose=Fa
     return phoneticSimilarity, emotionSimilarity, lyricalSimilarity
 
 if __name__=='__main__':
-    import sys
     
     # dummy data
     contentID = "5c971e36f4d9beaaf9ab6a87"
@@ -145,6 +145,6 @@ if __name__=='__main__':
     print(pSim, eSim, lSim)
 
     # next send back scores to front and back (userDB)
-    
+
 
 
