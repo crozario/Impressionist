@@ -20,7 +20,7 @@ window.onload = () => {
     video.autoplay = false;
 
     let content = document.createElement("source");
-    content.src = "audio_three-dialogue1.wav";
+    content.src = "clip_four.mp4";
     content.type = "video/mp4";
     video.appendChild(content);
     document.body.appendChild(video);
