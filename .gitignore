@@ -11,3 +11,4 @@ application/speech_to_text/__pycache__/transcribe_return_only_one_line.cpython-3
 application/speech_to_emotion/__pycache__/emotion_classifier_nn.cpython-36.pyc
 application/speech_to_text/transcribe_return_only_one_line.py
 application/speech_to_text/__pycache__/sub_user_similarity.cpython-36.pyc
+__pycache__

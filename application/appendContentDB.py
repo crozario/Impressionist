@@ -270,25 +270,28 @@ if __name__=='__main__':
     contentdict = {
         "reqType" : "appendContentDB",
         "mediaFileLocation" : mediaFile,
-        "length" : secondsDuration, # NOTE: notify debbie its seconds
+        "length" : secondsDuration,
         "featureFileLocations" : featureFiles, 
         "captionFile" : captionFile,
-        "emotionsList" : emotions # NOTE: add this to docs
+        "emotionsList" : emotions,
+        "captions" : dialogues2Darray, 
+        "netflixSubtitleOffset": -2000, # NOTE: new - notify Debbie
+        "characterNames" : uniqueCharacterNames, # NOTE: new - notify Debbie
     }
+    contentdict.update(characterDialogueIDsDict) # NOTE: new - notify Debbie
     if "contentData/movies" in dirName:
         contentdict["title"] = os.path.basename(dirName)
     else:
         split = dirName.split(sep='/')
         episode = split[-1].split('-')
         contentdict["episodeNumber"] = int(episode[0])
-        contentdict["episodeTitle"] = " ".join(episode[1:]) # NOTE: add this addendum to docs
+        contentdict["episodeTitle"] = " ".join(episode[1:])
         contentdict["seasonNumber"] = int(split[-2])
         contentdict["title"] = split[-3]
 
     # convert to JSON
     import json
     contentJSON = json.dumps(contentdict)
-    # print(contentJSON)
 
     # SEND jSON
     import urllib.request #ref: https://stackoverflow.com/a/26876308/7303112

@@ -74,7 +74,7 @@ io.on('connection', socket => {
     message.character = ("all" | "Ross" | "Chandler")
     */
     socket.on('getDialogue', message => {
-
+        
     });
 
     // get unique characters

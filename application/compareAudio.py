@@ -81,12 +81,13 @@ def getProcessedFromContentDB(contentID, dialogueID):
 
     # parse json
     assert(resjson['status'] == "success"), "Error - requesting gameplay data\n"+resjson['error']
-    assert('featureURL' in resjson and 'dialogueEmotion' in resjson and 'captionsFileURL' in resjson), "Error - Network response not containing one of the expected keys."
+    assert('featureURL' in resjson and 'dialogueEmotion' in resjson and 'captions' in resjson), "Error - Network response not containing one of the expected keys."
     featureFileURL = resjson['featureURL']
     emotion = resjson['dialogueEmotion']
-    originalCaptionFile = resjson['captionsFileURL']
-    # FIXME: this will change if storing 2D dialogue array in database
-    originalCaption = getCaptionFromVTTcaptionFile(originalCaptionFile, dialogueID)
+    # originalCaptionFile = resjson['captionsFileURL']
+    # # FIXME: this will change if storing 2D dialogue array in database
+    # originalCaption = getCaptionFromVTTcaptionFile(originalCaptionFile, dialogueID)
+    originalCaption = resjson['captions'][2]
 
     return featureFileURL, emotion, originalCaption
 
@@ -137,11 +138,11 @@ def performThreeComparisons(contentID, dialogueID, audioFile, gameID, verbose=Fa
 if __name__=='__main__':
     
     # dummy data
-    contentID = "5c971e36f4d9beaaf9ab6a87"
-    dialogueID = 1
+    contentID = "5c9849d23f86731faf463cb9"
+    dialogueID = 0
     audioFile = 'tmpFiles/test.webm'
     gameID = "" # don't have this yet to report score
-    pSim, eSim, lSim = performThreeComparisons(contentID, dialogueID, audioFile, gameID, verbose=False)
+    pSim, eSim, lSim = performThreeComparisons(contentID, dialogueID, audioFile, gameID, verbose=True)
     print(pSim, eSim, lSim)
 
     # next send back scores to front and back (userDB)
