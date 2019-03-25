@@ -31,13 +31,6 @@ https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/runti
 
 https://stackoverflow.com/questions/42105028/netflix-video-player-in-chrome-how-to-seek
 
-#### Dom Elements
-
-- class="player-timedtext-text-container" (subtitles div container)
-- class="sizing-wrapper" (netflix div for sizing player)
-- class="nf-kb-nav-wrapper" (wraps around "sizing-wrapper")
-- class="VideoContainer" (video container)
-
 
 **Notes**
 
@@ -50,13 +43,15 @@ Record audio from netflix video player
 
 
 
-Web Worker 
+- Web Worker 
 
 - Current Time 
 - Play/Pause
 
 **TODO**
 
+
+check if subtitles are on
 setup state variable for isplaying, isPaused, 
 
 
@@ -64,7 +59,45 @@ videoPlayer.setVolume() : volume between 0 and 1
 videoPlayer.setPlaybackRate : 
 
 
-**DOM Netflix API**
+#### Netflix API
+
+**Dom Elements**
+
+- class="player-timedtext-text-container" (subtitles div container)
+- class="sizing-wrapper" (netflix div for sizing player)
+- class="nf-kb-nav-wrapper" (wraps around "sizing-wrapper")
+- class="VideoContainer" (video container)
+
+- id="{Content Watch ID}" (video player container)
+
+- ef (subtitile)
+
+**Implemented Netflix Video Player Functions**
+
+GetCurrentTime()
+pauseVideo()
+playVideo()
+seek(toTime)
+------
+
+**TODO**
+
+getElement()
+getDuration()
+getEnded() ->
+getLoaded()
+getMovieId()
+getMuted()
+getPaused()
+getPlaying()
+getSegmentTime()
+getVideoSize() ()
+getVolume() -->
+getXid() 
+close() 
+
+------
+
 
 netflix.appContext.state.playerApp.getAPI().videoPlayer
 
@@ -80,3 +113,66 @@ netflix.appContext.state.playerApp.getAPI().videoPlayer.getCurrentTextTrackBySes
 
 
 netflix.appContext.getPlayerApp().getAPI().videoPlayer.showTimedTextBySessionId(netflix.appContext.state.playerApp.getAPI().videoPlayer.getAllPlayerSessionIds()[0])
+
+**VideoPlayer Functions List**
+
+addEpisode: ƒ y(a)
+addEventListener: ƒ (b,c,d)
+close: ƒ (e) --> video player closes
+diagnostics: {addEventListener: ƒ, removeEventListener: ƒ, getModel: ƒ, getTime: ƒ, getGroups: ƒ}
+engage: ƒ ()
+getAdditionalLogInfo: ƒ ()
+getAudioTrack: ƒ ()
+getAudioTrackList: ƒ ()
+getBufferedTime: ƒ ()
+getBusy: ƒ ()
+getCongestionInfo: ƒ (a)
+getCropAspectRatio: ƒ ()
+getCurrentTime: ƒ ()
+getDuration: ƒ ()
+getElement: ƒ ()
+getEnded: ƒ ()
+getError: ƒ ()
+getLoaded: ƒ ()
+getMovieId: ƒ ()
+getMuted: ƒ ()
+getPaused: ƒ ()
+getPlayback: ƒ ()
+getPlaying: ƒ ()
+getReady: ƒ ()
+getSegmentTime: ƒ ()
+getSessionSummary: ƒ ()
+getTimedTextTrack: ƒ ()
+getTimedTextTrackList: ƒ ()
+getTimedTextVisibility: ƒ ()
+getTrickPlayFrame: ƒ (a)
+getVideoSize: ƒ ()
+getVolume: ƒ ()
+getXid: ƒ ()
+hasLoggedClose: false
+induceError: ƒ (a)
+isLoading: ƒ ()
+load: ƒ ()
+loadCustomTimedTextTrack: ƒ (a,b,c)
+loaded: true
+loading: false
+observables: {loaded: e, loadedTracks: e, loadedMetadata: e}
+pause: ƒ ()
+play: ƒ ()
+playNextEpisode: ƒ (a)
+playSegment: ƒ (a)
+prepare: ƒ ()
+queueSegment: ƒ (a)
+removeEventListener: ƒ (b,c)
+seek: ƒ (a)
+setAudioTrack: ƒ (a)
+setMuted: ƒ (a)
+setPlaybackRate: ƒ (a)
+setTimedTextBounds: ƒ (a)
+setTimedTextMargins: ƒ (a)
+setTimedTextSize: ƒ (a)
+setTimedTextTrack: ƒ (a)
+setTimedTextVisibility: ƒ (a)
+setVolume: ƒ (a)
+tryRecoverFromStall: ƒ ()
+updateNextSegmentWeights: ƒ (a,b)
