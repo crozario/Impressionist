@@ -31,7 +31,7 @@ PORT = 3000        # Port to listen on (non-privileged ports are > 1023)
 #             conn.sendall(data)
 
 
-# FLASK_APP=server.py flask run -h localhost -p 3000
+# python3 server.py
 
 from flask import Flask, render_template
 from flask_socketio import SocketIO, emit
@@ -50,7 +50,15 @@ def handle_compareDialogue(message):
 
     return "received compareDialogue Message"
 
+@socketio.on('connect')
+def test_connect():
+    print('a user connected')
+
+@socketio.on('disconnect')
+def test_disconnect():
+    print('a user disconnected')
+
 
 
 if __name__ == '__main__':
-    socketio.run(app)
+    socketio.run(app, port=PORT)

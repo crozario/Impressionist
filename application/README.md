@@ -57,7 +57,11 @@ https://stackoverflow.com/questions/38506952/how-to-send-response-back-to-client
 
 ### Flask Socket.IO
 
+#### Python Dependencies
+- Flask
+- Flask-socketio
+
 **Run Flask Server**
 ```bash
-FLASK_APP=server.py flask run -h localhost -p 3000
+python3 server.py
 ```
