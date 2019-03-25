@@ -33,28 +33,6 @@ io.on('connection', socket => {
         console.log("a user has disconnected");
     });
     
-    // newEvent = "compareDialogue" (replacing "audio buffer")
-    // will be executed per dialogue
-    // expected message
-    /*
-    message = {
-        gameID : 
-        contentID : 
-        dialogueID : 
-        audioBlob : 
-    }
-    SEND to contentDB
-        contentID
-        dialogueID
-    RECEIVE from contentDB
-        featureFileURL  (for signal similarity)
-        emotion         (for emotion similarity)
-        captionsFileURL (for lyrical similarity)
-    - run
-    python compareAudio.py audioFile(.webm), contentID(str), dialogueID(number), gameID(str)
-
-     */
-    
     // audio buffer received
     socket.on('compareDialogue', (message, response) => {
         console.log("got dialogue data");
@@ -88,12 +66,30 @@ io.on('connection', socket => {
                 response(dataString); // send back this similarity score
             });
         });
-
         writeStream.end(); 
-    })
+    });
 
-    
-})
+    // interface to send dialogue 2D array
+    /*
+    message.character = ("all" | "Ross" | "Chandler")
+    */
+    socket.on('getDialogue', message => {
+
+    });
+
+    // get unique characters
+    socket.on('getUniqueCharacters', () => {
+        
+    });
+
+    // calibrate vtt file with netflix subtitles
+    /*
+    NOTE: depends on whether Crossley can get time of a subtitle from Netlix
+    */
+    socket.on('calibrate', message => {
+
+    });
+});
 
 // host location
 server.listen(serverPort, () => {

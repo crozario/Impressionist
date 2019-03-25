@@ -260,7 +260,13 @@ if __name__=='__main__':
     # construct JSON to send to contentDB
     # get mediaFile length
     secondsDuration = getVideoFileDuration(mediaFile)
-    
+    # get dialogue information of vtt file
+    from dialogueExtraction.dialogueExtraction import getUniqueCharacter, getDialogueIntervalsWithCaptions, getCharacterDialogueIdsDict
+    # FIXME: add `netflixOffset` attribute to database
+    netflixSubtitleOffset = -2000 # for the friendss02e12 - this means 2000 ms have to be subtracted from our subtitle values when we serve them to front
+    uniqueCharacterNames = getUniqueCharacter(captionFile)
+    dialogues2Darray = getDialogueIntervalsWithCaptions(captionFile)
+    characterDialogueIDsDict = getCharacterDialogueIdsDict(captionFile)
     contentdict = {
         "reqType" : "appendContentDB",
         "mediaFileLocation" : mediaFile,

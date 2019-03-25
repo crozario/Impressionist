@@ -6,7 +6,7 @@ const schema = require('../models/cont.model.js');
 // verify that user-provided username is unique
 exports.insertIntoContentDB = (req,res) => {
 	// validate request
-	if(!req.body.title || !req.body.length || !req.body.mediaFileLocation || !req.body.captionFile || !req.body.featureFileLocations || !req.body.emotionsList) {
+	if(!req.body.title || !req.body.length || !req.body.mediaFileLocation || !req.body.captions || !req.body.featureFileLocations || !req.body.emotionsList) {
 		return res.status(400).json({
 			status: "failure",
 			error: "one of the required fields was not provided"
@@ -17,6 +17,26 @@ exports.insertIntoContentDB = (req,res) => {
 	// 		0  -->  tv show
 	// 		1  -->  movie
 	if(req.body.seasonNumber && req.body.episodeNumber &&req.body.episodeTitle) {
+		// search the db to see if a document already exists for the same tv show/season/episode
+		schema.Cont.findOne({'title': req.body.title, 'seasonNumber': req.body.seasonNumber, 'episodeNumber': req.body.episodeNumber})
+		.then(result => {
+			if(result) {
+				// delete existing record --> the data from req will be saved in a new document in the db later
+				schema.Cont.deleteOne({'title': req.body.title, 'seasonNumber': req.body.seasonNumber, 'episodeNumber': req.body.episodeNumber}, function(err,raw) {
+					if(err) {
+						return res.status(500).json({
+							status: "failure",
+							error: err.message || "error occured when updating tv show document"
+						});
+					}
+				});
+			}
+		}).catch(err => {
+			return res.status(500).json({
+				status: "failure",
+				error: err.message || "error occured when searching for similar tv show document in db"
+			});
+		});
 		global.content = new schema.Cont({
 			mediaType: 0,
 			title: req.body.title,
@@ -25,17 +45,37 @@ exports.insertIntoContentDB = (req,res) => {
 			episodeTitle: req.body.episodeTitle,
 			length: req.body.length,
 			mediaFileLocation: req.body.mediaFileLocation,
-			captionFile: req.body.captionFile,
+			captions: req.body.captions,
 			featureFileLocations: req.body.featureFileLocations,
 			emotionsList: req.body.emotionsList
 		});
 	} else {
+		// search the db to see if a document already exists for the same movie
+		schema.Cont.findOne({'title': req.body.title})
+		.then(result => {
+			if(result) {
+				// delete existing record --> the data from req will be saved in a new document in the db later
+				schema.Cont.deleteOne({'title': req.body.title}, function(err,raw) {
+					if(err) {
+						return res.status(500).json({
+							status: "failure",
+							error: err.message || "error occured when updating tv show document"
+						});
+					}
+				});
+			}
+		}).catch(err => {
+			return res.status(500).json({
+				status: "failure",
+				error: err.message || "error occured when searching for similar tv show document in db"
+			});
+		});
 		global.content = new schema.Cont({
 			mediaType: 1,
 			title: req.body.title,
 			length: req.body.length,
 			mediaFileLocation: req.body.mediaFileLocation,
-			captionFile: req.body.captionFile,
+			captions: req.body.captions,
 			featureFileLocations: req.body.featureFileLocations,
 			emotionsList: req.body.emotionsList
 		});
@@ -54,10 +94,10 @@ exports.insertIntoContentDB = (req,res) => {
 	});
 };
 
+// retrieve content for game play
 exports.gamePlay = (req,res) => {
 	// validate request
-	console.log(req.body.contentID+ "   "+req.body.dialogueID);
-	if(!req.body.contentID || !req.body.dialogueID) {
+	if(!req.body.contentID) {
 		return res.status(400).json({
 			status: "failure",
 			error: "contentID or dialogueID was not provided"
@@ -69,16 +109,15 @@ exports.gamePlay = (req,res) => {
 		if(result) {
 			var url = result.featureFileLocations[req.body.dialogueID];
 			var emotion = result.emotionsList[req.body.dialogueID];
-			var captions = result.captionFile;
+			var captions = result.captions[req.body.dialogueID];
 			return res.json({
 				status: "success",
 				featureURL: url,
 				dialogueEmotion: emotion,
-				captionsFileURL: captions
+				captions: captions
 			});
 		}
 	}).catch(err => {
-		console.log("this is where the error is coming from");
 		return res.status(500).json({
 			status: "failure",
 			error: err.message || "error retrieving information from the database"

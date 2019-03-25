@@ -8,7 +8,7 @@ const ContentSchema = mongoose.Schema({
 	episodeTitle: String,
 	length: Number, // store length of movie/tv show in seconds
 	mediaFileLocation: String,
-	captionFile: String,
+	captions: {type: [Array], default: undefined},
 	featureFileLocations: Array,
 	emotionsList: Array // ,
 	// netflixTitleID: String,

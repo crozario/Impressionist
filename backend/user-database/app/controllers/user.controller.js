@@ -184,7 +184,7 @@ exports.initializeGame = (req,res) => {
 // store user score data
 exports.storeScoreData = (req,res) => {
 	// validate request
-	if(!req.body.username || !req.body.dialogueID || !req.body.score || !req.body.gameID) {
+	if(!req.body.username || !req.body.score || !req.body.gameID) {
 		return res.status(400).json({
 			status: "failure",
 			error: "username, dialogueID, gameID, or score were not provided"

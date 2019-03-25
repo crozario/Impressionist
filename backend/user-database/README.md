@@ -34,7 +34,7 @@ node server.js
 
 If that fails with ```connection failed``` error
 - have run MongoDB
-- Options (from [mongodb website](link)): 
+- Options (from [mongodb website](https://docs.mongodb.com/manual/tutorial/install-mongodb-on-os-x/)): 
 ```
 Run MongoDB
 
