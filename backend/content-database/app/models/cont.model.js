@@ -21,7 +21,7 @@ const ContentSchema = mongoose.Schema({
 	// netflixMediaURL: String,
 	netflixSubtitleOffset: Number,
 	characterNames: Array,
-	characterDialogueIDs: Array
+	characterDialogueIDs: Map
 }, {
 	collection: 'content'
 });
