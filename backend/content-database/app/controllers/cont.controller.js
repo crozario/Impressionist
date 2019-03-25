@@ -1,6 +1,5 @@
 const mongoose = require('mongoose');
 const schema = require('../models/cont.model.js');
-// schema.Char --> CharacterDialogueSchema
 // schema.Cont --> ContentSchema
 
 // verify that user-provided username is unique
@@ -129,4 +128,24 @@ exports.gamePlay = (req,res) => {
 			error: err.message || "error retrieving information from the database"
 		});
 	});
+};
+
+// retrieve all data from content document
+exports.retrieveContentData = (req,res) => {
+	// validate request
+	if(!req.body.contentID) {
+		return res.status(400).json({
+			status: "failure",
+			error: "contentID or dialogueID was not provided"
+		});
+	}
+	schema.Cont.findById(mongoose.Types.ObjectId(req.body.contentID))
+	.then(result => {
+		if(result) {
+			return res.json({
+				status: "success",
+				result: result
+			});
+		}
+	})
 };
