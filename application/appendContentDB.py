@@ -277,8 +277,9 @@ if __name__=='__main__':
         "captions" : dialogues2Darray, 
         "netflixSubtitleOffset": -2000, # NOTE: new - notify Debbie
         "characterNames" : uniqueCharacterNames, # NOTE: new - notify Debbie
+        "characterDialogueIDs" : characterDialogueIDsDict
     }
-    contentdict.update(characterDialogueIDsDict) # NOTE: new - notify Debbie
+    # contentdict.update(characterDialogueIDsDict) # NOTE: new - notify Debbie
     if "contentData/movies" in dirName:
         contentdict["title"] = os.path.basename(dirName)
     else:
