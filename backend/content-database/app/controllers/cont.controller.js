@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 const schema = require('../models/cont.model.js');
-// schema.Feat --> FeatureSchema
+// schema.Char --> CharacterDialogueSchema
 // schema.Cont --> ContentSchema
 
 // verify that user-provided username is unique
@@ -47,7 +47,10 @@ exports.insertIntoContentDB = (req,res) => {
 			mediaFileLocation: req.body.mediaFileLocation,
 			captions: req.body.captions,
 			featureFileLocations: req.body.featureFileLocations,
-			emotionsList: req.body.emotionsList
+			emotionsList: req.body.emotionsList,
+			netflixSubtitleOffset: req.body.netflixSubtitleOffset,
+			characterNames: req.body.characterNames,
+			characterDialogueIDs: req.body.characterDialogueIDs
 		});
 	} else {
 		// search the db to see if a document already exists for the same movie
@@ -77,7 +80,10 @@ exports.insertIntoContentDB = (req,res) => {
 			mediaFileLocation: req.body.mediaFileLocation,
 			captions: req.body.captions,
 			featureFileLocations: req.body.featureFileLocations,
-			emotionsList: req.body.emotionsList
+			emotionsList: req.body.emotionsList,
+			netflixSubtitleOffset: req.body.netflixSubtitleOffset,
+			characterNames: req.body.characterNames,
+			characterDialogueIDs: req.body.characterDialogueIDs
 		});
 	}
 	// store content information in the database
@@ -114,7 +120,7 @@ exports.gamePlay = (req,res) => {
 				status: "success",
 				featureURL: url,
 				dialogueEmotion: emotion,
-				captions: captions
+				captions: captions,
 			});
 		}
 	}).catch(err => {
