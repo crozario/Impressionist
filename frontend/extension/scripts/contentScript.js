@@ -14,7 +14,7 @@ const serverPort = 3000
 const serverHost = "http://localhost"
 // const serverHost = "https://impressionist.localtunnel.me"
 const socketAddress = serverHost + ":" + serverPort
-// const socket = io.connect(socketAddress);
+const socket = io.connect(socketAddress);
 
 // video states
 let currentTime = 0;
@@ -463,14 +463,14 @@ setupEventListeners = () => {
 // socket.io events
 
 let compareDialogue = (currentAudioBlob) => {
-    
+    console.log("compareDialogue Event")
     socket.emit("compareDialogue", { 
         gameID : contentInfo.gameID,
         contentID : contentInfo.contentID,
-        dialogueID :  contentInfo.currentDialogueID,
-        audioBlob : currentAudioBlob
+        dialogueID :  contentInfo.currentDialogueID
+        // audioBlob : currentAudioBlob
     }, (response) => {
-        console.log("response");
+        console.log(response);
     });
 }
 
@@ -547,7 +547,7 @@ let micInitialization = () => {
             // recording stopped
             mediaRecorder.onstop = function(e) {
                 const currentChunkBlob = new Blob(chunks);
-                // compareDialogue(currentChunkBlob);
+                compareDialogue(currentChunkBlob);
             }
 
             
