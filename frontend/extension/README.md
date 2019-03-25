@@ -43,7 +43,7 @@ Record audio from netflix video player
 
 
 
-Web Worker 
+- Web Worker 
 
 - Current Time 
 - Play/Pause
@@ -70,6 +70,7 @@ videoPlayer.setPlaybackRate :
 
 - id="{Content Watch ID}" (video player container)
 
+- ef (subtitile)
 
 **Implemented Netflix Video Player Functions**
 
@@ -96,14 +97,6 @@ getXid()
 close() 
 
 ------
-
-
-when character dialogueid comes
-pause video and start recording (on sideBar : "say the dialogue")
-user then says the dialog and presses done when finished
-recording gets sent to the server and video resumes
-
-ef (subtitile)
 
 
 netflix.appContext.state.playerApp.getAPI().videoPlayer
