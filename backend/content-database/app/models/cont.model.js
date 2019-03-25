@@ -1,10 +1,5 @@
 const mongoose = require('mongoose');
 
-const CharacterDialogueSchema = mongoose.Schema({
-	characterName: String,
-	dialogueIDs: Array
-});
-
 const ContentSchema = mongoose.Schema({
 	mediaType: Number,
 	title: String,
@@ -27,6 +22,5 @@ const ContentSchema = mongoose.Schema({
 });
 
 module.exports = {
-	Char: mongoose.model('Char', CharacterDialogueSchema),
 	Cont: mongoose.model('Cont', ContentSchema)
 }
