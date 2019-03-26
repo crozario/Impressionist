@@ -4,8 +4,9 @@ const schema = require('../models/cont.model.js');
 
 // verify that user-provided username is unique
 exports.insertIntoContentDB = (req,res) => {
+	const info = req.body;
 	// validate request
-	if(!req.body.title || !req.body.length || !req.body.mediaFileLocation || !req.body.captions || !req.body.featureFileLocations || !req.body.emotionsList) {
+	if(!info.title || !info.length || !info.mediaFileLocation || !info.captions || !info.featureFileLocations || !info.emotionsList) {
 		return res.status(400).json({
 			status: "failure",
 			error: "one of the required fields was not provided"
@@ -15,13 +16,13 @@ exports.insertIntoContentDB = (req,res) => {
 	// mediaType :
 	// 		0  -->  tv show
 	// 		1  -->  movie
-	if(req.body.seasonNumber && req.body.episodeNumber &&req.body.episodeTitle) {
+	if(info.seasonNumber && info.episodeNumber &&info.episodeTitle) {
 		// search the db to see if a document already exists for the same tv show/season/episode
-		schema.Cont.findOne({'title': req.body.title, 'seasonNumber': req.body.seasonNumber, 'episodeNumber': req.body.episodeNumber})
+		schema.Cont.findOne({'title': info.title, 'seasonNumber': info.seasonNumber, 'episodeNumber': info.episodeNumber})
 		.then(result => {
 			if(result) {
 				// delete existing record --> the data from req will be saved in a new document in the db later
-				schema.Cont.updateOne({'title': req.body.title, 'seasonNumber': req.body.seasonNumber, 'episodeNumber': req.body.episodeNumber}, {'episodeTitle': req.body.episodeTitle, 'length': req.body.length, 'mediaFileLocation': req.body.mediaFileLocation, 'captions': req.body.captions, 'featureFileLocations': req.body.featureFileLocations, 'emotionsList': req.body.emotionsList, 'netflixSubtitleOffset': req.body.netflixSubtitleOffset, 'characterNames': req.body.characterNames, 'characterDialogueIDs': req.body.characterDialogueIDs}, function(err) {
+				schema.Cont.updateOne({'title': info.title, 'seasonNumber': info.seasonNumber, 'episodeNumber': info.episodeNumber}, {'episodeTitle': info.episodeTitle, 'length': info.length, 'mediaFileLocation': info.mediaFileLocation, 'captions': info.captions, 'featureFileLocations': info.featureFileLocations, 'emotionsList': info.emotionsList, 'netflixSubtitleOffset': info.netflixSubtitleOffset, 'characterNames': info.characterNames, 'characterDialogueIDs': info.characterDialogueIDs}, function(err) {
 					if(err) {
 						return res.status(500).json({
 							status: "failure",
@@ -36,18 +37,18 @@ exports.insertIntoContentDB = (req,res) => {
 			} else {
 				global.content = new schema.Cont({
 					mediaType: 0,
-					title: req.body.title,
-					seasonNumber: req.body.seasonNumber,
-					episodeNumber: req.body.episodeNumber,
-					episodeTitle: req.body.episodeTitle,
-					length: req.body.length,
-					mediaFileLocation: req.body.mediaFileLocation,
-					captions: req.body.captions,
-					featureFileLocations: req.body.featureFileLocations,
-					emotionsList: req.body.emotionsList,
-					netflixSubtitleOffset: req.body.netflixSubtitleOffset,
-					characterNames: req.body.characterNames,
-					characterDialogueIDs: req.body.characterDialogueIDs
+					title: info.title,
+					seasonNumber: info.seasonNumber,
+					episodeNumber: info.episodeNumber,
+					episodeTitle: info.episodeTitle,
+					length: info.length,
+					mediaFileLocation: info.mediaFileLocation,
+					captions: info.captions,
+					featureFileLocations: info.featureFileLocations,
+					emotionsList: info.emotionsList,
+					netflixSubtitleOffset: info.netflixSubtitleOffset,
+					characterNames: info.characterNames,
+					characterDialogueIDs: info.characterDialogueIDs
 				});
 				// store content information in the database
 				content.save()
@@ -71,11 +72,11 @@ exports.insertIntoContentDB = (req,res) => {
 		
 	} else {
 		// search the db to see if a document already exists for the same movie
-		schema.Cont.findOne({'title': req.body.title})
+		schema.Cont.findOne({'title': info.title})
 		.then(result => {
 			if(result) {
 				// delete existing record --> the data from req will be saved in a new document in the db later
-				schema.Cont.updateOne({'title': req.body.title}, {'length': req.body.length, 'mediaFileLocation': req.body.mediaFileLocation, 'captions': req.body.captions, 'featureFileLocations': req.body.featureFileLocations, 'emotionsList': req.body.emotionsList, 'netflixSubtitleOffset': req.body.netflixSubtitleOffset, 'characterNames': req.body.characterNames, 'characterDialogueIDs': req.body.characterDialogueIDs}, function(err) {
+				schema.Cont.updateOne({'title': info.title}, {'length': info.length, 'mediaFileLocation': info.mediaFileLocation, 'captions': info.captions, 'featureFileLocations': info.featureFileLocations, 'emotionsList': info.emotionsList, 'netflixSubtitleOffset': info.netflixSubtitleOffset, 'characterNames': info.characterNames, 'characterDialogueIDs': info.characterDialogueIDs}, function(err) {
 					if(err) {
 						return res.status(500).json({
 							status: "failure",
@@ -90,15 +91,15 @@ exports.insertIntoContentDB = (req,res) => {
 			} else {
 				global.content = new schema.Cont({
 					mediaType: 1,
-					title: req.body.title,
-					length: req.body.length,
-					mediaFileLocation: req.body.mediaFileLocation,
-					captions: req.body.captions,
-					featureFileLocations: req.body.featureFileLocations,
-					emotionsList: req.body.emotionsList,
-					netflixSubtitleOffset: req.body.netflixSubtitleOffset,
-					characterNames: req.body.characterNames,
-					characterDialogueIDs: req.body.characterDialogueIDs
+					title: info.title,
+					length: info.length,
+					mediaFileLocation: info.mediaFileLocation,
+					captions: info.captions,
+					featureFileLocations: info.featureFileLocations,
+					emotionsList: info.emotionsList,
+					netflixSubtitleOffset: info.netflixSubtitleOffset,
+					characterNames: info.characterNames,
+					characterDialogueIDs: info.characterDialogueIDs
 				});
 				content.save()
 				.then(data => {
@@ -123,20 +124,21 @@ exports.insertIntoContentDB = (req,res) => {
 
 // retrieve content for game play
 exports.gamePlay = (req,res) => {
+	const info = req.body;
 	// validate request
-	if(!req.body.contentID) {
+	if(!info.contentID) {
 		return res.status(400).json({
 			status: "failure",
 			error: "contentID or dialogueID was not provided"
 		});
 	}
 	// find media document associated with contentID and retrieve features file URL using dialogueID
-	schema.Cont.findById(mongoose.Types.ObjectId(req.body.contentID))
+	schema.Cont.findById(mongoose.Types.ObjectId(info.contentID))
 	.then(result => {
 		if(result) {
-			var url = result.featureFileLocations[req.body.dialogueID];
-			var emotion = result.emotionsList[req.body.dialogueID];
-			var captions = result.captions[req.body.dialogueID];
+			var url = result.featureFileLocations[info.dialogueID];
+			var emotion = result.emotionsList[info.dialogueID];
+			var captions = result.captions[info.dialogueID];
 			return res.json({
 				status: "success",
 				featureURL: url,
@@ -154,14 +156,15 @@ exports.gamePlay = (req,res) => {
 
 // retrieve all data from content document
 exports.retrieveContentData = (req,res) => {
+	const info = req.body;
 	// validate request
-	if(!req.body.contentID) {
+	if(!info.contentID) {
 		return res.status(400).json({
 			status: "failure",
 			error: "contentID or dialogueID was not provided"
 		});
 	}
-	schema.Cont.findById(mongoose.Types.ObjectId(req.body.contentID))
+	schema.Cont.findById(mongoose.Types.ObjectId(info.contentID))
 	.then(result => {
 		if(result) {
 			return res.json({
