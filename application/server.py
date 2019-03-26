@@ -12,15 +12,6 @@ app.config['SECRET_KEY'] = 'secret!'
 
 socketio = SocketIO(app)
 
-@socketio.on('compareDialogue')
-def handle_compareDialogue(message):
-    print("on compareDialogue")
-    print(message['gameID'])
-    print(message['contentID'])
-    print(message['dialogueID'])
-
-    return "received compareDialogue Message"
-
 @socketio.on('connect')
 def test_connect():
     print('a user connected')
@@ -29,6 +20,30 @@ def test_connect():
 def test_disconnect():
     print('a user disconnected')
 
+@socketio.on('compareDialogue')
+def handle_compareDialogue(message):
+    print("on compareDialogue")
+    print(message['gameID'])
+    print(message['contentID'])
+    print(message['dialogueID'])
+    print(message['audioBlob'])
+
+    return "received compareDialogue Message"
+
+# interface to send dialogue 2D array
+@socketio.on('getDialogue')
+def handle_getDialogue(message):
+    print(message)
+
+# get unique characters
+@socketio.on('getUniqueCharacters')
+def handle_getUniqueCharacters(message):
+    print(message)
+
+# calibrate vtt file with netflix subtitles
+@socketio.on('calibrate')
+def handle_calibrate(message):
+    print(message)
 
 
 if __name__ == '__main__':
