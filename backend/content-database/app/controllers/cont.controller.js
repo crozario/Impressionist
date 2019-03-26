@@ -147,5 +147,10 @@ exports.retrieveContentData = (req,res) => {
 				result: result
 			});
 		}
-	})
+	}).catch(err => {
+		return res.status(500).json({
+			status: "failure",
+			error: err.message || "error retrieving information from the database"
+		});
+	});
 };
