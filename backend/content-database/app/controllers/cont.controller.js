@@ -21,13 +21,45 @@ exports.insertIntoContentDB = (req,res) => {
 		.then(result => {
 			if(result) {
 				// delete existing record --> the data from req will be saved in a new document in the db later
-				schema.Cont.deleteOne({'title': req.body.title, 'seasonNumber': req.body.seasonNumber, 'episodeNumber': req.body.episodeNumber}, function(err,raw) {
+				schema.Cont.updateOne({'title': req.body.title, 'seasonNumber': req.body.seasonNumber, 'episodeNumber': req.body.episodeNumber}, {'episodeTitle': req.body.episodeTitle, 'length': req.body.length, 'mediaFileLocation': req.body.mediaFileLocation, 'captions': req.body.captions, 'featureFileLocations': req.body.featureFileLocations, 'emotionsList': req.body.emotionsList, 'netflixSubtitleOffset': req.body.netflixSubtitleOffset, 'characterNames': req.body.characterNames, 'characterDialogueIDs': req.body.characterDialogueIDs}, function(err) {
 					if(err) {
 						return res.status(500).json({
 							status: "failure",
 							error: err.message || "error occured when updating tv show document"
 						});
+					} else {
+						return res.json({
+							status: "success"
+						});
 					}
+				});
+			} else {
+				global.content = new schema.Cont({
+					mediaType: 0,
+					title: req.body.title,
+					seasonNumber: req.body.seasonNumber,
+					episodeNumber: req.body.episodeNumber,
+					episodeTitle: req.body.episodeTitle,
+					length: req.body.length,
+					mediaFileLocation: req.body.mediaFileLocation,
+					captions: req.body.captions,
+					featureFileLocations: req.body.featureFileLocations,
+					emotionsList: req.body.emotionsList,
+					netflixSubtitleOffset: req.body.netflixSubtitleOffset,
+					characterNames: req.body.characterNames,
+					characterDialogueIDs: req.body.characterDialogueIDs
+				});
+				// store content information in the database
+				content.save()
+				.then(data => {
+					return res.json({
+						status: "success"
+					});
+				}).catch(err => {
+					return res.status(500).json({
+						status: "failure",
+						error: err.message || "error occured while storing infromation in the database"
+					});
 				});
 			}
 		}).catch(err => {
@@ -36,34 +68,48 @@ exports.insertIntoContentDB = (req,res) => {
 				error: err.message || "error occured when searching for similar tv show document in db"
 			});
 		});
-		global.content = new schema.Cont({
-			mediaType: 0,
-			title: req.body.title,
-			seasonNumber: req.body.seasonNumber,
-			episodeNumber: req.body.episodeNumber,
-			episodeTitle: req.body.episodeTitle,
-			length: req.body.length,
-			mediaFileLocation: req.body.mediaFileLocation,
-			captions: req.body.captions,
-			featureFileLocations: req.body.featureFileLocations,
-			emotionsList: req.body.emotionsList,
-			netflixSubtitleOffset: req.body.netflixSubtitleOffset,
-			characterNames: req.body.characterNames,
-			characterDialogueIDs: req.body.characterDialogueIDs
-		});
+		
 	} else {
 		// search the db to see if a document already exists for the same movie
 		schema.Cont.findOne({'title': req.body.title})
 		.then(result => {
 			if(result) {
 				// delete existing record --> the data from req will be saved in a new document in the db later
-				schema.Cont.deleteOne({'title': req.body.title}, function(err,raw) {
+				schema.Cont.updateOne({'title': req.body.title}, {'length': req.body.length, 'mediaFileLocation': req.body.mediaFileLocation, 'captions': req.body.captions, 'featureFileLocations': req.body.featureFileLocations, 'emotionsList': req.body.emotionsList, 'netflixSubtitleOffset': req.body.netflixSubtitleOffset, 'characterNames': req.body.characterNames, 'characterDialogueIDs': req.body.characterDialogueIDs}, function(err) {
 					if(err) {
 						return res.status(500).json({
 							status: "failure",
-							error: err.message || "error occured when updating tv show document"
+							error: err.message || "error occured when updating movie document"
+						});
+					} else {
+						return res.json({
+							status: "success"
 						});
 					}
+				});
+			} else {
+				global.content = new schema.Cont({
+					mediaType: 1,
+					title: req.body.title,
+					length: req.body.length,
+					mediaFileLocation: req.body.mediaFileLocation,
+					captions: req.body.captions,
+					featureFileLocations: req.body.featureFileLocations,
+					emotionsList: req.body.emotionsList,
+					netflixSubtitleOffset: req.body.netflixSubtitleOffset,
+					characterNames: req.body.characterNames,
+					characterDialogueIDs: req.body.characterDialogueIDs
+				});
+				content.save()
+				.then(data => {
+					return res.json({
+						status: "success"
+					});
+				}).catch(err => {
+					return res.status(500).json({
+						status: "failure",
+						error: err.message || "error occured while storing infromation in the database"
+					});
 				});
 			}
 		}).catch(err => {
@@ -72,31 +118,8 @@ exports.insertIntoContentDB = (req,res) => {
 				error: err.message || "error occured when searching for similar tv show document in db"
 			});
 		});
-		global.content = new schema.Cont({
-			mediaType: 1,
-			title: req.body.title,
-			length: req.body.length,
-			mediaFileLocation: req.body.mediaFileLocation,
-			captions: req.body.captions,
-			featureFileLocations: req.body.featureFileLocations,
-			emotionsList: req.body.emotionsList,
-			netflixSubtitleOffset: req.body.netflixSubtitleOffset,
-			characterNames: req.body.characterNames,
-			characterDialogueIDs: req.body.characterDialogueIDs
-		});
 	}
-	// store content information in the database
-	content.save()
-	.then(data => {
-		return res.json({
-			status: "success"
-		});
-	}).catch(err => {
-		return res.status(500).json({
-			status: "failure",
-			error: err.message || "error occured while storing infromation in the database"
-		});
-	});
+	
 };
 
 // retrieve content for game play
