@@ -7,6 +7,9 @@ module.exports = (app) => {
 	// retrieve content for game play
 	app.post('/cont/play', cont.gamePlay);
 
+	// retrieve all data from content document
+	app.post('/cont/retrieve', cont.retrieveContentData);
+
 	// store data for user
 	// app.post('/cont/storeGame', cont.storeGame);
 
