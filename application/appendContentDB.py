@@ -262,7 +262,7 @@ if __name__=='__main__':
     secondsDuration = getVideoFileDuration(mediaFile)
     # get dialogue information of vtt file
     from dialogueExtraction.dialogueExtraction import getUniqueCharacter, getDialogueIntervalsWithCaptions, getCharacterDialogueIdsDict
-    # FIXME: add `netflixOffset` attribute to database
+    # FIXME: add `netflixSubtitleOffset` from front in a better way
     netflixSubtitleOffset = -2000 # for the friendss02e12 - this means 2000 ms have to be subtracted from our subtitle values when we serve them to front
     uniqueCharacterNames = getUniqueCharacter(captionFile)
     dialogues2Darray = getDialogueIntervalsWithCaptions(captionFile)
@@ -275,11 +275,10 @@ if __name__=='__main__':
         "captionFile" : captionFile,
         "emotionsList" : emotions,
         "captions" : dialogues2Darray, 
-        "netflixSubtitleOffset": -2000, # NOTE: new - notify Debbie
-        "characterNames" : uniqueCharacterNames, # NOTE: new - notify Debbie
+        "netflixSubtitleOffset": netflixSubtitleOffset, 
+        "characterNames" : uniqueCharacterNames, 
         "characterDialogueIDs" : characterDialogueIDsDict
     }
-    # contentdict.update(characterDialogueIDsDict) # NOTE: new - notify Debbie
     if "contentData/movies" in dirName:
         contentdict["title"] = os.path.basename(dirName)
     else:
@@ -296,7 +295,8 @@ if __name__=='__main__':
 
     # SEND jSON
     import urllib.request #ref: https://stackoverflow.com/a/26876308/7303112
-    backURL = "http://localhost:3000/cont/"
+    contentDB_PORT = str(3002)
+    backURL = "http://localhost:"+contentDB_PORT+"/cont/"
     req = urllib.request.Request(backURL, method='POST')
     req.add_header('Content-Type', 'application/json; charset=utf-8')
     jsondataasbytes = contentJSON.encode('utf-8') # convert to bytes
