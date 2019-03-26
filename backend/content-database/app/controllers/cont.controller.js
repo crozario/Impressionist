@@ -58,7 +58,7 @@ exports.insertIntoContentDB = (req,res) => {
 				}).catch(err => {
 					return res.status(500).json({
 						status: "failure",
-						error: err.message || "error occured while storing infromation in the database"
+						error: err.message || "error occured while storing information in the database"
 					});
 				});
 			}
@@ -108,7 +108,7 @@ exports.insertIntoContentDB = (req,res) => {
 				}).catch(err => {
 					return res.status(500).json({
 						status: "failure",
-						error: err.message || "error occured while storing infromation in the database"
+						error: err.message || "error occured while storing information in the database"
 					});
 				});
 			}
@@ -119,7 +119,6 @@ exports.insertIntoContentDB = (req,res) => {
 			});
 		});
 	}
-	
 };
 
 // retrieve content for game play
@@ -174,6 +173,21 @@ exports.retrieveContentData = (req,res) => {
 		return res.status(500).json({
 			status: "failure",
 			error: err.message || "error retrieving information from the database"
+		});
+	});
+};
+
+exports.retrieveAllContent = (req,res) => {
+	schema.Cont.find({},'mediaType title seasonNumber episodeNumber episodeTitle length characterNames')
+	.then(result => {
+		return res.json({
+			status: "success",
+			result: result
+		});
+	}).catch(err => {
+		return res.status(500).json({
+			status: "failure",
+			error: err.message || "error occured when retrieving information from the database"
 		});
 	});
 };
