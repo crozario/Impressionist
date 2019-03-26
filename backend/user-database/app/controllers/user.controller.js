@@ -9,14 +9,15 @@ const schema = require('../models/user.model.js');
 
 // verify that user-provided username is unique
 exports.isUniqueUsername = (req,res) => {
+	const info = req.body;
 	// validate request
-	if(!req.body.username) {
+	if(!info.username) {
 		return res.status(400).json({
 			status: "failure",
 			error: "a username was not provided"
 		});
 	}
-	schema.User.findOne({'credentials.username': req.body.username})
+	schema.User.findOne({'credentials.username': info.username})
 	.then(exists => {
 		if(!exists) {
 			return res.json({
@@ -38,20 +39,47 @@ exports.isUniqueUsername = (req,res) => {
 
 // user sign-up, store basic sign-up information 
 exports.signUp = (req,res) => {
+	const info = req.body;
 	// validate request
-	if(!req.body.firstName || !req.body.lastName || !req.body.email || !req.body.username || !req.body.password) {
+	if(!info.firstName || !info.lastName || !info.email || !info.username || !info.password) {
 		return res.status(400).json({
 			status: "failure",
 			error: "some or all required fields were not provided"
 		});
 	}
 
-	schema.User.findOne({'credentials.emailAddress': req.body.email})
+	schema.User.findOne({'credentials.emailAddress': info.email})
 	.then(exists => {
 		if(exists) {
 			return res.status(400).json({
 				status: "failure",
 				error: "an account with the user-provided email address already exists"
+			});
+		} else {
+			// create a new user
+			const cred = new schema.Cred({
+				emailAddress: info.email,
+				username: info.username,
+				password: info.password
+			});
+			const user_s = new schema.User({
+				firstName: info.firstName,
+				lastName: info.lastName,
+				credentials: cred,
+				lastLogin: Date("<YYYY-mm-ddTHH:MM:ss>")
+			});
+			// store user information in the database 
+			user_s.save()
+			.then(data => {
+				return res.json({
+					status: "success",
+					info: data
+				});
+			}).catch(err => {
+				return res.status(500).json({
+					status: "failure",
+					error: err.message || "error occured while storing information in the database"
+				});
 			});
 		}
 	}).catch(err => {
@@ -60,50 +88,25 @@ exports.signUp = (req,res) => {
 			error: err.message || "error retrieving information from the database"
 		});
 	});
-
-	// create a new user
-	const cred = new schema.Cred({
-		emailAddress: req.body.email,
-		username: req.body.username,
-		password: req.body.password
-	});
-	const user_s = new schema.User({
-		firstName: req.body.firstName,
-		lastName: req.body.lastName,
-		credentials: cred,
-		lastLogin: Date("<YYYY-mm-ddTHH:MM:ss>")
-	});
-	// store user information in the database 
-	user_s.save()
-	.then(data => {
-		return res.json({
-			status: "success",
-			info: data
-		});
-	}).catch(err => {
-		return res.status(500).json({
-			status: "failure",
-			error: err.message || "error occured while storing information in the database"
-		});
-	});
 };
 
 // user sign-in, verify that user-provided username/email exists and check password
 exports.signIn = (req,res) => {
+	const info = req.body;
 	// validate request
-	if(!req.body.user && !req.body.password) {
+	if(!info.user && !info.password) {
 		return res.status(400).json({
 			status: "failure",
 			error: "username or password was not provided"
 		});
 	}
 	// build query based on whether the user signed-in with email or username
-	if((req.body.user).includes("@")) {
+	if((info.user).includes("@")) {
 		// res.setHeader('type', 'emailAddress');
-		var query = schema.User.findOne({'credentials.emailAddress': req.body.user});
+		var query = schema.User.findOne({'credentials.emailAddress': info.user});
 	} else {
 		// res.setHeader('type', 'username');
-		var query = schema.User.findOne({'credentials.username': req.body.user});
+		var query = schema.User.findOne({'credentials.username': info.user});
 	}
 	query.exec(function(err,doc) {
 		if(err) {
@@ -113,7 +116,7 @@ exports.signIn = (req,res) => {
 			});
 		}
 		// compare user-provided password with the hashed password from db, doc.credentials.password
-		bcrypt.compare(req.body.password,doc.credentials.password,function(err,result) {
+		bcrypt.compare(info.password,doc.credentials.password,function(err,result) {
 			if(err) {
 				return res.status(500).json({
 					status: "failure",
@@ -139,15 +142,16 @@ exports.signIn = (req,res) => {
 
 // initialize game
 exports.initializeGame = (req,res) => {
+	const info = req.body;
 	// validate request
-	if(!req.body.username || !req.body.contentID) {
+	if(!info.username || !info.contentID) {
 		return res.status(400).json({
 			status: "failure",
 			error: "a username or contentID was not provided"
 		});
 	}
 	// find user's document in the userDB
-	var query = schema.User.findOne({'credentials.username': req.body.username});
+	var query = schema.User.findOne({'credentials.username': info.username});
 	query.exec(function(err,doc) {
 		if(err) {
 			return res.status(500).json({
@@ -156,10 +160,10 @@ exports.initializeGame = (req,res) => {
 			});
 		}
 		// create game History schema to update user's document with
-		global.objectID = mongoose.Types.ObjectId(req.body.contentID);
+		global.objectID = mongoose.Types.ObjectId(info.contentID);
 		const history = new schema.Hist({
 			contentID: objectID,
-			// difficulty: req.body.difficulty,
+			// difficulty: info.difficulty,
 			completed: false,
 			activity: Date("<YYYY-mm-ddTHH:MM:ss>")
 			// averageAccuracy: 0
@@ -183,15 +187,16 @@ exports.initializeGame = (req,res) => {
 
 // store user score data
 exports.storeScoreData = (req,res) => {
+	const info = req.body;
 	// validate request
-	if(!req.body.username || !req.body.score || !req.body.gameID) {
+	if(!info.username || !info.score || !info.gameID) {
 		return res.status(400).json({
 			status: "failure",
 			error: "username, dialogueID, gameID, or score were not provided"
 		});
 	}
 	// find the user's game document connected to the given gameID and store/update data
-	var query = schema.User.findOne({'credentials.username': req.body.username});
+	var query = schema.User.findOne({'credentials.username': info.username});
 	query.exec(function(err,doc) {
 		if(err) {
 			return res.status(500).json({
@@ -201,10 +206,10 @@ exports.storeScoreData = (req,res) => {
 		}
 		// save data in the document
 		const score_data = new schema.Score({
-			score: req.body.score,
-			dialogueID: req.body.dialogueID
+			score: info.score,
+			dialogueID: info.dialogueID
 		});
-		doc.gameHistory.id(mongoose.Types.ObjectId(req.body.gameID)).score = score_data;
+		doc.gameHistory.id(mongoose.Types.ObjectId(info.gameID)).score = score_data;
 		doc.save()
 		.then(data => {
 			return res.json({
