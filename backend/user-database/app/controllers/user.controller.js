@@ -144,7 +144,7 @@ exports.signIn = (req,res) => {
 exports.initializeGame = (req,res) => {
 	const info = req.body;
 	// validate request
-	if(!info.username || !info.contentID) {
+	if(!info.username || !info.netflixWatchID) {
 		return res.status(400).json({
 			status: "failure",
 			error: "a username or contentID was not provided"
@@ -160,13 +160,10 @@ exports.initializeGame = (req,res) => {
 			});
 		}
 		// create game History schema to update user's document with
-		global.objectID = mongoose.Types.ObjectId(info.contentID);
 		const history = new schema.Hist({
-			contentID: objectID,
-			// difficulty: info.difficulty,
+			netflixWatchID: info.netflixWatchID,
 			completed: false,
 			activity: Date("<YYYY-mm-ddTHH:MM:ss>")
-			// averageAccuracy: 0
 		});
 		// save data in gameHistory field array
 		doc.gameHistory = history;
@@ -174,7 +171,7 @@ exports.initializeGame = (req,res) => {
 		.then(data => {
 			return res.json({
 				status: "success",
-				gameID: mongoose.Types.ObjectId(data.gameHistory[0]._id)
+				gameID: data.gameHistory[0]._id
 			});
 		}).catch(err => {
 			return res.status(500).json({

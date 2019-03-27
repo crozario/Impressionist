@@ -25,12 +25,10 @@ const ScoreSchema = mongoose.Schema({
 });
 
 const HistorySchema = mongoose.Schema({
-	contentID: mongoose.Schema.Types.ObjectId, 
-	// difficulty: String,
+	netflixWatchID: String, 
 	completed: Boolean,
 	activity: Array,
 	score: {type: [ScoreSchema], default: undefined}
-	// averageAccuracy: Number
 });
 
 const UserSchema = mongoose.Schema({

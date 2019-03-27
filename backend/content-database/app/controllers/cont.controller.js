@@ -194,3 +194,30 @@ exports.retrieveAllContent = (req,res) => {
 		});
 	});
 };
+
+exports.initializeGame = (req,res) => {
+	// validate request
+	if(!info.netflixWatchID) {
+		return res.status(400).json({
+			status: "failure",
+			error: "watchID was not provided"
+		});
+	}
+	schema.Cont.findOne({'netflixWatchID': info.watchID}, 'characterNames')
+	.then(data => {
+		if(data) {
+			return res.json({
+				result: "supported",
+				characters: data
+			});
+		} else {
+			return res.json({
+				result: "not supported"
+			});
+		}
+	}).catch(err => {
+		return res.status(500).json({
+			error: err.message || "error retrieving information from the database"
+		});
+	})
+};

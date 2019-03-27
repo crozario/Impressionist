@@ -12,6 +12,7 @@ app.config['SECRET_KEY'] = 'secret!'
 
 socketio = SocketIO(app)
 
+
 @socketio.on('connect')
 def test_connect():
     print('a user connected')
@@ -23,9 +24,10 @@ def test_disconnect():
 @socketio.on('compareDialogue')
 def handle_compareDialogue(message):
     print("on compareDialogue")
-    print(message['gameID'])
-    print(message['contentID'])
-    print(message['dialogueID'])
+    print(message)
+    # print(message['gameID'])
+    # print(message['contentID'])
+    # print(message['dialogueID'])
     # print(message['audioBlob'])
 
     return "received compareDialogue Message"

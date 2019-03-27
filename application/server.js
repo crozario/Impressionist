@@ -92,6 +92,6 @@ io.on('connection', socket => {
 });
 
 // host location
-server.listen(serverPort, () => {
+server.listen(serverPort, hostname='0.0.0.0', () => {
     console.log("listening on port : " + serverPort );
 })
