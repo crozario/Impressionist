@@ -76,8 +76,6 @@ let loginButtonPressed = () => {
 
     let stringifedData = JSON.stringify(data);
 
-    // alert(stringifedData);
-    
     var req = new XMLHttpRequest();
 
     req.onreadystatechange = function () {
