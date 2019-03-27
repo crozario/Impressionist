@@ -11,8 +11,8 @@ Description: Content script to interact with the webpage
 
 // socket.io connection
 const serverPort = 3000
-// const serverHost = "http://localhost"
-const serverHost = "10.202.133.175"
+const serverHost = "http://localhost"
+// const serverHost = "10.202.133.175"
 // const serverHost = "https://impressionist.localtunnel.me"
 const socketAddress = serverHost + ":" + serverPort
 const socket = io.connect(socketAddress);
@@ -44,7 +44,7 @@ const timeDelay = 50;
 let getContentInfo = () => {
 
     let data = {
-        "watchID" : "70274032"
+        "netflixWatchID" : "70274032"
     }
 
     let stringifedData = JSON.stringify(data);
@@ -55,17 +55,17 @@ let getContentInfo = () => {
         if (req.readyState == 4) {
             if (req.status == 200) {  
                 console.log("initializeContent");
+                // console.log(JSON.parse(req.responseText));
                 console.log(req.responseText);
-                alert(req.responseText);
 
             } else {
-                alert("error");
-                alert(req.responseText)
+                console.log("error on initializeContent");
+                console.log(req.responseText);
             }
         }
     }
 
-    req.open("POST", "http://localhost:3001/cont/initializeGame", true);
+    req.open("POST", "http://localhost:3002/cont/initializeGame", true);
     req.setRequestHeader("Content-Type", "application/json");
     req.send(stringifedData);
 }
@@ -74,7 +74,7 @@ let getUserInfo = () => {
 
     let data = {
         "username" : "c.rozario",
-        "watchID" : "70274032"
+        "netflixWatchID" : "70274032"
     }
 
     let stringifedData = JSON.stringify(data);
@@ -85,15 +85,16 @@ let getUserInfo = () => {
         if (req.readyState == 4) {
             if (req.status == 200) {  
                 console.log("initializeGame");
+                // console.log(JSON.parse(req.responseText));
                 console.log(req.responseText);
             } else {
-                alert("error");
-                alert(req.responseText)
+                console.log("error on initializeGame");
+                console.log(req.responseText);
             }
         }
     }
 
-    req.open("POST", "http://localhost:3002/user/initializeGame", true);
+    req.open("POST", "http://localhost:3001/user/initializeGame", true);
     req.setRequestHeader("Content-Type", "application/json");
     req.send(stringifedData);
 }
@@ -376,11 +377,9 @@ let isInBetweenDialogues = (timeOne, timeTwo) => {
     if(currentTime > timeOne && currentTime < timeTwo) {
         return true;
     } else {
-        return false
+        return false;
     }
 }
-
-
 
 // let setPreviousAndNextIfExists = (currentDialogueID) => {
 //     if (doesDialogueExist(currentDialogueID - 1, contentInfo.dialogueTimeArray)) { // if previous exists
