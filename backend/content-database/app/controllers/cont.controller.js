@@ -206,14 +206,14 @@ exports.initializeGame = (req,res) => {
 			error: "watchID was not provided"
 		});
 	}
-	schema.Cont.findOne({ 'netflixWatchID': info.netflixWatchID }, 'characterNames', 'captions', 'characterDialogueIDs')
+	schema.Cont.findOne({'netflixWatchID': info.netflixWatchID }, {'characterNames':1, 'captions':1 , 'characterDialogueIDs':1})
 	.then(data => {
 		if(data) {
 			return res.json({
 				result: "supported",
 				characterNames : data.characterNames,
-				captions : data.captions,
-				characterDialogueIDs : data.characterDialogueIDs
+				characterDialogueIDs : data.characterDialogueIDs,
+				captions : data.captions
 			});
 		} else {
 			return res.json({
