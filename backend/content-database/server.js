@@ -1,10 +1,15 @@
 const express = require('express');
 const bodyParser = require('body-parser');
+const cors = require('cors');
 
 const PORT = 3002;
 
 // create express app
 const app = express();
+
+// added CORS(Cross-Origin Resource Sharing) headers 
+app.use(cors())
+
 // parse requests of content-type - application/x-www-form-urlencoded
 app.use(bodyParser.urlencoded({ extended: true }))
 // parse application/json
