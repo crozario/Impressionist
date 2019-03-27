@@ -197,6 +197,7 @@ if __name__=='__main__':
     parser = argparse.ArgumentParser(
         description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("mediaDirectory", type=str, help="parent folder containing video file (.mkv or .mp4(tested)) and subtitle file (.vtt ; .srt WON'T work)")
+
     args = parser.parse_args()
 
     mediaFile, captionFile = getMediaAndCaptionFiles(args.mediaDirectory)
@@ -207,13 +208,9 @@ if __name__=='__main__':
     emotionsLogFile = os.path.join(dirName, "emotions.csv")
     # used when converting video to audio
     samplingRate = 44100
-
-    # intervals = vttExtractDialogues(captionFile)
-    # millidialogues = convertIntervalsToMilliseconds(intervals)
-    # twoDmilli = []
-    # _ = [twoDmilli.append([start, end]) for start, end in millidialogues]
-    # print(twoDmilli)
-    # exit()
+    # FIXME: add `netflixSubtitleOffset` from front in a better way
+    netflixSubtitleOffset = -2000
+    netflixWatchID = "70274032"
 
     """
     Plan
@@ -262,9 +259,6 @@ if __name__=='__main__':
     secondsDuration = getVideoFileDuration(mediaFile)
     # get dialogue information of vtt file
     from dialogueExtraction.dialogueExtraction import getUniqueCharacter, getDialogueIntervalsWithCaptions, getCharacterDialogueIdsDict
-    # FIXME: add `netflixSubtitleOffset` from front in a better way
-    netflixSubtitleOffset = -2000 # for the friendss02e12 - this means 2000 ms have to be subtracted from our subtitle values when we serve them to front
-    netflixWatchID = "70274032"
     uniqueCharacterNames = getUniqueCharacter(captionFile)
     dialogues2Darray = getDialogueIntervalsWithCaptions(captionFile)
     characterDialogueIDsDict = getCharacterDialogueIdsDict(captionFile)
