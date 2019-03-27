@@ -13,6 +13,9 @@ module.exports = (app) => {
 	// retrieve all data from database, all documents
 	app.post('/cont/retrieveAll', cont.retrieveAllContent);
 
+	// retrieve data to initialize game
+	app.post('/cont/initializeGame', cont.initializeGame);
+
 	// store data for user
 	// app.post('/cont/storeGame', cont.storeGame);
 
