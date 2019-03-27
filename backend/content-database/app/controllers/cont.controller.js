@@ -46,6 +46,7 @@ exports.insertIntoContentDB = (req,res) => {
 					captions: info.captions,
 					featureFileLocations: info.featureFileLocations,
 					emotionsList: info.emotionsList,
+					netflixWatchID: info.netflixWatchID,
 					netflixSubtitleOffset: info.netflixSubtitleOffset,
 					characterNames: info.characterNames,
 					characterDialogueIDs: info.characterDialogueIDs
@@ -97,6 +98,7 @@ exports.insertIntoContentDB = (req,res) => {
 					captions: info.captions,
 					featureFileLocations: info.featureFileLocations,
 					emotionsList: info.emotionsList,
+					netflixWatchID: info.netflixWatchID,
 					netflixSubtitleOffset: info.netflixSubtitleOffset,
 					characterNames: info.characterNames,
 					characterDialogueIDs: info.characterDialogueIDs
