@@ -198,6 +198,7 @@ exports.retrieveAllContent = (req,res) => {
 };
 
 exports.initializeGame = (req,res) => {
+	const info = req.body;
 	// validate request
 	if(!info.netflixWatchID) {
 		return res.status(400).json({
@@ -205,7 +206,7 @@ exports.initializeGame = (req,res) => {
 			error: "watchID was not provided"
 		});
 	}
-	schema.Cont.findOne({'netflixWatchID': info.watchID}, 'characterNames')
+	schema.Cont.findOne({'netflixWatchID': info.netflixWatchID}, 'characterNames')
 	.then(data => {
 		if(data) {
 			return res.json({

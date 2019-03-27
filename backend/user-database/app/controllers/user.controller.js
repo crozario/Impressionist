@@ -163,10 +163,11 @@ exports.initializeGame = (req,res) => {
 		const history = new schema.Hist({
 			netflixWatchID: info.netflixWatchID,
 			completed: false,
-			activity: Date("<YYYY-mm-ddTHH:MM:ss>")
+			activity: Date("<YYYY-mm-ddTHH:MM:ss>"),
+			scores: []
 		});
 		// save data in gameHistory field array
-		doc.gameHistory = history;
+		doc.gameHistory.push(history);
 		doc.save()
 		.then(data => {
 			return res.json({
