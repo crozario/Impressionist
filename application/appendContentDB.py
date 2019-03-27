@@ -264,6 +264,7 @@ if __name__=='__main__':
     from dialogueExtraction.dialogueExtraction import getUniqueCharacter, getDialogueIntervalsWithCaptions, getCharacterDialogueIdsDict
     # FIXME: add `netflixSubtitleOffset` from front in a better way
     netflixSubtitleOffset = -2000 # for the friendss02e12 - this means 2000 ms have to be subtracted from our subtitle values when we serve them to front
+    netflixWatchID = "70274032"
     uniqueCharacterNames = getUniqueCharacter(captionFile)
     dialogues2Darray = getDialogueIntervalsWithCaptions(captionFile)
     characterDialogueIDsDict = getCharacterDialogueIdsDict(captionFile)
@@ -277,7 +278,8 @@ if __name__=='__main__':
         "captions" : dialogues2Darray, 
         "netflixSubtitleOffset": netflixSubtitleOffset, 
         "characterNames" : uniqueCharacterNames, 
-        "characterDialogueIDs" : characterDialogueIDsDict
+        "characterDialogueIDs" : characterDialogueIDsDict,
+        "netflixWatchID" : netflixWatchID
     }
     if "contentData/movies" in dirName:
         contentdict["title"] = os.path.basename(dirName)
