@@ -26,7 +26,7 @@ def handle_compareDialogue(message):
     print(message['gameID'])
     print(message['contentID'])
     print(message['dialogueID'])
-    print(message['audioBlob'])
+    # print(message['audioBlob'])
 
     return "received compareDialogue Message"
 
