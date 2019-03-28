@@ -150,37 +150,46 @@ exports.initializeGame = (req,res) => {
 			error: "a username or contentID was not provided"
 		});
 	}
-	// find user's document in the userDB
-	var query = schema.User.findOne({'credentials.username': info.username});
-	query.exec(function(err,doc) {
-		if(err) {
-			return res.status(500).json({
-				status: "failure",
-				error: err.message || "error occured when retrieving information from the database"
-			});
-		}
-		// create game History schema to update user's document with
-		const history = new schema.Hist({
-			netflixWatchID: info.netflixWatchID,
-			completed: false,
-			activity: Date("<YYYY-mm-ddTHH:MM:ss>"),
-			scores: []
-		});
-		// save data in gameHistory field array
-		doc.gameHistory.push(history);
-		doc.save()
-		.then(data => {
+	// check if gameID exists for the username and netflixWatchID
+	schema.User.findOne({'credentials.username': info.username}, {'gameHistory': {$elemMatch: {'netflixWatchID': info.netflixWatchID, 'completed': false}}})
+	.then(doc => {
+		if(doc) {
+		// if a gameHistory document DOES already exist for the specified username and netflixWatchID
 			return res.json({
 				status: "success",
-				gameID: data.gameHistory[0]._id
+				gameID: doc.gameHistory[0]._id,
+				resuming: true
 			});
-		}).catch(err => {
-			return res.status(500).json({
-				status: "failure",
-				error: err.message || "error occured when saving user game data into database"
+		} else { 
+		// if a gameHistory document DOES NOT already exist for the specified username and netflixWatchID
+			const history = new schema.Hist({
+				netflixWatchID: info.netflixWatchID,
+				completed: false,
+				activity: Date("<YYYY-mm-ddTHH:MM:ss>"),
+				scores: []
 			});
-		}); 
-	});
+			// save data in gameHistory field array
+			doc.gameHistory.push(history);
+			doc.save()
+			.then(data => {
+				return res.json({
+					status: "success",
+					gameID: data.gameHistory[0]._id,
+					resuming: false
+				});
+			}).catch(err => {
+				return res.status(500).json({
+					status: "failure",
+					error: err.message || "error occured when saving user game data into database"
+				});
+			});
+		}
+	}).catch(err => {
+		return res.status(500).json({
+			status: "failure",
+			error: err.message || "error retrieving information from the database"
+		});
+	})
 };
 
 // store user score data
