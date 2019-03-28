@@ -15,4 +15,7 @@ module.exports = (app) => {
 
 	// store user score data
 	app.post('/user/score', user.storeScoreData);
+
+	// close game and set 'completed' field to true
+	app.post('/user/closeGame', user.closeGame);
 }
