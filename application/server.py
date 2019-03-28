@@ -49,4 +49,5 @@ def handle_calibrate(message):
 
 
 if __name__ == '__main__':
+    print("Application Server is listening in port " + str(PORT))
     socketio.run(app, port=PORT)

@@ -41,6 +41,6 @@ require("./app/routes/user.routes.js")(app);
 
 // listen for requests
 app.listen(PORT, () => {
-	console.log("Server is listening on port "+PORT);
+	console.log("User Database Server is listening on port "+PORT);
 });
 

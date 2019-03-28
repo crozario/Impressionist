@@ -41,5 +41,5 @@ require("./app/routes/cont.routes.js")(app);
 
 // listen for requests
 app.listen(PORT, () => {
-	console.log("Server is listening on port "+PORT);
+	console.log("Content Database Server is listening on port "+PORT);
 });
