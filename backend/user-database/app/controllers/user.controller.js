@@ -221,3 +221,35 @@ exports.storeScoreData = (req,res) => {
 		});
 	});
 };
+
+// close game and set 'completed' field to true
+exports.closeGame = (req,res) => {
+	const info = req.body;
+	// validate request
+	if(info.reqType!='closeGame' || !info.gameID) {
+		return req.status(400).json({
+			status: "failure",
+			error: err.message || "reqType not closeGame or gameID not provided"
+		});
+	}
+	schema.User.findOne({'gameHistory._id': mongoose.Types.ObjectId(info.gameID)})
+	.then(doc => {
+		doc.gameHistory.id(mongoose.Types.ObjectId(info.gameID)).completed=true;
+		doc.save()
+		.then(data => {
+			return res.json({
+				status: "success"
+			});
+		}).catch(err => {
+			return res.status(500).json({
+				status: "failure",
+				error: err.message || "error occured when updating document"
+			});
+		});
+	}).catch(err => {
+		return res.status(500).json({
+			status: "failure",
+			error: err.message || "error retrieving information from the database"
+		});
+	});
+};
