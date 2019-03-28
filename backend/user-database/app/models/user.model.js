@@ -18,8 +18,8 @@ const StatsSchema = mongoose.Schema({
 });
 
 const ScoreSchema = mongoose.Schema({
-	score: Array,
-	dialogueID: Array
+	scores: Array,
+	dialogueIDs: Array
 }, {
 	_id: false
 });
@@ -28,7 +28,7 @@ const HistorySchema = mongoose.Schema({
 	netflixWatchID: String, 
 	completed: Boolean,
 	activity: Array,
-	score: {type: [ScoreSchema], default: undefined}
+	scores: ScoreSchema
 });
 
 const UserSchema = mongoose.Schema({
