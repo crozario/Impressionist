@@ -20,3 +20,10 @@ Entrepreneur Team members:
 - Deborah Santo
 - Alfurqan Khan
 - Raj Patel
+
+# Run development servers
+
+```bash
+./runServers.sh
+```
+

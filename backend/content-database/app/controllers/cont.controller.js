@@ -210,14 +210,14 @@ exports.initializeGame = (req,res) => {
 	.then(data => {
 		if(data) {
 			return res.json({
-				result: "supported",
+				supported : true,
 				characterNames : data.characterNames,
 				characterDialogueIDs : data.characterDialogueIDs,
 				captions : data.captions
 			});
 		} else {
 			return res.json({
-				result: "not supported"
+				supported : false
 			});
 		}
 	}).catch(err => {

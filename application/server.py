@@ -24,10 +24,10 @@ def test_disconnect():
 @socketio.on('compareDialogue')
 def handle_compareDialogue(message):
     print("on compareDialogue")
-    print(message)
-    # print(message['gameID'])
-    # print(message['contentID'])
-    # print(message['dialogueID'])
+    # print(message)
+    print(message['gameID'])
+    print(message['watchID'])
+    print(message['dialogueID'])
     # print(message['audioBlob'])
 
     return "received compareDialogue Message"
