@@ -24,7 +24,7 @@ def test_disconnect():
 @socketio.on('compareDialogue')
 def handle_compareDialogue(message):
     print("on compareDialogue")
-    # print(message)
+    print(message)
     print(message['gameID'])
     print(message['watchID'])
     print(message['dialogueID'])
@@ -43,9 +43,10 @@ def handle_getUniqueCharacters(message):
     print(message)
 
 # calibrate vtt file with netflix subtitles
-@socketio.on('calibrate')
-def handle_calibrate(message):
-    print(message)
+# NOT NEEDED atm (3/29/19) because manualling entering offset when adding to appending to contentDB
+# @socketio.on('calibrate')
+# def handle_calibrate(message):
+#     print(message)
 
 
 if __name__ == '__main__':

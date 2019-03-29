@@ -59,7 +59,7 @@ def printDialogueIntervalsJSON(charName, vttFile):
   lstjson = json.dumps({"dialogues" : lst})
   print(lstjson)
 
-def getDialogueIntervalsWithCaptions(vttFile):
+def getDialogueIntervalsWithCaptions(vttFile, offset=0):
   """Returns 2D array of dialogues' start/end times, and captions
   Array of shape (n, 3), where n is number of dialogues
   Ex: [
@@ -73,7 +73,7 @@ def getDialogueIntervalsWithCaptions(vttFile):
 
   allDialogues = []
   for line in subs:
-    allDialogues.append([line.start, line.end, line.text])
+    allDialogues.append([line.start + offset, line.end + offset, line.text])
 
   # return 2D array of shape (n, 3)
   return allDialogues

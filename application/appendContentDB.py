@@ -1,11 +1,13 @@
 """Adds content to mongoDB contentDB
-$ python3 appendContentDB.py <parentFolder>
+    $ python3 appendContentDB.py <parentFolder>
 NOTE: arg `parentFolder` is NOT individual file
-
+Example:
+    $ python appendContentDB.py ../contentData/tvShows/Friends/02/12-The-One-After-The-Superbowl-Part1/ "70274032" --subsOffset=-2000
 Rules / notes
 - using configFile -> `databuilder/configs/prosodyShs.conf`
-- MOST IMPORTANT: using relative paths so this file has to be in the same folder as `server.js` and `compareAudio.py` (VERY DELICATE STUFF)
+- MOST IMPORTANT: using relative paths so this file has to be in the same folder as `server` and `compareAudio.py` and any other file calling it (VERY DELICATE STUFF)
 - When adding files to database, convention should be followed (inside `contentData/README.md`)
+- Using fixed samplerate (44100) when converting content video to audio using FFMPEG
 
 Author: Haard @ Impressionist
 """
@@ -197,7 +199,9 @@ if __name__=='__main__':
     parser = argparse.ArgumentParser(
         description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("mediaDirectory", type=str, help="parent folder containing video file (.mkv or .mp4(tested)) and subtitle file (.vtt ; .srt WON'T work)")
-
+    parser.add_argument("netflixWatchID", type=str, help="watch id from netflix content's URL. REQUIRED argument because all video supported are currently netflix.")
+    # reason for offset is because netflix subtitles are shifted a bit
+    parser.add_argument('--subsOffset', help="add the certain float offset, in milliseconds, to the times read from .vtt subtitle file above. (default) 0", type=float, default=0.0)
     args = parser.parse_args()
 
     mediaFile, captionFile = getMediaAndCaptionFiles(args.mediaDirectory)
@@ -209,8 +213,8 @@ if __name__=='__main__':
     # used when converting video to audio
     samplingRate = 44100
     # FIXME: add `netflixSubtitleOffset` from front in a better way
-    netflixSubtitleOffset = -2000
-    netflixWatchID = "70274032"
+    netflixSubtitleOffset = args.subsOffset  # netflixSubtitleOffset = -2000
+    netflixWatchID = args.netflixWatchID  # netflixWatchID = "70274032"
 
     """
     Plan
@@ -260,7 +264,7 @@ if __name__=='__main__':
     # get dialogue information of vtt file
     from dialogueExtraction.dialogueExtraction import getUniqueCharacter, getDialogueIntervalsWithCaptions, getCharacterDialogueIdsDict
     uniqueCharacterNames = getUniqueCharacter(captionFile)
-    dialogues2Darray = getDialogueIntervalsWithCaptions(captionFile)
+    dialogues2Darray = getDialogueIntervalsWithCaptions(captionFile, offset=netflixSubtitleOffset)
     characterDialogueIDsDict = getCharacterDialogueIdsDict(captionFile)
     contentdict = {
         "reqType" : "appendContentDB",
