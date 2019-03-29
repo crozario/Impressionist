@@ -230,6 +230,26 @@ let injectSideBar = () => {
     currentDialogueElement.style.margin = "20px 0";
 
 
+    let userFeedbackContainer = document.createElement('div');
+    userFeedbackContainer.style.height = "150px";
+    userFeedbackContainer.style.margin = "0";
+    userFeedbackContainer.style.padding = "0";
+    userFeedbackContainer.style.textAlign = "center";
+
+    let characterPickerElement = document.createElement('select');
+    characterPickerElement.style.background = "linear-gradient(to right, #0BBFD6 0%, #5ACCC1 100%)";
+    
+    addCharacterNamesToPicker(characterPickerElement);
+
+    userFeedbackContainer.append(characterPickerElement);
+
+    let userSpeakElement = document.createElement('h4');
+    userSpeakElement.innerHTML = "PLEASE SPEAK THE DIALOGUE!";
+    userSpeakElement.id = "user-speak";
+    userSpeakElement.style.color = "red";
+    userSpeakElement.style.display = "none";
+    userFeedbackContainer.appendChild(userSpeakElement);
+
     // dialogue container element
     let dialogueContainerElement = document.createElement('div');
     dialogueContainerElement.style.width = "100%";
@@ -248,24 +268,12 @@ let injectSideBar = () => {
     dialogueTitleElement.style.padding = "10px 10px";
     dialogueContainerElement.appendChild(dialogueTitleElement);
     
-    let previousDialogueButton = createButton("Previous", dialogueContainerElement);
-    previousDialogueButton.addEventListener("click", goToPreviousDialogue)
+    let previousDialogueButton = createButton("Previous", dialogueContainerElement, 0);
+    previousDialogueButton.addEventListener("click", goToPreviousDialogue);
 
-    let nextDialogueButton = createButton("Next", dialogueContainerElement);
-    nextDialogueButton.addEventListener("click", goToNextDialogue)
+    let nextDialogueButton = createButton("Next", dialogueContainerElement, 0);
+    nextDialogueButton.addEventListener("click", goToNextDialogue);
 
-    let userFeedbackContainer = document.createElement('div');
-    userFeedbackContainer.style.height = "150px";
-    userFeedbackContainer.style.margin = "0";
-    userFeedbackContainer.style.padding = "0";
-    userFeedbackContainer.style.textAlign = "center";
-
-    let userSpeakElement = document.createElement('h4');
-    userSpeakElement.innerHTML = "PLEASE SPEAK THE DIALOGUE!";
-    userSpeakElement.id = "user-speak";
-    userSpeakElement.style.color = "red";
-    userSpeakElement.style.display = "none";
-    userFeedbackContainer.appendChild(userSpeakElement);
 
     sideBarContainerDivElement.appendChild(currentTimeElement);
     sideBarContainerDivElement.appendChild(currentDialogueElement);
@@ -275,7 +283,38 @@ let injectSideBar = () => {
 
     /* Manipulate to netflix webpage */
     videoContainer.style.right = "300px"; // need to add this to a class inside ('size-wrapper') to show and hide side bar
+}
 
+let addCharacterNamesToPicker = (pickerElement) => {
+    const noCharacterSelected = "No Character Selected";
+
+    const option = noCharacterSelected;
+    const optionElement = document.createElement('option');
+
+    optionElement.text = option;
+    optionElement.value = option;
+    pickerElement.add(optionElement);
+
+    for (var character of contentInfo.characterNames) {
+        const option = character;
+        const optionElement = document.createElement('option');
+
+        optionElement.text = option;
+        optionElement.value = option;
+        pickerElement.add(optionElement);
+    }
+
+    pickerElement.addEventListener("change", () => {
+        var selectedValue = this.value;
+
+        if(selectedValue === noCharacterSelected) {
+            contentInfo.characterPicked = null;
+            contentInfo.characterPickedIDs = null;
+        } else {
+            contentInfo.characterPicked = selectedValue;
+            contentInfo.characterPickedIDs = contentInfo.characterDialogueIDs[contentInfo.characterPicked];
+        }
+    })
 }
 
 
@@ -430,8 +469,13 @@ let isInBetweenDialogues = (timeOne, timeTwo) => {
 
 let checkDialogueIsCharacterPicked = () => {
     if(contentInfo.currentDialogueID !== null && contentInfo.characterPickedIDs !== null) {
+
+        // on dialogue user picked
         if(contentInfo.characterPickedIDs.includes(contentInfo.currentDialogueID)) {
             showUserSpeakElement();
+        
+
+        // not on dialogue user picked
         } else {
             hideUserSpeakElement()
         }
@@ -469,7 +513,7 @@ let checkAllDialogues = () => {
     }
 }
 
-let createButton = (value, parentElement) => {
+let createButton = (value, parentElement, colorID) => {
     let buttonElement = document.createElement('input');
     buttonElement.type = "button";
     buttonElement.value = value;
@@ -479,8 +523,14 @@ let createButton = (value, parentElement) => {
     buttonElement.style.border = "0";
     buttonElement.style.width = "100px";
     buttonElement.style.outline = "0";
-    buttonElement.style.background = "linear-gradient(to right, #0BBFD6 0%, #5ACCC1 100%)";
-    buttonElement.borderRadius = "5px";
+    
+    buttonElement.style.borderRadius = "5px";
+
+    if(colorID === 0) {
+        buttonElement.style.background = "linear-gradient(to right, #0BBFD6 0%, #5ACCC1 100%)";
+    } else if (colorID == 1) {
+        buttonElement.style.background = "red";
+    }
 
     // buttonElement.onmouseover = () => {
     //     console.log(this)
