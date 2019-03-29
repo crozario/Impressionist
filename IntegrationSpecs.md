@@ -50,13 +50,19 @@ WORDS
 
 # User stories
 ## *Append to content database*
+> Updated : 3/29/19
 - (contentProcessor → contentDatabase)
-    - MediaID
-    - dataArray (details of elements in the array in TV Show | Movie section above)
-        - If id == 1
-            - dataArray will contain TV show details
-        - If id == 2
-            - dataArray will contain Movie details
+    - "reqType" : "appendContentDB"
+    - "mediaFileLocation" : String (*relative location of file on local server*)
+    - "length" : Number (*duration of the content*)
+    - "featureFileLocations" : Array of Strings (*all paths relative to local server*)
+    - "captionFile" : String (*relative path to .vtt subtitle file. MUST include characterNames*)
+    - "emotionsList" : Array of Strings (*on word emotions of all dialogues in the movie/episode*)
+    - "captions" : 2D Array Numbers and Strings (*each row has [Number, Number, String] representing one dialogues [startTime, endTime, transcribedDialogue]*)
+    - "netflixSubtitleOffset" : Number (*positive or negative number representing the milliseconds adjustement to the dialogue start/stop times stored in contentDB*)
+    - "characterNames" : Array of Strings
+    - "characterDialogueID" : Map where keys are the same names from *characterNames* and values are Array of Numbers (*representing dialogueID where the character speaks*)
+    - "netflixWatchID" : String (*watch id from netflix content's URL*)
 - (contentProcessor ← contentDatabase)
     - Success / Failure
     - Error (if failure) - why might it fail?
@@ -64,18 +70,21 @@ WORDS
         - Received incomplete data
 
 ## *During game play*
+> Updated : 3/29/19
 - (Front → Application)
     - gameID
-    - contentID
+    - netflixWatchID
     - audioBuffer
     - dialogueID
 - (Application → contentDatabase)
-    - contentID
+    - netflixWatchID
     - dialogueID
 - (Application ← contentDatabase)
     - featureURL
+    - dialogueEmotion
+    - dialogueCaption
 - (Application → Front, userDatabase)
-    - Score
+    - Score (FIXME: i have 3 scores)
     - dialogueID
     - gameID
 

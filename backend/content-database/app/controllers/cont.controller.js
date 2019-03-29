@@ -128,24 +128,24 @@ exports.insertIntoContentDB = (req,res) => {
 exports.gamePlay = (req,res) => {
 	const info = req.body;
 	// validate request
-	if(!info.contentID) {
+	if (!info.netflixWatchID || (info.dialogueID == null)) {
 		return res.status(400).json({
 			status: "failure",
-			error: "contentID or dialogueID was not provided"
+			error: "netflixWatchID or dialogueID was not provided"
 		});
 	}
-	// find media document associated with contentID and retrieve features file URL using dialogueID
-	schema.Cont.findById(mongoose.Types.ObjectId(info.contentID))
+	// find media document associated with netflixWatchID and retrieve features file URL using dialogueID
+	schema.Cont.findOne({"netflixWatchID":info.netflixWatchID})
 	.then(result => {
 		if(result) {
 			var url = result.featureFileLocations[info.dialogueID];
 			var emotion = result.emotionsList[info.dialogueID];
-			var captions = result.captions[info.dialogueID];
+			var caption = result.captions[info.dialogueID];
 			return res.json({
 				status: "success",
 				featureURL: url,
 				dialogueEmotion: emotion,
-				captions: captions,
+				dialogueCaption: caption,
 			});
 		}
 	}).catch(err => {

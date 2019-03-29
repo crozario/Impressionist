@@ -137,7 +137,7 @@ window.onload = () => {
 
     })
 
-    return
+    // return
     
     // TODO: connect/intitialize with sockets 
 
