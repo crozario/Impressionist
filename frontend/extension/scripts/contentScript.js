@@ -10,18 +10,23 @@ Description: Content script to interact with the webpage
 // var port = chrome.runtime.connect();
 
 // socket.io connection
-const serverPort = 3000
-const serverHost = "http://localhost"
+const applicationServerPort = 3000;
+const applicationServerHost = "http://localhost";
 // const serverHost = "10.202.133.175"
 // const serverHost = "https://impressionist.localtunnel.me"
-const socketAddress = serverHost + ":" + serverPort
-const socket = io.connect(socketAddress);
+const socketAddress = applicationServerHost + ":" + applicationServerPort;
+
+let socket;
+
+const timeDelay = 50;
 
 // video states
 let currentTime = 0;
 let isPlaying = null;
 let isPaused = null;
 
+// states 
+let contentSupported = false;
 
 // content info
 
@@ -39,7 +44,6 @@ let contentInfo = {
     watchID : null
 }
 
-const timeDelay = 50;
 
 let gameInitialization = (username, watchID) => {
     return new Promise((resolve, reject) => {
@@ -116,13 +120,24 @@ window.onload = () => {
     const username = getUsername();
     
     ifGameSupported(watchID).then((jsonResult) => {
-        // console.log(jsonResult);
-        contentInfo.characterNames = jsonResult.characterNames
-        contentInfo.allDialogueTimes = jsonResult.captions
-        contentInfo.characterDialogueIDs = jsonResult.characterDialogueIDs
-
+        // content supported and received content info from content db
+        contentSupported = true;
+        contentInfo.characterNames = jsonResult.characterNames;
+        contentInfo.allDialogueTimes = jsonResult.captions;
+        contentInfo.characterDialogueIDs = jsonResult.characterDialogueIDs;
+        
         gameInitialization(username, watchID).then((jsonResult) => {
             contentInfo.gameID = jsonResult.gameID
+
+            const startTime = Date.now(); 
+            socket = io.connect(socketAddress);
+            console.log("socket connection : " + getDuration(startTime));
+            
+
+            setupContentScript();
+            setupEventListeners()
+            micInitialization();
+
 
         }).catch((error) => {
             console.log("error on initializeGame");
@@ -131,22 +146,12 @@ window.onload = () => {
 
     }).catch((error) => {
 
-        // game not supported
+        // content not supported
         console.log("error on initializeContent");
         console.log(error);
 
     })
 
-    // return
-    
-    // TODO: connect/intitialize with sockets 
-
-    setupContentScript();
-    setupEventListeners()
-
-    micInitialization();
-
-    
 }
 
 let setupContentScript = () => {
@@ -563,7 +568,7 @@ let compareDialogue = (currentAudioBlob) => {
         audioBlob : currentAudioBlob
     }, (response) => {
         console.log(response);
-        console.log("compareDialoge took : " + getDuration(startTime));
+        console.log("compareDialogue took : " + getDuration(startTime));
     });
 }
 
