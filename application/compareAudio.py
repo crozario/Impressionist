@@ -204,9 +204,9 @@ if __name__=='__main__':
     dialogueID = 0
     audioFile = 'tmpFiles/test.webm'
     gameID = "5c9e7faee8175c4566425568"  # don't have this yet to report score
-    # resultBYTES = performThreeComparisons(netflixWatchID, dialogueID, audioFile, gameID, verbose=True)
-    # print(resultBYTES)
-    resultBYTES = json.dumps({"gameID": "5c9e7faee8175c4566425568", "dialogueID": 32, "originalEmotion": "angry", "originalCaption": "I wonder if I did the right thing,\\\\Ngiving him away.", "phoneticScore": 48.04395060873494, "emotionScore": 0.0, "lyricalScore": 21.62162162162162, "averageScore": 23.221857410118854}).encode('utf-8')
+    resultBYTES = performThreeComparisons(netflixWatchID, dialogueID, audioFile, gameID, verbose=True)
+    print(resultBYTES)
+    # resultBYTES = json.dumps({"gameID": "5c9e7faee8175c4566425568", "dialogueID": 32, "originalEmotion": "angry", "originalCaption": "I wonder if I did the right thing,\\\\Ngiving him away.", "phoneticScore": 48.04395060873494, "emotionScore": 0.0, "lyricalScore": 21.62162162162162, "averageScore": 23.221857410118854}).encode('utf-8')
     backResponse = sendScoreToBack(resultBYTES)
     print(backResponse)
 
