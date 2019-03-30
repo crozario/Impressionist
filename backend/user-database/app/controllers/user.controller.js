@@ -209,14 +209,14 @@ exports.initializeGame = (req,res) => {
 exports.storeScoreData = (req,res) => {
 	const info = req.body;
 	// validate request
-	if(!info.username || !info.score || !info.gameID) {
+	if(!info.score || !info.gameID) {
 		return res.status(400).json({
 			status: "failure",
 			error: "username, dialogueID, gameID, or score were not provided"
 		});
 	}
 	// find the user's game document connected to the given gameID and store/update data
-	schema.User.findOne({'credentials.username': info.username, 'gameHistory._id': mongoose.Types.ObjectId(info.gameID)})
+	schema.User.findOne({/* 'credentials.username': info.username,  */'gameHistory._id': mongoose.Types.ObjectId(info.gameID)})
 	.then(doc => {
 		if(doc) {
 			doc.gameHistory.id(mongoose.Types.ObjectId(info.gameID)).scores.scores.push(info.score);
@@ -232,6 +232,13 @@ exports.storeScoreData = (req,res) => {
 					error: err.message || "error occured when storing score data in the database"
 				});
 			});
+		}
+		else {
+			// console.log("(userDB) Problem here");
+			return res.json({
+				status: "failure",
+				error: "could not find gameID " + info.gameID
+			})
 		}
 	}).catch(err => {
 		return res.status(500).json({

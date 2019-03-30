@@ -1,11 +1,17 @@
 #!/usr/bin/env python3
 
 # HOST = '127.0.0.1'  # Standard loopback interface address (localhost)
+import sys
+sys.path.insert(0, 'application/')
+sys.path.insert(0, 'application/signalComparison')
+from compareAudio import performThreeComparisons, sendScoreToBack
+
 PORT = 3000        # Port to listen on (non-privileged ports are > 1023)
 # python3 server.py
 
 from flask import Flask, render_template
 from flask_socketio import SocketIO, emit
+
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'secret!'
@@ -26,9 +32,13 @@ def handle_compareDialogue(message):
     print("on compareDialogue")
     print(message)
     print(message['gameID'])
-    print(message['watchID'])
+    print(message['netflixWatchID'])
     print(message['dialogueID'])
     # print(message['audioBlob'])
+
+    resultBYTES = performThreeComparisons(message['netflixWatchID'], message['dialogueID'], wavFile, message['gameID'])
+    # FIXME: don't wanna wait until back responds 
+    _ = sendScoreToBack(resultBYTES)
 
     return "received compareDialogue Message"
 
