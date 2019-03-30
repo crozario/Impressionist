@@ -30,7 +30,7 @@ import io
 from google.oauth2 import service_account
 
 
-credentials = service_account.Credentials.from_service_account_file('api-key.json')
+credentials = service_account.Credentials.from_service_account_file('speech_to_text/api-key.json')
 
 
 def transcribe_file_with_word_time_offsets(speech_file,language):

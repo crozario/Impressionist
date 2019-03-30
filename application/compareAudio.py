@@ -6,9 +6,11 @@ Author: Haard @ Impressionist
 """
 
 import subprocess
-
+# import cProfile
+# pr = cProfile.Profile()
 # add Impressionist HOME path
 import sys
+import os
 import json
 import urllib.request
 # sys.path.insert(0, '../')
@@ -17,6 +19,7 @@ from databuilder.extractFeatures import extractFeature as extract
 sys.path.insert(0, 'signalComparison/')
 from signalComparison.compareSig import compareSignals as compare
 sys.path.insert(0, 'speech_to_text/')
+from speech_to_text.sub_user_similarity import compareToDialogue
 
 CONTENTDB_PORT = 3002
 USERDB_PORT = 3001
@@ -45,12 +48,14 @@ def validateAudioFileFormat(audioFile):
 
 def comparePhoneticSimilarity(audioFile, featureFile, verbose=False):
     assert(".wav" in audioFile), "Expected .wav as audioFile"
-    # audioFile = '../frontend/audio_three-dialogue1.wav' # same file yields 100%
-    status, error = extract(audioFile, 'test.csv', 'databuilder/configs/prosodyShs.conf', verbose=verbose)
+    configFile = 'databuilder/configs/prosodyShs.conf'
+    if not (os.path.exists(configFile) and os.path.exists(audioFile) and os.path.exists(featureFile)):
+        print("One or more files don't exist (check paths). Cannot compare phonetics. exiting...")
+        return
+    status, error = extract(audioFile, featureFile, configFile, verbose=verbose)
     if not status: #failed
         print(error)
-        exit()
-
+        return
     similarity = compare("test.csv", featureFile, 'prosody', delimiter=';', verbose=verbose, plot=False)
     if verbose: print("Similarity: ", similarity)
     return similarity
@@ -67,7 +72,6 @@ def getProcessedFromContentDB(netflixWatchID, dialogueID):
     featureFileURL = ''
     emotion = '' 
     originalCaption = '' # dialogueID-th dialogue from captionFile
-    originalCaptionFile = '' # entire caption file URL
     # construct json
     reqdict = {
         "netflixWatchID" : netflixWatchID,
@@ -80,6 +84,7 @@ def getProcessedFromContentDB(netflixWatchID, dialogueID):
     req.add_header('Content-Type', 'application/json; charset=utf-8')
     req.add_header('Content-Length', len(reqbytes))
     # send request
+    # print("reqbytes:", reqbytes)
     response = urllib.request.urlopen(req, reqbytes)
     resString = response.read().decode('utf-8')
     resjson = json.loads(resString)
@@ -107,8 +112,6 @@ def compareEmotionSimilarity(audioFile, emotion, verbose=False):
 
 def compareLyricalSimilarity(audioFile, originalCaption, verbose=False):
     """Convert audioFile to text and compares against originalCaption string"""
-    sys.path.insert(0, 'speech_to_text/')
-    from speech_to_text.sub_user_similarity import compareToDialogue
     return compareToDialogue(audioFile, originalCaption, verbose=verbose)
 
 def performThreeComparisons(netflixWatchID, dialogueID, audioFile, gameID, verbose=False):
@@ -124,7 +127,7 @@ def performThreeComparisons(netflixWatchID, dialogueID, audioFile, gameID, verbo
     4. compareEmotion
     5. compareLyrical
     """
-    resultDICT = {"gameID" : gameID}
+    resultDICT = {"gameID" : gameID, "dialogueID" : dialogueID}
     overallscore = 0.0
     totalScores = 3
     # 1. get processed data from contentDB
@@ -145,10 +148,14 @@ def performThreeComparisons(netflixWatchID, dialogueID, audioFile, gameID, verbo
     if verbose: print("Similar emotion:", resultDICT["emotionScore"])
     overallscore += resultDICT["emotionScore"]
     # 5. Compare Lyrics
+    # pr.enable()
     lyricalSimilarity = compareLyricalSimilarity(audioFile, originalCaption, verbose=False)
+    # pr.disable()
+    # pr.print_stats(sort='time')
     resultDICT["lyricalScore"] = lyricalSimilarity*100
     if verbose: print("Lyrical Similarity:", resultDICT["lyricalScore"])
     overallscore += resultDICT["lyricalScore"]
+    overallscore /= totalScores
 
     # add average score
     resultDICT["score"] = overallscore

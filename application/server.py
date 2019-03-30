@@ -4,6 +4,9 @@
 import sys
 sys.path.insert(0, 'application/')
 sys.path.insert(0, 'application/signalComparison')
+sys.path.insert(0, 'application/speech_to_text')
+sys.path.insert(0, 'application/speech_to_emotion')
+sys.path.insert(0, 'application/databuilder')
 from compareAudio import performThreeComparisons, sendScoreToBack
 
 PORT = 3000        # Port to listen on (non-privileged ports are > 1023)
@@ -11,6 +14,7 @@ PORT = 3000        # Port to listen on (non-privileged ports are > 1023)
 
 from flask import Flask, render_template
 from flask_socketio import SocketIO, emit
+import json
 
 
 app = Flask(__name__)
@@ -30,15 +34,22 @@ def test_disconnect():
 @socketio.on('compareDialogue')
 def handle_compareDialogue(message):
     print("on compareDialogue")
-    print(message)
-    print(message['gameID'])
-    print(message['netflixWatchID'])
-    print(message['dialogueID'])
+    # print(message)
+    # print(message['gameID'])
+    # print(message['netflixWatchID'])
+    # print(message['dialogueID'])
     # print(message['audioBlob'])
+    stream = message['audioBlob']
 
-    # resultBYTES = performThreeComparisons(message['netflixWatchID'], message['dialogueID'], wavFile, message['gameID'])
+    tmpFileName = "tmptest.webm"
+    with open(tmpFileName, 'wb') as aud:
+        aud.write(stream)
+
+    resultBYTES = performThreeComparisons(message['netflixWatchID'], message['dialogueID'], tmpFileName, message['gameID'])
+    print("send to db", resultBYTES)
     # FIXME: don't wanna wait until back responds 
-    # _ = sendScoreToBack(resultBYTES)
+    response = sendScoreToBack(resultBYTES)
+    print("response:", response)
 
     return "received compareDialogue Message"
 

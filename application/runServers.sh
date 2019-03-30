@@ -1,8 +1,8 @@
 #!/bin/bash
 
-application_server_cmd="python3 application/server.py"
-user_db_server_cmd="node backend/user-database/server.js"
-content_db_server_cmd="node backend/content-database/server.js"
+application_server_cmd="python3 server.py"
+user_db_server_cmd="node ../backend/user-database/server.js"
+content_db_server_cmd="node ../backend/content-database/server.js"
 
 # remove subprocesses
 cleanup() {
