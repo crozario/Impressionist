@@ -41,6 +41,11 @@ let getCurrentTime = () => {
     }
 }
 
+let getPaused = () => {
+    let videoPlayer = netflix.appContext.state.playerApp.getAPI().videoPlayer.getVideoPlayerBySessionId(netflix.appContext.state.playerApp.getAPI().videoPlayer.getAllPlayerSessionIds()[0]);
+    return videoPlayer.getPaused;
+}
+
 // setTimeout(function() {
 //     document.dispatchEvent(new CustomEvent('RW759_connectExtension', {
     
@@ -53,6 +58,10 @@ let getCurrentTime = () => {
 window.setInterval(() => {
     document.dispatchEvent(new CustomEvent('getCurrentTime', {
         detail: getCurrentTime()
+    }));
+
+    document.dispatchEvent(new CustomEvent('getPaused', {
+        detail: getPaused()
     }));
 }, 50);
 
