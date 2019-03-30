@@ -18,7 +18,7 @@ const StatsSchema = mongoose.Schema({
 });
 
 const ScoreSchema = mongoose.Schema({
-	scores: {type: [Map], default: undefined},
+	scores: {type: Map, default: {}},
 	dialogueIDs: Array
 }, {
 	_id: false

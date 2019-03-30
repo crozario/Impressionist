@@ -110,22 +110,32 @@ def getProcessedFromContentDB(netflixWatchID, dialogueID, profile=False):
     originalCaption = resjson['dialogueCaption'][2]
     if (profile):
         end = time.time()
+        print("(profile) get data from contentDB : ", end-start)
     return featureFileURL, emotion, originalCaption
 
-def compareEmotionSimilarity(audioFile, emotion, verbose=False):
+def compareEmotionSimilarity(audioFile, emotion, verbose=False, profile=False):
     """returns True (if same emotion)"""
+    if (profile): start = time.time()
     from speech_to_emotion.emotion_classifier_nn import livePredictions
     emoPredictor = livePredictions(path='speech_to_emotion/Emotion_Voice_Detection_Model.h5', file=audioFile)
     emoPredictor.load_model()
     prediction = emoPredictor.makepredictions()
     if verbose: print("user emotion -", prediction)
+    if (profile):
+        end = time.time()
+        print("(profile) compare emotion : ", end-start)
     return (prediction == emotion)
 
-def compareLyricalSimilarity(audioFile, originalCaption, verbose=False):
+def compareLyricalSimilarity(audioFile, originalCaption, verbose=False, profile=False):
     """Convert audioFile to text and compares against originalCaption string"""
+    if (profile): start = time.time()
+    cmp = compareToDialogue(audioFile, originalCaption, verbose=verbose)
+    if (profile):
+        end = time.time()
+        print("(profile) lyrical similarity :", end-start)
     return compareToDialogue(audioFile, originalCaption, verbose=verbose)
 
-def performThreeComparisons(netflixWatchID, dialogueID, audioFile, gameID, verbose=False):
+def performThreeComparisons(netflixWatchID, dialogueID, audioFile, gameID, verbose=False, profile=False):
     """Perform comparison 
     $ python compareAudio.py audioFile(.webm), netflixWatchID(str), dialogueID(number), gameID(str)
         - NOTE: gameID to report to userDB
@@ -142,25 +152,25 @@ def performThreeComparisons(netflixWatchID, dialogueID, audioFile, gameID, verbo
     overallscore = 0.0
     totalScores = 3
     # 1. get processed data from contentDB
-    featureFileURL, originalEmotion, originalCaption = getProcessedFromContentDB(netflixWatchID, dialogueID)
+    featureFileURL, originalEmotion, originalCaption = getProcessedFromContentDB(netflixWatchID, dialogueID, profile=profile)
     resultDICT["originalEmotion"] = originalEmotion
     resultDICT["originalCaption"] = originalCaption
     # print(featureFileURL, emotion, originalCaption)
     # 2. Validate audioFile
-    audioFile = validateAudioFileFormat(audioFile)
+    audioFile = validateAudioFileFormat(audioFile, profile=profile)
     # 3. comparePhonetic
-    phoneticSimilarity = comparePhoneticSimilarity(audioFile, featureFileURL, verbose=False)
+    phoneticSimilarity = comparePhoneticSimilarity(audioFile, featureFileURL, verbose=False, profile=profile)
     resultDICT["phoneticScore"] = phoneticSimilarity
     if verbose: print("Phonetic similarity:", resultDICT["phoneticScore"])
     overallscore += resultDICT["phoneticScore"]
     # 4. Compare Emotion
-    emotionSimilarity = compareEmotionSimilarity(audioFile, originalEmotion, verbose=True)
+    emotionSimilarity = compareEmotionSimilarity(audioFile, originalEmotion, verbose=True, profile=profile)
     resultDICT["emotionScore"] = 100.0 if emotionSimilarity else 0.0
     if verbose: print("Similar emotion:", resultDICT["emotionScore"])
     overallscore += resultDICT["emotionScore"]
     # 5. Compare Lyrics
     # pr.enable()
-    lyricalSimilarity = compareLyricalSimilarity(audioFile, originalCaption, verbose=False)
+    lyricalSimilarity = compareLyricalSimilarity(audioFile, originalCaption, verbose=False, profile=profile)
     # pr.disable()
     # pr.print_stats(sort='time')
     resultDICT["lyricalScore"] = lyricalSimilarity*100
@@ -194,12 +204,10 @@ if __name__=='__main__':
     dialogueID = 0
     audioFile = 'tmpFiles/test.webm'
     gameID = "5c9e7faee8175c4566425568"  # don't have this yet to report score
-    resultBYTES = performThreeComparisons(netflixWatchID, dialogueID, audioFile, gameID, verbose=True)
-    print(resultBYTES)
+    # resultBYTES = performThreeComparisons(netflixWatchID, dialogueID, audioFile, gameID, verbose=True)
+    # print(resultBYTES)
+    resultBYTES = json.dumps({"gameID": "5c9e7faee8175c4566425568", "dialogueID": 32, "originalEmotion": "angry", "originalCaption": "I wonder if I did the right thing,\\\\Ngiving him away.", "phoneticScore": 48.04395060873494, "emotionScore": 0.0, "lyricalScore": 21.62162162162162, "averageScore": 23.221857410118854}).encode('utf-8')
     backResponse = sendScoreToBack(resultBYTES)
     print(backResponse)
-
-    # next send back scores to front and back (userDB)
-
 
 

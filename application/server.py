@@ -34,9 +34,9 @@ def test_disconnect():
 @socketio.on('compareDialogue')
 def handle_compareDialogue(message):
     print("on compareDialogue")
-    # print(message['gameID'])
-    # print(message['netflixWatchID'])
-    # print(message['dialogueID'])
+    print(message['gameID'])
+    print(message['netflixWatchID'])
+    print(message['dialogueID'])
     # print(message['audioBlob'])
     stream = message['audioBlob']
 
@@ -45,7 +45,7 @@ def handle_compareDialogue(message):
     with open(tmpFileName, 'wb') as aud:
         aud.write(stream)
 
-    resultBYTES = performThreeComparisons(message['netflixWatchID'], message['dialogueID'], tmpFileName, message['gameID'])
+    resultBYTES = performThreeComparisons(message['netflixWatchID'], message['dialogueID'], tmpFileName, message['gameID'], profile=True)
     print("send to db", resultBYTES)
     # FIXME: don't wanna wait until back responds 
     response = sendScoreToBack(resultBYTES)

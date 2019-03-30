@@ -166,7 +166,7 @@ exports.initializeGame = (req,res) => {
 			schema.User.findOne({'credentials.username': info.username})
 			.then(result => {
 				const scores = new schema.Score({
-					scores: [],
+					scores: {},
 					dialogueIDs: []
 				});
 				const history = new schema.Hist({
@@ -212,38 +212,42 @@ exports.storeScoreData = (req,res) => {
 	if(!info.gameID) {
 		return res.status(400).json({
 			status: "failure",
-			error: "score was not provided"
+			error: "gameID was not provided"
 		});
 	}
 	// find the user's game document connected to the given gameID and store/update data
 	schema.User.findOne({/* 'credentials.username': info.username,  */'gameHistory._id': mongoose.Types.ObjectId(info.gameID)})
 	.then(doc => {
 		if(doc) {
-			var scoreMap = new Map();
-			scoreMap.set(info.dialogueID.toString(), {'phoneticScore': info.phoneticScore, 'lyricalScore': info.lyricalScore, 'emotionScore': info.emotionScore, 'averageScore': info.averageScore});
-			doc.gameHistory.id(mongoose.Types.ObjectId(info.gameID)).scores.scores.push(scoreMap);
+
+			doc.gameHistory.id(mongoose.Types.ObjectId(info.gameID)).scores.scores.set(info.dialogueID.toString(), {'phoneticScore': info.phoneticScore, 'lyricalScore': info.lyricalScore, 'emotionScore': info.emotionScore, 'averageScore': info.averageScore});
 			doc.gameHistory.id(mongoose.Types.ObjectId(info.gameID)).scores.dialogueIDs.push(info.dialogueID);
+
 			doc.save()
 			.then(result => {
 				return res.json({
 					status: "success"
 				});
 			}).catch(err => {
-				return res.status(500).json({
+				// return res.status(500).json({
+				console.log("(contentDB) here1")
+				return res.json({
 					status: "failure",
 					error: err.message || "error occured when storing score data in the database"
 				});
 			});
 		}
 		else {
-			// console.log("(userDB) Problem here");
+			// console.log("(userDB) here2");
 			return res.json({
 				status: "failure",
 				error: "could not find gameID " + info.gameID
 			})
 		}
 	}).catch(err => {
-		return res.status(500).json({
+		// return res.status(500).json({
+		// console.log("(contentDB) here3")
+		return res.json({
 			status: "failure",
 			error: err.message || "error retrieving information from the database"
 		});
