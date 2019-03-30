@@ -58,7 +58,7 @@ def comparePhoneticSimilarity(audioFile, featureFile, verbose=False, profile=Fal
     if not (os.path.exists(configFile) and os.path.exists(audioFile) and os.path.exists(featureFile)):
         print("One or more files don't exist (check paths). Cannot compare phonetics. exiting...")
         return
-    status, error = extract(audioFile, featureFile, configFile, verbose=verbose)
+    status, error = extract(audioFile, "test.csv", configFile, verbose=verbose)
     if not status: #failed
         print(error)
         return
