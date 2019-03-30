@@ -164,8 +164,9 @@ def performThreeComparisons(netflixWatchID, dialogueID, audioFile, gameID, verbo
     if verbose: print("Phonetic similarity:", resultDICT["phoneticScore"])
     overallscore += resultDICT["phoneticScore"]
     # 4. Compare Emotion
-    emotionSimilarity = compareEmotionSimilarity(audioFile, originalEmotion, verbose=True, profile=profile)
-    resultDICT["emotionScore"] = 100.0 if emotionSimilarity else 0.0
+    # emotionSimilarity = compareEmotionSimilarity(audioFile, originalEmotion, verbose=True, profile=profile)
+    # resultDICT["emotionScore"] = 100.0 if emotionSimilarity else 0.0
+    resultDICT["emotionScore"] = 0.0
     if verbose: print("Similar emotion:", resultDICT["emotionScore"])
     overallscore += resultDICT["emotionScore"]
     # 5. Compare Lyrics
