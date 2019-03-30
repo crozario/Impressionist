@@ -18,7 +18,7 @@ const StatsSchema = mongoose.Schema({
 });
 
 const ScoreSchema = mongoose.Schema({
-	scores: Array,
+	scores: {type: [Map], default: undefined},
 	dialogueIDs: Array
 }, {
 	_id: false
@@ -41,20 +41,6 @@ const UserSchema = mongoose.Schema({
 }, {
 	collection: 'users'
 });
-
-// CredentialsSchema.pre('save', async function(next) {
-// 	try {
-// 		if(this.isDirectModified) {
-// 			const salt = 10;
-// 			const hash_pass = await bcrypt.hash(this.password,salt);
-// 			this.password = hash_pass;
-// 			console.log(this.password);
-// 			next();
-// 		}
-// 	} catch(err) {
-// 		next(err);
-// 	}
-// });
 
 const salt = 10;
 CredentialsSchema.pre('save', function(next) {
