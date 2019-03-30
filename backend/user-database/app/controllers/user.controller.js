@@ -209,17 +209,19 @@ exports.initializeGame = (req,res) => {
 exports.storeScoreData = (req,res) => {
 	const info = req.body;
 	// validate request
-	if(!info.score || !info.gameID) {
+	if(!info.gameID) {
 		return res.status(400).json({
 			status: "failure",
-			error: "username, dialogueID, gameID, or score were not provided"
+			error: "score was not provided"
 		});
 	}
 	// find the user's game document connected to the given gameID and store/update data
 	schema.User.findOne({/* 'credentials.username': info.username,  */'gameHistory._id': mongoose.Types.ObjectId(info.gameID)})
 	.then(doc => {
 		if(doc) {
-			doc.gameHistory.id(mongoose.Types.ObjectId(info.gameID)).scores.scores.push(info.score);
+			var scoreMap = new Map();
+			scoreMap.set(info.dialogueID.toString(), {'phoneticScore': info.phoneticScore, 'lyricalScore': info.lyricalScore, 'emotionScore': info.emotionScore, 'averageScore': info.averageScore});
+			doc.gameHistory.id(mongoose.Types.ObjectId(info.gameID)).scores.scores.push(scoreMap);
 			doc.gameHistory.id(mongoose.Types.ObjectId(info.gameID)).scores.dialogueIDs.push(info.dialogueID);
 			doc.save()
 			.then(result => {
