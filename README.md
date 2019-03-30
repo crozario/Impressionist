@@ -21,9 +21,12 @@ Entrepreneur Team members:
 - Alfurqan Khan
 - Raj Patel
 
-# Run development servers
+## Run development servers
 
 ```bash
 ./runServers.sh
 ```
 
+## All Dependencies
+
+- ffmpeg
