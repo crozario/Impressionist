@@ -143,8 +143,8 @@ window.onload = () => {
 
             setupContentScript();
             setupEventListeners()
-            // micInitialization();
-            initializeMic();
+            micInitialization();
+            // initializeMic();
 
         }).catch((error) => {
             console.log("error on initializeGame");
@@ -347,7 +347,9 @@ let addCharacterNamesToPicker = (pickerElement) => {
 let doneButtonOnClick = () => {
     sendForComparison = true;   
     hideUserSpeakContainer();
+    console.log("doneButtonOnClick Before : " + mediaRecorder.state);
     stopRecording();
+    console.log("doneButtonOnClick After : " + mediaRecorder.state);
 }
 
 let skipButtonOnClick = () => {
@@ -522,8 +524,10 @@ let checkDialogueIsCharacterPicked = () => {
         // on dialogue user picked
         if (contentInfo.characterPickedIDs.includes(contentInfo.currentDialogueID)) {
             if(videoIsPlaying && audioIsRecording === false) {
+                console.log("checkDialogueIsCharacterPicked Before : " + mediaRecorder.state);
                 pauseVideo();
                 startRecording();
+                console.log("checkDialogueIsCharacterPicked After : " + mediaRecorder.state);
                 showUserSpeakContainer();
             }
             
@@ -718,123 +722,88 @@ function initializeMic() {
 // audio
 
 let startRecording = () => {
+    console.log("startRecording");
     mediaRecorder.start();
 }
 
 let stopRecording = () => {
+    console.log("stopRecording");
     mediaRecorder.stop();
 }
 
-let audioAvailable = () => {
-    if(sendForComparison) {
-        sendForComparison = false;
-        compareDialogue(audioBlob, (result) => {
-            console.log("Got Results from CompareDialogue");
-            console.log(result);
-        })
-    }
-}
+// let audioAvailable = () => {
+//     console.log("audioAvailable");
+//     console.log(sendForComparison);
 
-mediaRecorder.onstop = audioAvailable;
+//     if(sendForComparison) {
+//         const audioBlob = new Blob(audioChunks);
+//         console.log(audioBlob);
 
-
-mediaRecorder.ondataavailable = () => {
-    chunks = [];
-    chunks.push(e.data);
-}
-
-// let micInitialization = () => {
-//     if (navigator.mediaDevices) {
-//         console.log('getUserMedia supported.');
-//         var constraints = { 
-//             audio: /*true*/ {
-//                 sampleRate : {
-//                     exact : 44100 // 44.1KHz (DW)
-//                 }
-//             } 
-//         };
-//         var chunks = [];
-
-//         // console.log("supported consraints");
-//         // console.log(navigator.mediaDevices.getSupportedConstraints())
-
-//         // Get mic audio
-//         navigator.mediaDevices.getUserMedia(constraints)
-//         .then(function(stream) {
-
-//             // myconstraints = {
-//             //     sampleRate : { ideal : 44100 }, 
-//             //     sampleSize : { exact : 8}
-//             // }
-//             // console.log("constraints")
-//             // console.log(myconstraints);
-//             // console.log("Tracks");
-//             // stream.getTracks().forEach(function(track) {
-//             //     track.applyConstraints(myconstraints); // doesn't do anything
-//             //     console.log(track.getSettings());
-//             //     console.log(track.getCapabilities());
-//             // })
-
-//             var options = {
-//                 audioBitsPerSecond : 128000,
-//                 mimeType: 'audio/webm;codec=pcm'
-//             };
-
-//             var mediaRecorder = new MediaRecorder(stream, options);
-
-//             // var videoElement = document.getElementById("video-content");
-
-//             mediaRecorder.start();
-//             console.log("recorder started");
-//             console.log(mediaRecorder.state);
-
-
-//             setTimeout(function() {
-//                 mediaRecorder.stop();
-//                 console.log(mediaRecorder.state);
-//                 console.log("recorder ended");
-//             }, 10000);
-
-
-//             // start recording on video play
-//             // videoElement.onplay = () => {
-//             //     mediaRecorder.start();
-//             //     console.log(mediaRecorder.state);
-//             //     console.log("recorder started");
-//             // }
-
-//             // stop recording on video pause
-//             // videoElement.onpause = () => {
-//             //     mediaRecorder.stop();
-//             //     console.log(mediaRecorder.state);
-//             //     console.log("recorder ended");
-//             // }
-
-
-//             // recording stopped
-//             mediaRecorder.onstop = function(e) {
-//                 const currentChunkBlob = new Blob(chunks);
-//                 compareDialogue(currentChunkBlob);
-//             }
-
-
-//             // recording data available
-//             mediaRecorder.ondataavailable = function(e) {
-//                 chunks = [];
-//                 chunks.push(e.data);
-//                 console.log("e ondataavailable");
-//                 console.log(e);
-//                 console.log("e.data ondataavailable");
-//                 console.log(e.data);
-//             }
-
+//         sendForComparison = false;
+//         compareDialogue(audioBlob, (result) => {
+//             console.log("Got Results from CompareDialogue");
+//             console.log(result);
 //         })
-//         .catch(function(err) {
-//             console.log('The following error occurred: ' + err);
-//         });
-//     };
-// } 
+//     }
+// }
 
+// mediaRecorder.onstop = audioAvailable;
+
+
+// mediaRecorder.ondataavailable = () => {
+//     chunks = [];
+//     chunks.push(e.data);
+// }
+
+
+
+let micInitialization = () => {
+    if (navigator.mediaDevices) {
+        console.log('getUserMedia supported.');
+
+        var constraints = { audio: true }
+
+        // Get mic audio
+        navigator.mediaDevices.getUserMedia(constraints)
+        .then(function(stream) {
+
+            var options = {
+                audioBitsPerSecond : 128000,
+                mimeType: 'audio/webm;codec=pcm'
+            };
+
+            mediaRecorder = new MediaRecorder(stream, options);
+
+            // recording stopped
+            mediaRecorder.onstop = (e) => {
+                console.log("audioAvailable");
+                console.log(sendForComparison);
+                
+                if(sendForComparison) {
+                    const audioBlob = new Blob(audioChunks);
+                    console.log(audioBlob);
+            
+                    sendForComparison = false;
+                    compareDialogue(audioBlob, (result) => {
+                        console.log("Got Results from CompareDialogue");
+                        console.log(result);
+                    })
+                }
+            }
+            
+            // recording data available
+            mediaRecorder.ondataavailable = (e) =>{
+                console.log("mediaRecorder ondataavailable");
+                audioChunks = [];
+                audioChunks.push(e.data);
+            }
+
+        })
+        .catch(function(err) {
+            console.log('The following error occurred: ' + err);
+        });
+    };
+} 
 
 
 let getDuration = startTime => {

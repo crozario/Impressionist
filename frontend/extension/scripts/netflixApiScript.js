@@ -43,7 +43,11 @@ let getCurrentTime = () => {
 
 let getPaused = () => {
     let videoPlayer = netflix.appContext.state.playerApp.getAPI().videoPlayer.getVideoPlayerBySessionId(netflix.appContext.state.playerApp.getAPI().videoPlayer.getAllPlayerSessionIds()[0]);
-    return videoPlayer.getPaused;
+    if (videoPlayer) {
+        return videoPlayer.getPaused();
+    } else {
+        return true;
+    }
 }
 
 // setTimeout(function() {
