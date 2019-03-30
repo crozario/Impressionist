@@ -34,7 +34,6 @@ def test_disconnect():
 @socketio.on('compareDialogue')
 def handle_compareDialogue(message):
     print("on compareDialogue")
-    # print(message)
     # print(message['gameID'])
     # print(message['netflixWatchID'])
     # print(message['dialogueID'])
@@ -42,6 +41,7 @@ def handle_compareDialogue(message):
     stream = message['audioBlob']
 
     tmpFileName = "tmptest.webm"
+    # FIXME: just writing as raw and then running ffmpeg again inside `compareAudio.py`
     with open(tmpFileName, 'wb') as aud:
         aud.write(stream)
 
@@ -51,7 +51,7 @@ def handle_compareDialogue(message):
     response = sendScoreToBack(resultBYTES)
     print("response:", response)
 
-    return "received compareDialogue Message"
+    return resultBYTES
 
 # interface to send dialogue 2D array
 @socketio.on('getDialogue')

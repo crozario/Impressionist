@@ -6,6 +6,7 @@ Author: Haard @ Impressionist
 """
 
 import subprocess
+import time
 # import cProfile
 # pr = cProfile.Profile()
 # add Impressionist HOME path
@@ -26,7 +27,8 @@ USERDB_PORT = 3001
 URLcontentDB_gamePlay = "http://localhost:"+str(CONTENTDB_PORT)+"/cont/play"
 URLuserDB_storeScoreData = "http://localhost:"+str(USERDB_PORT)+"/user/score"
 
-def validateAudioFileFormat(audioFile):
+def validateAudioFileFormat(audioFile, profile=False):
+    if (profile): start = time.time()
     assert (".wav" in audioFile or ".webm" in audioFile), "Error: only supports comparing audio for .wav and .webm files."
         
     # TODO: convert this step to bash script
@@ -44,9 +46,13 @@ def validateAudioFileFormat(audioFile):
         assert ("size=" in out), "Error: unknown error in converting `.webm` file to `.wav`"
         audioFile = newFile
     
+    if (profile): 
+        end = time.time()
+        print("(profile) validate audio file : ", end-start)
     return audioFile
 
-def comparePhoneticSimilarity(audioFile, featureFile, verbose=False):
+def comparePhoneticSimilarity(audioFile, featureFile, verbose=False, profile=False):
+    if (profile): start = time.time()
     assert(".wav" in audioFile), "Expected .wav as audioFile"
     configFile = 'databuilder/configs/prosodyShs.conf'
     if not (os.path.exists(configFile) and os.path.exists(audioFile) and os.path.exists(featureFile)):
@@ -58,6 +64,9 @@ def comparePhoneticSimilarity(audioFile, featureFile, verbose=False):
         return
     similarity = compare("test.csv", featureFile, 'prosody', delimiter=';', verbose=verbose, plot=False)
     if verbose: print("Similarity: ", similarity)
+    if (profile):
+        end = time.time()
+        print("(profile) compare phonetic similarity : ", end-start)
     return similarity
 
 def getCaptionFromVTTcaptionFile(vttFile, dialogueID):
@@ -66,9 +75,10 @@ def getCaptionFromVTTcaptionFile(vttFile, dialogueID):
     import webvtt
     return webvtt.read(vttFile)[dialogueID].text
 
-def getProcessedFromContentDB(netflixWatchID, dialogueID):
+def getProcessedFromContentDB(netflixWatchID, dialogueID, profile=False):
     """Requests contentDB for data using urllib
     """
+    if (profile): start = time.time()
     featureFileURL = ''
     emotion = '' 
     originalCaption = '' # dialogueID-th dialogue from captionFile
@@ -98,7 +108,8 @@ def getProcessedFromContentDB(netflixWatchID, dialogueID):
     # # FIXME: this will change if storing 2D dialogue array in database
     # originalCaption = getCaptionFromVTTcaptionFile(originalCaptionFile, dialogueID)
     originalCaption = resjson['dialogueCaption'][2]
-
+    if (profile):
+        end = time.time()
     return featureFileURL, emotion, originalCaption
 
 def compareEmotionSimilarity(audioFile, emotion, verbose=False):
@@ -158,7 +169,7 @@ def performThreeComparisons(netflixWatchID, dialogueID, audioFile, gameID, verbo
     overallscore /= totalScores
 
     # add average score
-    resultDICT["score"] = overallscore
+    resultDICT["averageScore"] = overallscore
 
     # convert to JSON
     resultJSON = json.dumps(resultDICT)
