@@ -36,9 +36,9 @@ def handle_compareDialogue(message):
     print(message['dialogueID'])
     # print(message['audioBlob'])
 
-    resultBYTES = performThreeComparisons(message['netflixWatchID'], message['dialogueID'], wavFile, message['gameID'])
+    # resultBYTES = performThreeComparisons(message['netflixWatchID'], message['dialogueID'], wavFile, message['gameID'])
     # FIXME: don't wanna wait until back responds 
-    _ = sendScoreToBack(resultBYTES)
+    # _ = sendScoreToBack(resultBYTES)
 
     return "received compareDialogue Message"
 
