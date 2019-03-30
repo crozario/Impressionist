@@ -18,7 +18,6 @@ if [[ "$OSTYPE" == "linux-gnu" || "$OSTYPE" == "darwin"* ]]; then # Linux and Ma
     # run cleanup function before exiting program
     trap cleanup EXIT
 
-
 elif [[ "$OSTYPE" == "msys" ]]; then # Windows (MinGW)
     # Lightweight shell and GNU utilities compiled for Windows (part of MinGW)
     echo "Windows"
