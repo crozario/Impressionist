@@ -45,7 +45,7 @@ def handle_compareDialogue(message):
     with open(tmpFileName, 'wb') as aud:
         aud.write(stream)
 
-    resultBYTES = performThreeComparisons(message['netflixWatchID'], message['dialogueID'], tmpFileName, message['gameID'], profile=True)
+    resultBYTES = performThreeComparisons(message['netflixWatchID'], message['dialogueID'], tmpFileName, message['gameID'], profile=False)
     print("send to db", resultBYTES)
     # FIXME: don't wanna wait until back responds 
     response = sendScoreToBack(resultBYTES)

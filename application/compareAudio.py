@@ -150,7 +150,7 @@ def performThreeComparisons(netflixWatchID, dialogueID, audioFile, gameID, verbo
     """
     resultDICT = {"gameID" : gameID, "dialogueID" : dialogueID}
     overallscore = 0.0
-    totalScores = 3
+    totalScores = 2
     # 1. get processed data from contentDB
     featureFileURL, originalEmotion, originalCaption = getProcessedFromContentDB(netflixWatchID, dialogueID, profile=profile)
     resultDICT["originalEmotion"] = originalEmotion
@@ -159,7 +159,7 @@ def performThreeComparisons(netflixWatchID, dialogueID, audioFile, gameID, verbo
     # 2. Validate audioFile
     audioFile = validateAudioFileFormat(audioFile, profile=profile)
     # 3. comparePhonetic
-    phoneticSimilarity = comparePhoneticSimilarity(audioFile, featureFileURL, verbose=False, profile=profile)
+    phoneticSimilarity= comparePhoneticSimilarity(audioFile, featureFileURL, verbose=False, profile=profile)
     resultDICT["phoneticScore"] = phoneticSimilarity
     if verbose: print("Phonetic similarity:", resultDICT["phoneticScore"])
     overallscore += resultDICT["phoneticScore"]
@@ -170,10 +170,8 @@ def performThreeComparisons(netflixWatchID, dialogueID, audioFile, gameID, verbo
     if verbose: print("Similar emotion:", resultDICT["emotionScore"])
     overallscore += resultDICT["emotionScore"]
     # 5. Compare Lyrics
-    # pr.enable()
-    lyricalSimilarity = compareLyricalSimilarity(audioFile, originalCaption, verbose=False, profile=profile)
-    # pr.disable()
-    # pr.print_stats(sort='time')
+    lyricalSimilarity, userDialogue = compareLyricalSimilarity(audioFile, originalCaption, verbose=False, profile=profile)
+    resultDICT["userTranscript"] = userDialogue
     resultDICT["lyricalScore"] = lyricalSimilarity*100
     if verbose: print("Lyrical Similarity:", resultDICT["lyricalScore"])
     overallscore += resultDICT["lyricalScore"]
@@ -207,8 +205,7 @@ if __name__=='__main__':
     gameID = "5c9e7faee8175c4566425568"  # don't have this yet to report score
     resultBYTES = performThreeComparisons(netflixWatchID, dialogueID, audioFile, gameID, verbose=True)
     print(resultBYTES)
-    # resultBYTES = json.dumps({"gameID": "5c9e7faee8175c4566425568", "dialogueID": 32, "originalEmotion": "angry", "originalCaption": "I wonder if I did the right thing,\\\\Ngiving him away.", "phoneticScore": 48.04395060873494, "emotionScore": 0.0, "lyricalScore": 21.62162162162162, "averageScore": 23.221857410118854}).encode('utf-8')
-    backResponse = sendScoreToBack(resultBYTES)
-    print(backResponse)
+    # backResponse = sendScoreToBack(resultBYTES)
+    # print(backResponse)
 
 

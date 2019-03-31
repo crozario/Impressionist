@@ -216,13 +216,16 @@ exports.storeScoreData = (req,res) => {
 		});
 	}
 	// find the user's game document connected to the given gameID and store/update data
-	schema.User.findOne({/* 'credentials.username': info.username,  */'gameHistory._id': mongoose.Types.ObjectId(info.gameID)})
+	schema.User.findOne({'gameHistory._id': mongoose.Types.ObjectId(info.gameID)})
 	.then(doc => {
 		if(doc) {
-
+			// if the dialogueID from the request already exists in the db with scores, do not push the dialogueID but STILL update the scores with new scores
 			doc.gameHistory.id(mongoose.Types.ObjectId(info.gameID)).scores.scores.set(info.dialogueID.toString(), {'phoneticScore': info.phoneticScore, 'lyricalScore': info.lyricalScore, 'emotionScore': info.emotionScore, 'averageScore': info.averageScore});
+			if(doc.gameHistory.id(mongoose.Types.ObjectId(info.gameID)).scores.dialogueIDs.indexOf(info.dialogueID)==-1) {
+				// if the dialogueID from the request already exists in the db with scores, do not push the dialogueID
+				doc.gameHistory.id(mongoose.Types.ObjectId(info.gameID)).scores.dialogueIDs.push(info.dialogueID);
+			}
 			doc.gameHistory.id(mongoose.Types.ObjectId(info.gameID)).scores.dialogueIDs.push(info.dialogueID);
-
 			doc.save()
 			.then(result => {
 				return res.json({
