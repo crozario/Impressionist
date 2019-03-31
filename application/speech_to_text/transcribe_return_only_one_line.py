@@ -26,11 +26,12 @@ Example usage:
 
 import argparse
 import io
+import os
 
 from google.oauth2 import service_account
 
-
-credentials = service_account.Credentials.from_service_account_file('speech_to_text/api-key.json')
+apifile = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'api-key.json')
+credentials = service_account.Credentials.from_service_account_file(apifile)
 
 
 def transcribe_file_with_word_time_offsets(speech_file,language):
