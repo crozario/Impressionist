@@ -219,30 +219,26 @@ exports.storeScoreData = (req,res) => {
 	schema.User.findOne({'gameHistory._id': mongoose.Types.ObjectId(info.gameID)})
 	.then(doc => {
 		if(doc) {
-			if(doc.gameHistory.id(mongoose.Types.ObjectId(info.gameID)).scores.dialogueIDs.indexOf(info.dialogueID)!=-1) {
-				// if the dialogueID from the request already exists in the db with scores, do not push the scores/dialogueID
+			// if the dialogueID from the request already exists in the db with scores, do not push the dialogueID but STILL update the scores with new scores
+			doc.gameHistory.id(mongoose.Types.ObjectId(info.gameID)).scores.scores.set(info.dialogueID.toString(), {'phoneticScore': info.phoneticScore, 'lyricalScore': info.lyricalScore, 'emotionScore': info.emotionScore, 'averageScore': info.averageScore});
+			if(doc.gameHistory.id(mongoose.Types.ObjectId(info.gameID)).scores.dialogueIDs.indexOf(info.dialogueID)==-1) {
+				// if the dialogueID from the request already exists in the db with scores, do not push the dialogueID
+				doc.gameHistory.id(mongoose.Types.ObjectId(info.gameID)).scores.dialogueIDs.push(info.dialogueID);
+			}
+			doc.gameHistory.id(mongoose.Types.ObjectId(info.gameID)).scores.dialogueIDs.push(info.dialogueID);
+			doc.save()
+			.then(result => {
+				return res.json({
+					status: "success"
+				});
+			}).catch(err => {
+				// return res.status(500).json({
+				console.log("(contentDB) here1")
 				return res.json({
 					status: "failure",
-					error: "scores for the dialogueID provided already exist"
+					error: err.message || "error occured when storing score data in the database"
 				});
-			} else {
-				// else, meaning the dialogueID from the request does not already exist in the db with scores, then add them in
-				doc.gameHistory.id(mongoose.Types.ObjectId(info.gameID)).scores.scores.set(info.dialogueID.toString(), {'phoneticScore': info.phoneticScore, 'lyricalScore': info.lyricalScore, 'emotionScore': info.emotionScore, 'averageScore': info.averageScore});
-				doc.gameHistory.id(mongoose.Types.ObjectId(info.gameID)).scores.dialogueIDs.push(info.dialogueID);
-				doc.save()
-				.then(result => {
-					return res.json({
-						status: "success"
-					});
-				}).catch(err => {
-					// return res.status(500).json({
-					console.log("(contentDB) here1")
-					return res.json({
-						status: "failure",
-						error: err.message || "error occured when storing score data in the database"
-					});
-				});
-			}
+			});
 		}
 		else {
 			// console.log("(userDB) here2");

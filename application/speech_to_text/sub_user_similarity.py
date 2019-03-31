@@ -33,12 +33,13 @@ def compareToDialogue(userWavAudio, origStringDialogue, verbose=False):
     # get user's subtitle
     user_diag = str(gstt.transcribe_file_with_word_time_offsets(userWavAudio, 'en-US'))
     user_diag = user_diag.replace('\n', '').lower()
+    # print(user_diag)
     # reformat orig dialog
     origStringDialogue = re.sub(r'\W+', ' ', origStringDialogue.lower()).strip(' ')
     
     if verbose: print("users:", user_diag)
     if verbose: print("original:", origStringDialogue)
-    return similar(origStringDialogue, user_diag)
+    return similar(origStringDialogue, user_diag), user_diag
 
 def similar(a, b):
     return SequenceMatcher(None, a, b).ratio()
