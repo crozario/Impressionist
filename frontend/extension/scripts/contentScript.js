@@ -259,7 +259,7 @@ let injectSideBar = () => {
 
     let resultsContainer = document.createElement('div');
     resultsContainer.id = "results-container";
-    resultsContainer.style.border = "1px solid gray";
+    // resultsContainer.style.border = "1px solid gray";
     
     let loaderContainer = document.createElement('div');
     loaderContainer.id = "loader";
