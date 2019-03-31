@@ -144,7 +144,7 @@ window.onload = () => {
             setupContentScript();
             setupEventListeners()
             micInitialization();
-            // initializeMic();
+
 
         }).catch((error) => {
             console.log("error on initializeGame");
@@ -162,11 +162,6 @@ window.onload = () => {
 }
 
 let setupContentScript = () => {
-    // pause video after 10 seconds
-    // setTimeout(function() {
-    //     seek(getCurrentTime() + 100000)
-    // }, 10000);
-
     injectNetflixScript();
     injectSideBar();
 }
@@ -180,6 +175,7 @@ let injectNetflixScript = () => {
     script.onload = function () {
         script.remove();
     };
+
     console.log("injected netflixApiScript");
 }
 
@@ -190,6 +186,7 @@ let injectSideBar = () => {
 
 
     /* Add to netflix webpage */
+
     // side bar container element
     let sideBarContainerDivElement = document.createElement('div');
     sideBarContainerDivElement.id = "side-bar-container";
@@ -237,7 +234,7 @@ let injectSideBar = () => {
     characterPickerElement.style.background = "linear-gradient(to right, #0BBFD6 0%, #5ACCC1 100%)";
     characterPickerElement.id = "character-picker";
     addCharacterNamesToPicker(characterPickerElement);
-
+    
     userFeedbackContainer.append(characterPickerElement);
 
     let userSpeakContainer = document.createElement('div');
@@ -254,7 +251,30 @@ let injectSideBar = () => {
     skipButton.addEventListener("click", skipButtonOnClick);
 
     userSpeakContainer.style.display = "none";
+    
     userSpeakContainer.appendChild(userSpeakElement);
+
+
+    // results from compare dialogue
+
+    let resultsContainer = document.createElement('div');
+    resultsContainer.id = "results-container";
+    
+    let loaderContainer = document.createElement('div');
+    loaderContainer.id = "loader";
+    loaderContainer.style.display = "none";
+
+    let resultsReceivedContainer = document.createElement('div');
+    resultsReceivedContainer.id = "results-received-container";
+    resultsReceivedContainer.style.display = "none";
+    
+    resultsReceivedTemplate(resultsReceivedContainer);
+
+    // resultsContainer.style.display = "none";
+    resultsContainer.appendChild(loaderContainer);
+    resultsContainer.appendChild(resultsReceivedContainer)
+
+    userFeedbackContainer.appendChild(resultsContainer);
     userFeedbackContainer.appendChild(userSpeakContainer);
 
     // dialogue container element
@@ -350,12 +370,20 @@ let doneButtonOnClick = () => {
     console.log("doneButtonOnClick Before : " + mediaRecorder.state);
     stopRecording();
     console.log("doneButtonOnClick After : " + mediaRecorder.state);
+    showResultsContainer();
 }
 
 let skipButtonOnClick = () => {
     sendForComparison = false;   
     hideUserSpeakContainer();
     stopRecording();
+}
+
+let addToResultsReceivedContainer = (result) => {
+    let resultsReceivedElement = document.getElementById('results-received-container');
+    
+
+    showResultsReceived();
 }
 
 
@@ -365,6 +393,47 @@ let skipButtonOnClick = () => {
 // recording gets sent to the server and video resumes
 
 // Manipulate Netflix DOM
+
+let resultsReceivedTemplate = (parentElement) => {
+    // let dialogueIDElement = document.createElement('p');
+
+    // let phoneticScore = ""
+
+    // parentElemen
+}
+
+let showResultsReceived = () => {
+    hideLoader();
+    let resultsReceivedElement = document.getElementById('results-received-container');
+    resultsReceivedElement.style.display = "block";
+}
+
+let hideResultsReceived = () => {
+    let resultsReceivedElement = document.getElementById('results-received-container');
+    resultsReceivedElement.style.display = "none";
+}
+
+let showLoader = () => {
+    let loaderElement = document.getElementById('loader');
+    loaderElement.style.display = "block";
+}
+
+let hideLoader = () => {
+    let loaderElement = document.getElementById('loader');
+    loaderElement.style.display = "none";
+}
+
+let showResultsContainer = () => { 
+    let resultsContainerElement = document.getElementById('results-container');
+    resultsContainerElement.style.display = "block";
+    showLoader();
+}
+
+let hideResultsContainer = () => {
+    let resultsContainerElement = document.getElementById('results-container');
+    resultsContainerElement.style.display = "none";
+    hideResultsReceived();
+}
 
 let showUserSpeakContainer = () => {
     let userSpeakContainerElement = document.getElementById('user-speak-container');
@@ -569,33 +638,6 @@ let checkAllDialogues = () => {
     }
 }
 
-let createButton = (value, parentElement, colorID) => {
-    let buttonElement = document.createElement('input');
-    buttonElement.type = "button";
-    buttonElement.value = value;
-    buttonElement.class = "button-el"
-    buttonElement.style.padding = "6px 6px";
-    buttonElement.style.margin = "8px";
-    buttonElement.style.border = "0";
-    buttonElement.style.width = "100px";
-    buttonElement.style.outline = "0";
-
-    buttonElement.style.borderRadius = "5px";
-
-    if (colorID === 0) {
-        buttonElement.style.background = "linear-gradient(to right, #0BBFD6 0%, #5ACCC1 100%)";
-    } else if (colorID == 1) {
-        buttonElement.style.background = "red";
-    }
-
-    // buttonElement.onmouseover = () => {
-    //     console.log(this)
-    //     this.style.opacity = "0.8";
-    // }
-
-    parentElement.appendChild(buttonElement);
-    return buttonElement;
-}
 
 
 
@@ -682,7 +724,6 @@ let compareDialogue = (currentAudioBlob, callback) => {
         dialogueID: contentInfo.currentDialogueID,
         audioBlob: currentAudioBlob
     }, (response) => {
-        console.log(response);
         console.log("compareDialogue took : " + getDuration(startTime));
         if (typeof (callback) == "function") {
             callback(response);
@@ -691,33 +732,6 @@ let compareDialogue = (currentAudioBlob, callback) => {
 }
 
 
-// mic audio
-
-function initializeMic() {
-    try {
-        // monkeypatch for AudioContext, getUserMedia and URL
-        window.AudioContext = window.AudioContext || window.webkitAudioContext;
-        navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia;
-        window.URL = window.URL || window.webkitURL;
-
-        // Store the instance of AudioContext globally
-        // audioContext = new AudioContext;
-        console.log('navigator.getUserMedia ' + (navigator.getUserMedia ? 'available.' : 'not present!'));
-
-        navigator.getUserMedia({ audio: true }, function (stream) {
-            audioStream = stream;
-            mediaRecorder = new MediaRecorder(stream);
-            console.log('Media stream succesfully created');
-
-        }, (error) => {
-            console.log("getUserMedia Error");
-            console.log(error);
-        });
-
-    } catch (e) {
-        alert('No web audio support in this browser!');
-    }
-}
 
 // audio
 
@@ -731,33 +745,13 @@ let stopRecording = () => {
     mediaRecorder.stop();
 }
 
-// let audioAvailable = () => {
-//     console.log("audioAvailable");
-//     console.log(sendForComparison);
-
-//     if(sendForComparison) {
-//         const audioBlob = new Blob(audioChunks);
-//         console.log(audioBlob);
-
-//         sendForComparison = false;
-//         compareDialogue(audioBlob, (result) => {
-//             console.log("Got Results from CompareDialogue");
-//             console.log(result);
-//         })
-//     }
-// }
-
-// mediaRecorder.onstop = audioAvailable;
-
-
-// mediaRecorder.ondataavailable = () => {
-//     chunks = [];
-//     chunks.push(e.data);
-// }
-
-
-
 let micInitialization = () => {
+    // monkeypatch for AudioContext, getUserMedia and URL
+    
+    window.AudioContext = window.AudioContext || window.webkitAudioContext;
+    navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia;
+    window.URL = window.URL || window.webkitURL;
+
     if (navigator.mediaDevices) {
         console.log('getUserMedia supported.');
 
@@ -787,6 +781,7 @@ let micInitialization = () => {
                     compareDialogue(audioBlob, (result) => {
                         console.log("Got Results from CompareDialogue");
                         console.log(result);
+                        addToResultsReceivedContainer(result);
                     })
                 }
             }
@@ -799,11 +794,13 @@ let micInitialization = () => {
             }
 
         })
-        .catch(function(err) {
-            console.log('The following error occurred: ' + err);
-        });
-    };
+        .catch(function(error) {
+            console.log("getUserMedia Error");
+            console.log(error);
+        })
+    }
 } 
+
 
 
 let getDuration = startTime => {
@@ -817,4 +814,34 @@ let getUsername = () => {
 let getWatchID = () => {
     contentInfo.netflixWatchID = "70274032";
     return contentInfo.netflixWatchID;
+}
+
+// helper functions
+
+let createButton = (value, parentElement, colorID) => {
+    let buttonElement = document.createElement('input');
+    buttonElement.type = "button";
+    buttonElement.value = value;
+    buttonElement.class = "button-el"
+    buttonElement.style.padding = "6px 6px";
+    buttonElement.style.margin = "8px";
+    buttonElement.style.border = "0";
+    buttonElement.style.width = "100px";
+    buttonElement.style.outline = "0";
+
+    buttonElement.style.borderRadius = "5px";
+
+    if (colorID === 0) {
+        buttonElement.style.background = "linear-gradient(to right, #0BBFD6 0%, #5ACCC1 100%)";
+    } else if (colorID == 1) {
+        buttonElement.style.background = "red";
+    }
+
+    // buttonElement.onmouseover = () => {
+    //     console.log(this)
+    //     this.style.opacity = "0.8";
+    // }
+
+    parentElement.appendChild(buttonElement);
+    return buttonElement;
 }

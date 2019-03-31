@@ -51,7 +51,7 @@ def handle_compareDialogue(message):
     response = sendScoreToBack(resultBYTES)
     print("response:", response)
 
-    return resultBYTES
+    return response
 
 # interface to send dialogue 2D array
 @socketio.on('getDialogue')

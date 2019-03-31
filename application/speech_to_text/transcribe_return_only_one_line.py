@@ -59,7 +59,7 @@ def transcribe_file_with_word_time_offsets(speech_file,language):
             encoding=enums.RecognitionConfig.AudioEncoding.LINEAR16,
             language_code=language,
             enable_word_time_offsets=True,
-            audio_channel_count=2)
+            audio_channel_count=1)
             # enableSeparateRecognitionPerChannel=True)
 
     #print("Recognizing:")

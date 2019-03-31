@@ -16,6 +16,7 @@
     "content_scripts": [
       {
         "matches": ["https://www.netflix.com/watch/*"],
+        "css": ["css/contentScript.css"],
         "js": ["scripts/socket.io.slim.js", "scripts/contentScript.js"]
       }
     ],
