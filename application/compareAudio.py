@@ -184,7 +184,7 @@ def performThreeComparisons(netflixWatchID, dialogueID, audioFile, gameID, verbo
     resultJSON = json.dumps(resultDICT)
     resultBYTES = resultJSON.encode('utf-8')
 
-    return resultBYTES
+    return resultBYTES, resultJSON
 
 def sendScoreToBack(resultBYTES):
     # send to back
