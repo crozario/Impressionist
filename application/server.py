@@ -71,6 +71,7 @@ def handle_compareDialogue(message):
 
     return resultJSON
 
+
 # interface to send dialogue 2D array
 @socketio.on('getDialogue')
 def handle_getDialogue(message):
