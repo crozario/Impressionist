@@ -259,6 +259,7 @@ let injectSideBar = () => {
 
     let resultsContainer = document.createElement('div');
     resultsContainer.id = "results-container";
+    resultsContainer.style.border = "1px solid gray";
     
     let loaderContainer = document.createElement('div');
     loaderContainer.id = "loader";
@@ -266,6 +267,7 @@ let injectSideBar = () => {
 
     let resultsReceivedContainer = document.createElement('div');
     resultsReceivedContainer.id = "results-received-container";
+    resultsReceivedContainer.className = "animate-bottom";
     resultsReceivedContainer.style.display = "none";
     
     resultsReceivedTemplate(resultsReceivedContainer);
@@ -380,9 +382,30 @@ let skipButtonOnClick = () => {
 }
 
 let addToResultsReceivedContainer = (result) => {
-    let resultsReceivedElement = document.getElementById('results-received-container');
-    
+    let resultDialogueID = document.getElementById('resultDialogueID');
+    resultDialogueID.innerHTML = "Dialogue ID : " + result.dialogueID;
 
+    let resultOriginalCaption = document.getElementById('resultOriginalCaption');
+    resultOriginalCaption.innerHTML = "Original Caption : " + result.originalCaption;
+    
+    let resultUserTranscript = document.getElementById('resultUserTranscript');
+    resultUserTranscript.innerHTML = "User Transcript : " + result.userTranscript;
+
+    // let resultOriginalEmotion = document.getElementById('resultOriginalEmotion');
+    // resultOriginalEmotion.innerHTML = "Original Emotion : " + result.originalEmotion;
+
+    let resultPhoneticScore = document.getElementById('resultPhoneticScore');
+    resultPhoneticScore.innerHTML = "Phonetic Score : " + result.phoneticScore;
+    
+    // let resultEmotionScore = document.getElementById('resultEmotionScore');
+    // resultEmotionScore.innerHTML = "Emotion Score : " + result.emotionScore;
+
+    let resultLyricalScore = document.getElementById('resultLyricalScore');
+    resultLyricalScore.innerHTML = "Lyrical Score : " + result.lyricalScore;
+
+    let resultAverageScore = document.getElementById('resultAverageScore');
+    resultAverageScore.innerHTML = "Average Score : " + result.averageScore;
+    
     showResultsReceived();
 }
 
@@ -395,11 +418,43 @@ let addToResultsReceivedContainer = (result) => {
 // Manipulate Netflix DOM
 
 let resultsReceivedTemplate = (parentElement) => {
-    // let dialogueIDElement = document.createElement('p');
+    let titleElement = document.createElement('h3');
+    titleElement.innerHTML = "Results";
 
-    // let phoneticScore = ""
+    let resultDialogueID = document.createElement('p');
+    resultDialogueID.id = "resultDialogueID";
 
-    // parentElemen
+    let resultOriginalCaption = document.createElement('p');
+    resultOriginalCaption.id = "resultOriginalCaption";
+    
+    let resultUserTranscript = document.createElement('p');
+    resultUserTranscript.id = "resultUserTranscript";
+
+    // let resultOriginalEmotion = document.createElement('p');
+    // resultOriginalEmotion.id = "resultOriginalEmotion";
+
+    let resultPhoneticScore = document.createElement('p');
+    resultPhoneticScore.id = "resultPhoneticScore";
+    
+    // let resultEmotionScore = document.createElement('p');
+    // resultEmotionScore.id = "resultEmotionScore";
+
+    let resultLyricalScore = document.createElement('p');
+    resultLyricalScore.id = "resultLyricalScore";
+
+    let resultAverageScore = document.createElement('p');
+    resultAverageScore.id = "resultAverageScore";
+
+    parentElement.appendChild(titleElement);
+    parentElement.appendChild(resultDialogueID);
+    parentElement.appendChild(resultOriginalCaption);
+    parentElement.appendChild(resultUserTranscript);
+    // parentElement.appendChild(resultOriginalEmotion);
+    parentElement.appendChild(resultPhoneticScore);
+    // parentElement.appendChild(resultEmotionScore);
+    parentElement.appendChild(resultLyricalScore);
+    parentElement.appendChild(resultAverageScore);
+
 }
 
 let showResultsReceived = () => {
@@ -424,6 +479,7 @@ let hideLoader = () => {
 }
 
 let showResultsContainer = () => { 
+    hideUserSpeakContainer();
     let resultsContainerElement = document.getElementById('results-container');
     resultsContainerElement.style.display = "block";
     showLoader();
@@ -436,6 +492,7 @@ let hideResultsContainer = () => {
 }
 
 let showUserSpeakContainer = () => {
+    hideResultsContainer();
     let userSpeakContainerElement = document.getElementById('user-speak-container');
     userSpeakContainerElement.style.display = "block";
 }
@@ -780,8 +837,8 @@ let micInitialization = () => {
                     sendForComparison = false;
                     compareDialogue(audioBlob, (result) => {
                         console.log("Got Results from CompareDialogue");
-                        console.log(result);
-                        addToResultsReceivedContainer(result);
+                        console.log(JSON.parse(result));
+                        addToResultsReceivedContainer(JSON.parse(result));
                     })
                 }
             }
