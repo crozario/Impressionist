@@ -8,7 +8,7 @@ from datetime import timedelta
 def extractTime(t):
     """converts ':' separated string into timedelta
     """
-    t = t.split(',')
+    t = t.split('.')
     ms = int(t[1].strip())
     t = t[0].split(':')
     if (len(t) == 3):
@@ -30,7 +30,7 @@ def getInterval(line):
     return (start, end)
 
 # returns list of (startTime, stopTime) tuples
-def srtExtractDialogues(subtitlesFile):
+def vttExtractDialogues(subtitlesFile):
     dialogueIntervals = []
     with open(subtitlesFile, 'r') as subfile:
         for line in subfile:
@@ -56,13 +56,14 @@ def dialogueIntervalsToIndices(dIntervals, samplingRate):
         indices.append((start, end))
     return indices
 
-def printIntervals(dIntervals):
-    for d in dIntervals:
-        start = '0'+str(d[0])
-        start = start.replace('.', ',')[:-3]
-        end = '0'+str(d[1])
-        end = end.replace('.', ',')[:-3]
-        print(start, '-->', end)
+# OLD for srt file
+# def printIntervals(dIntervals):
+#     for d in dIntervals:
+#         start = '0'+str(d[0])
+#         start = start.replace('.', ',')[:-3]
+#         end = '0'+str(d[1])
+#         end = end.replace('.', ',')[:-3]
+#         print(start, '-->', end)
 
 def generateWavDialogueFiles(audioFile, subtitlesFile, verbose=False):
     import os
@@ -73,7 +74,7 @@ def generateWavDialogueFiles(audioFile, subtitlesFile, verbose=False):
     #   read audio file
     rate, audio = wavfile.read(args.audio_file)  # rate is samples / second
     #   read subtitles
-    dIntervals = srtExtractDialogues(subtitlesFile)
+    dIntervals = vttExtractDialogues(subtitlesFile)
     indexIntervals = dialogueIntervalsToIndices(dIntervals, rate)
 
     count = 1
