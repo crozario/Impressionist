@@ -1,5 +1,6 @@
 """
 Application server (Flask)
+$ python3 server.py
 """
 
 import os
@@ -8,28 +9,22 @@ if (os.getcwd() != os.path.dirname(os.path.realpath(__file__))):
     print("Application server should be run from application folder.")
     print("cwd:", os.getcwd())
     exit()
-# CWD = os.getcwd()
-# print(CWD)
-# CONTENT_DIR = os.path.join(os.path.dirname(CWD), 'contentData')
-# print(CONTENT_DIR)
-# FRIENDS_DIR_2_12 = os.path.join(
-#     CONTENT_DIR, 'tvShows/Friends/02/12-The-One-After-The-Superbowl-Part1')
-# print(FRIENDS_DIR_2_12)
-# RAND_TEST_DIR = os.path.join(CONTENT_DIR, 'another/dir/test')
-# print(RAND_TEST_DIR)
-# # mkdir
-# print(os.path.isdir(RAND_TEST_DIR))
-# exit()
+
+SAVE_USER_AUDIO = False
+CWD = os.getcwd()
+CONTENT_DIR = os.path.join(os.path.dirname(CWD), 'contentData')
+FRIENDS_DIR_2_12 = os.path.join(
+    CONTENT_DIR, 'tvShows/Friends/02/12-The-One-After-The-Superbowl-Part1')
+USER_DIALOGUE_DIR = os.path.join(FRIENDS_DIR_2_12, "userAudio")
 
 import sys
-sys.path.insert(0, 'signalComparison')
-sys.path.insert(0, 'speech_to_text')
-sys.path.insert(0, 'speech_to_emotion')
-sys.path.insert(0, 'databuilder')
+sys.path.insert(0, 'signalComparison/')
+sys.path.insert(0, 'speech_to_text/')
+sys.path.insert(0, 'speech_to_emotion/')
+sys.path.insert(0, 'databuilder/')
 from compareAudio import performThreeComparisons, sendScoreToBack
 
 PORT = 3000        # Port to listen on (non-privileged ports are > 1023)
-# python3 server.py
 
 from flask import Flask, render_template
 from flask_socketio import SocketIO, emit
@@ -57,13 +52,23 @@ def handle_compareDialogue(message):
     # print(message['audioBlob'])
     stream = message['audioBlob']
 
-    tmpFileName = "tmptest.webm"
+    prefix = "diag"+str(message['dialogueID']+1)
+    webmname = prefix + ".webm"
+    wavname = prefix + ".wav"
+
+    webmFile = webmname if not SAVE_USER_AUDIO else os.path.join(USER_DIALOGUE_DIR, webmname)
+    wavFile = wavname if not SAVE_USER_AUDIO else os.path.join(USER_DIALOGUE_DIR, wavname) # for deleting purposes later
 
     # FIXME: just writing as raw and then running ffmpeg again inside `compareAudio.py`
-    with open(tmpFileName, 'wb') as aud:
+    with open(webmFile, 'wb') as aud:
         aud.write(stream)
 
-    resultBYTES, resultJSON = performThreeComparisons(message['netflixWatchID'], message['dialogueID'], tmpFileName, message['gameID'], profile=False)
+    resultBYTES, resultJSON = performThreeComparisons(message['netflixWatchID'], message['dialogueID'], webmFile, message['gameID'], profile=False)
+
+    if not SAVE_USER_AUDIO: os.remove(wavFile)
+    os.remove(webmFile)
+
+
     print("send to db", resultBYTES)
     # FIXME: don't wanna wait until back responds 
     response = sendScoreToBack(resultBYTES)
@@ -88,7 +93,13 @@ def handle_getUniqueCharacters(message):
 # def handle_calibrate(message):
 #     print(message)
 
+def initializeUserAudioDir():
+    if not os.path.isdir(USER_DIALOGUE_DIR):
+        os.makedirs(USER_DIALOGUE_DIR)
+        print("created:", os.path.isdir(USER_DIALOGUE_DIR),USER_DIALOGUE_DIR )
+
 if __name__ == '__main__':
     print("Application Server is listening in port " + str(PORT))
+    if SAVE_USER_AUDIO: initializeUserAudioDir()
     socketio.run(app, port=PORT)
         
