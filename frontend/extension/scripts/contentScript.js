@@ -410,21 +410,24 @@ let addCharacterNamesToPicker = (pickerElement) => {
 }
 
 let doneButtonOnClick = () => {
+    if(isUserSpeakContainerDisplayed() === true) {
+        hideUserSpeakContainer();
+    }
+    
     currentGameState = gameStates.sendingUserAudio;
-    hideUserSpeakContainer();
+    
     stopRecording();
     playVideo();
     showResultsContainer();
 }
 
 let skipButtonOnClick = () => {
-    currentGameState = gameStates.skippedDialogue
-    // var index = contentInfo.characterDialogueAlreadyViewed.indexOf(contentInfo.currentDialogueID);
-    // if (index > -1) {
-    //     contentInfo.characterDialogueAlreadyViewed.splice(index, 1);
-    // }
-    contentInfo.currentSpeakingDialogue = null
-    hideUserSpeakContainer();
+    currentGameState = gameStates.skippedDialogue;
+
+    if(isUserSpeakContainerDisplayed() === true) {
+        hideUserSpeakContainer();
+    }
+    
     stopRecording();
     playVideo();
 }
@@ -781,15 +784,18 @@ let checkDialogueIsCharacterPicked = () => {
 
                 pauseVideo();
                 startRecording();
-                showUserSpeakContainer();
+                if(isUserSpeakContainerDisplayed() === false) {
+                    showUserSpeakContainer();
+                }
             }
             
             // not on dialogue user picked
         } else {
-            hideUserSpeakContainer();
+            contentInfo.currentSpeakingDialogue = null;
+            // hideUserSpeakContainer();
         }
     } else {
-        hideUserSpeakContainer();
+        // hideUserSpeakContainer();
     }
 }
 
