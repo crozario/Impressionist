@@ -148,7 +148,7 @@ def performThreeComparisons(netflixWatchID, dialogueID, audioFile, gameID, verbo
     4. compareEmotion
     5. compareLyrical
     """
-    resultDICT = {"gameID" : gameID, "dialogueID" : dialogueID}
+    resultDICT = {"gameID" : gameID, "dialogueID" : dialogueID, "error" : "", "success" : True}
     overallscore = 0.0
     totalScores = 2
     # 1. get processed data from contentDB

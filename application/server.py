@@ -46,10 +46,10 @@ def test_disconnect():
 
 @socketio.on('compareDialogue')
 def handle_compareDialogue(message):
-    print("on compareDialogue")
-    print(message['gameID'])
-    print(message['netflixWatchID'])
-    print(message['dialogueID'])
+    print("Data received (on compareDialogue)")
+    print("gameID:", message['gameID'])
+    print("netflixWatchID:", message['netflixWatchID'])
+    print("dialogueID:", message['dialogueID'])
     # print(message['audioBlob'])
     stream = message['audioBlob']
 
@@ -69,14 +69,14 @@ def handle_compareDialogue(message):
     if not SAVE_USER_AUDIO: os.remove(wavFile)
     os.remove(webmFile)
 
-    print("send to db", resultBYTES)
+    # print("send to db", resultBYTES)
     # FIXME: don't wanna wait until back responds 
     # SOLUTION: async process
-    thr = threading.Thread(target=sendScoreToBack, args=(resultBYTES, True))
-    thr.start()
+    # thr = threading.Thread(target=sendScoreToBack, args=(resultBYTES, True))
+    # thr.start()
     # response = sendScoreToBack(resultBYTES)
     # print("response:", response)
-    print("returned to front")
+    print(resultJSON)
 
     return resultJSON
 
