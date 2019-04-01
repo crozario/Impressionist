@@ -35,6 +35,7 @@ from bs4 import BeautifulSoup
 soup = BeautifulSoup(page.content, 'html.parser')
 
 html = list(soup.children)
+# print(type(html[4]))
 
 # [type(item) for item in list(soup.children)]
 
@@ -48,7 +49,7 @@ import re
 
 match = re.finditer(r'(\w+.?\w*:(.+\n)+?  <b)', html[4].prettify())
 
-  #[match[0] for match in re.finditer(r'(\w+.?\w*:(.+\n)+?  <b)', html[4].prettify())]
+  # [match[0] for match in re.finditer(r'(\w+.?\w*:(.+\n)+?  <b)', html[4].prettify())]
 # match = re.search(r'\w+.?\w*:(.+\n)+?  <?', html[4].prettify())
 # match.group(0)
 
@@ -62,7 +63,7 @@ import pysubs2
 
 subs = pysubs2.load('friends.s02e12.720p.bluray.x264-psychd.srt')
 
-print(subs[0].text)
+# print(subs[0].text)
 
 for sub in subs:
   if sub.name is not '':
@@ -75,6 +76,7 @@ for sub in subs:
 # match = re.finditer(r'((\w+.?\w*):(.+\n)+?  <b)', html[4].prettify())
 for i, dialogue in enumerate(match):
   # print(dialogue.group(0))
+  # exit()
   # print("---------")
   # if (i == 1):
     # break
