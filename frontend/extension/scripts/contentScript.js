@@ -80,7 +80,8 @@ let contentInfo = {
     characterPickedIDs: null,
     netflixWatchID: null, // id for the specific content (movie, episode)
     // characterDialogueAlreadyViewed : []
-    currentSpeakingDialogue : null
+    currentSpeakingDialogue : null,
+    allCharacterIDs : null
 }
 
 
@@ -166,6 +167,8 @@ window.onload = () => {
         contentInfo.characterNames = jsonResult.characterNames;
         contentInfo.captions = jsonResult.captions;
         contentInfo.characterDialogueIDs = jsonResult.characterDialogueIDs;
+
+        getAllCharacterIds();
 
         gameInitialization(username, watchID).then((jsonResult) => {
             contentInfo.gameID = jsonResult.gameID
@@ -396,16 +399,34 @@ let addCharacterNamesToPicker = (pickerElement) => {
             contentInfo.characterPicked = null;
             contentInfo.characterPickedIDs = null;
         } else if (selectedIndex == 1) {
-            // contentInfo.characterPicked = "All";
-            // contentInfo.characterDialogueIDs = 
+            
+            // check if allCharacterID's exist 
+
+            if(contentInfo.allCharacterIDs !== null) {
+                contentInfo.characterPicked = "All";
+                contentInfo.characterPickedIDs = contentInfo.allCharacterIDs;
+            } else {
+                pickerElement.selectedIndex = 0;
+            }
+            
         } else {
             contentInfo.characterPicked = contentInfo.characterNames[selectedIndex - 2];
             contentInfo.characterPickedIDs = contentInfo.characterDialogueIDs[contentInfo.characterPicked];
         }
 
-        console.log(contentInfo.characterPicked);
-        console.log(contentInfo.characterPickedIDs);
     })
+}
+
+let getAllCharacterIds = () => {
+    if(contentInfo.characterDialogueIDs !== null) {
+        contentInfo.allCharacterIDs = [];
+
+        for (let key in contentInfo.characterDialogueIDs){
+            let currentCharacterArray = contentInfo.characterDialogueIDs[key];
+            Array.prototype.push.apply(contentInfo.allCharacterIDs, currentCharacterArray);
+        }
+    }
+
 }
 
 let doneButtonOnClick = () => {
