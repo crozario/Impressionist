@@ -282,10 +282,10 @@ let injectSideBar = () => {
 
     userSpeakContainer.appendChild(userSpeakElement);
 
-    let doneButton = createButton("Done", userSpeakContainer, 1);
+    let doneButton = createButton("Done", "done-button", userSpeakContainer, 1);
     doneButton.addEventListener("click", doneButtonOnClick);
 
-    let skipButton = createButton("Skip", userSpeakContainer, 1);
+    let skipButton = createButton("Skip", "skip-button", userSpeakContainer, 1);
     skipButton.addEventListener("click", skipButtonOnClick);
 
     userSpeakContainer.style.display = "none";
@@ -338,12 +338,11 @@ let injectSideBar = () => {
     dialogueTitleElement.style.padding = "10px 10px";
     dialogueContainerElement.appendChild(dialogueTitleElement);
 
-    let previousDialogueButton = createButton("Previous", dialogueContainerElement, 0);
-    previousDialogueButton.addEventListener("click", goToPreviousDialogue);
+    let previousDialogueButton = createButton("Previous", "previous-button", dialogueContainerElement, 0);
+    previousDialogueButton.addEventListener("click", previousButtonOnClick);
 
-    let nextDialogueButton = createButton("Next", dialogueContainerElement, 0);
-    nextDialogueButton.addEventListener("click", goToNextDialogue);
-
+    let nextDialogueButton = createButton("Next", "next-button", dialogueContainerElement, 0);
+    nextDialogueButton.addEventListener("click", nextButtonOnClick);
 
     sideBarContainerDivElement.appendChild(currentTimeElement);
     sideBarContainerDivElement.appendChild(currentDialogueElement);
@@ -410,6 +409,7 @@ let addCharacterNamesToPicker = (pickerElement) => {
 }
 
 let doneButtonOnClick = () => {
+
     if(isUserSpeakContainerDisplayed() === true) {
         hideUserSpeakContainer();
     }
@@ -422,6 +422,7 @@ let doneButtonOnClick = () => {
 }
 
 let skipButtonOnClick = () => {
+    
     currentGameState = gameStates.skippedDialogue;
 
     if(isUserSpeakContainerDisplayed() === true) {
@@ -459,12 +460,6 @@ let addToResultsReceivedContainer = (result) => {
     
     showResultsReceived();
 }
-
-
-// when character dialogueid comes
-// pause video and start recording (on sideBar : "say the dialogue")
-// user then says the dialog and presses done when finished
-// recording gets sent to the server and video resumes
 
 // Manipulate Netflix DOM
 
@@ -621,8 +616,16 @@ let updateDialogueElement = () => {
     currentDialogueElement.innerHTML = "Current Dialogue : " + contentInfo.currentDialogueID;
 }
 
-let goToPreviousDialogue = () => {
+let previousButtonOnClick = () => {
+    let previousButton = document.getElementById("previous-button");
+
     if (contentInfo.previousDialogueID !== null) {
+        previousButton.disabled = true;
+
+        setTimeout(() => {
+            previousButton.disabled = false;
+        }, 1000);
+
         const previousStartDialogue = contentInfo.captions[contentInfo.previousDialogueID][0];
         console.log("PREV BUTTON: " + "prev: " + contentInfo.previousDialogueID + " current : " + contentInfo.currentDialogueID + " next: " + contentInfo.nextDialogueID);
         pauseVideo();
@@ -633,8 +636,16 @@ let goToPreviousDialogue = () => {
     }
 }
 
-let goToNextDialogue = () => {
+let nextButtonOnClick = () => {
+    let nextButton = document.getElementById("next-button");
+
     if (contentInfo.nextDialogueID !== null) {
+        nextButton.disabled = true;
+
+        setTimeout(() => {
+            nextButton.disabled = false;
+        }, 1000);
+
         const nextStartDialogue = contentInfo.captions[contentInfo.nextDialogueID][0];
         console.log("NEXT BUTTON: " + "prev: " + contentInfo.previousDialogueID + " current : " + contentInfo.currentDialogueID + " next: " + contentInfo.nextDialogueID);
         pauseVideo();
@@ -756,27 +767,6 @@ let hideDoneSkip = () => {
     let showDoneContainerElement = document.getElementById('done-skip');
     showDoneContainerElement.style.display = "none";
 }
-
-// let checkDialogueIsCharacterPicked = () => {
-//     if (contentInfo.currentDialogueID !== null && contentInfo.characterPickedIDs !== null) {
-
-//         // on dialogue user picked
-//         if (contentInfo.characterPickedIDs.includes(contentInfo.currentDialogueID)) {
-//             if(currentVideoState === videoStates.playing && currentRecorderState !== recorderStates.recording && contentInfo.characterDialogueAlreadyViewed.includes(contentInfo.currentDialogueID) === false) {
-//                 contentInfo.characterDialogueAlreadyViewed.push(contentInfo.currentDialogueID);
-//                 pauseVideo();
-//                 startRecording();
-//                 showUserSpeakContainer();
-//             }
-            
-//             // not on dialogue user picked
-//         } else {
-//             hideUserSpeakContainer();
-//         }
-//     } else {
-//         hideUserSpeakContainer();
-//     }
-// }
 
 let checkDialogueIsCharacterPicked = () => {
     if (contentInfo.currentDialogueID !== null && contentInfo.characterPickedIDs !== null) {
@@ -1022,7 +1012,7 @@ let getWatchID = () => {
 
 // helper functions
 
-let createButton = (value, parentElement, colorID) => {
+let createButton = (value, id, parentElement, colorID) => {
     let buttonElement = document.createElement('input');
     buttonElement.type = "button";
     buttonElement.value = value;
@@ -1032,6 +1022,7 @@ let createButton = (value, parentElement, colorID) => {
     buttonElement.style.border = "0";
     buttonElement.style.width = "100px";
     buttonElement.style.outline = "0";
+    buttonElement.id = id;
 
     buttonElement.style.borderRadius = "5px";
 
