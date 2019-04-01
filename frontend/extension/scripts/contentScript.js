@@ -658,6 +658,10 @@ let updateDialogueID = () => {
 
         // check if still in current dialogue
         if (isInBetweenDialogues(currentStartDialogue, currentEndDialogue)) {
+            if(doesDialogueExist(currentDialogueID - 1, contentInfo.captions)) {
+                contentInfo.previousDialogueID = contentInfo.currentDialogueID - 1;
+            }
+            
             return;
         }
 
