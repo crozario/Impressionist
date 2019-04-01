@@ -15,25 +15,56 @@ const applicationServerHost = "http://localhost";
 // const serverHost = "10.202.133.175"
 // const serverHost = "https://impressionist.localtunnel.me"
 const socketAddress = applicationServerHost + ":" + applicationServerPort;
-
 let socket;
 
 const timeDelay = 50;
 
-// video infor
+// video info
 let currentTime = 0;
-let videoIsPlaying = null;
-let videoIsPaused = null;
 
 // audio info
 var audioContext;
 var mediaRecorder;
 var audioChunks = [];
-var audioIsRecording = false;
-var sendForComparison = false;
 
-// states 
 let contentSupported = false;
+
+// let state = {
+//     currentGameState : inactive,
+//     currentVideoState : inactive,
+//     currentRecorderState : inactive,
+// }
+
+/* 
+    states
+*/
+
+const gameStates = {
+    inactive : "inactive",
+    userSpeakingDialogue : "user speaking dialogue",
+    sendingUserAudio : "sending user audio",
+    waitingForDialogueResult : "waiting for dialogue result",
+    skippedDialogue : "skipped Dialogue"
+}
+
+const videoStates = {
+    inactive : "inactive",
+    playing : "playing",
+    paused : "paused",
+}
+
+const recorderStates = {
+    inactive : "inactive",
+    recording : "recording",
+    paused : "paused",
+    stopped : "stopped"
+}
+
+let currentGameState = gameStates.inactive
+let currentVideoState = videoStates.inactive
+let currentRecorderState = recorderStates.inactive
+
+
 
 // content info
 
@@ -47,8 +78,11 @@ let contentInfo = {
     characterDialogueIDs: null, // list of dialogue indexes per character
     characterPicked: null,
     characterPickedIDs: null,
-    netflixWatchID: null // id for the specific content (movie, episode)
+    netflixWatchID: null, // id for the specific content (movie, episode)
+    // characterDialogueAlreadyViewed : []
+    currentSpeakingDialogue : null
 }
+
 
 
 let gameInitialization = (username, watchID) => {
@@ -185,9 +219,10 @@ let injectSideBar = () => {
     let videoContainer = document.getElementsByClassName('sizing-wrapper')[0];
 
 
-    /* Add to netflix webpage */
+    /* 
+        Add to netflix webpage 
+    */
 
-    // side bar container element
     let sideBarContainerDivElement = document.createElement('div');
     sideBarContainerDivElement.id = "side-bar-container";
     sideBarContainerDivElement.style.backgroundColor = "#141A31";
@@ -200,7 +235,6 @@ let injectSideBar = () => {
     sideBarContainerDivElement.style.height = "100%";
     sideBarContainerDivElement.style.width = "300px";
 
-    // title element
     let titleElement = document.createElement('h1');
     titleElement.innerHTML = "Impressionist";
     titleElement.style.textAlign = "center";
@@ -210,7 +244,6 @@ let injectSideBar = () => {
 
     sideBarContainerDivElement.appendChild(titleElement)
 
-    // current time element
     let currentTimeElement = document.createElement('p');
     currentTimeElement.id = "current-time-container";
     currentTimeElement.innerHTML = "Current Time : "
@@ -223,7 +256,7 @@ let injectSideBar = () => {
     currentDialogueElement.style.textAlign = "center";
     currentDialogueElement.style.margin = "20px 0";
 
-
+    
     let userFeedbackContainer = document.createElement('div');
     userFeedbackContainer.style.height = "150px";
     userFeedbackContainer.style.margin = "0";
@@ -237,12 +270,17 @@ let injectSideBar = () => {
     
     userFeedbackContainer.append(characterPickerElement);
 
+    /*
+        tells when the user should speak and send/skip dialogue comparison
+    */
     let userSpeakContainer = document.createElement('div');
     userSpeakContainer.id = "user-speak-container";
 
     let userSpeakElement = document.createElement('h4');
     userSpeakElement.innerHTML = "PLEASE SPEAK THE DIALOGUE!";
     userSpeakElement.style.color = "red";
+
+    userSpeakContainer.appendChild(userSpeakElement);
 
     let doneButton = createButton("Done", userSpeakContainer, 1);
     doneButton.addEventListener("click", doneButtonOnClick);
@@ -252,10 +290,9 @@ let injectSideBar = () => {
 
     userSpeakContainer.style.display = "none";
     
-    userSpeakContainer.appendChild(userSpeakElement);
-
-
-    // results from compare dialogue
+    /*
+        shows loader and results from compareDialogue
+    */
 
     let resultsContainer = document.createElement('div');
     resultsContainer.id = "results-container";
@@ -276,10 +313,14 @@ let injectSideBar = () => {
     resultsContainer.appendChild(loaderContainer);
     resultsContainer.appendChild(resultsReceivedContainer)
 
-    userFeedbackContainer.appendChild(resultsContainer);
     userFeedbackContainer.appendChild(userSpeakContainer);
+    userFeedbackContainer.appendChild(resultsContainer);
+   
 
-    // dialogue container element
+    /*
+        interaction with dialogues
+        go to Previous or Next dialogue 
+    */
     let dialogueContainerElement = document.createElement('div');
     dialogueContainerElement.style.width = "100%";
     dialogueContainerElement.style.position = "absolute";
@@ -310,7 +351,9 @@ let injectSideBar = () => {
     sideBarContainerDivElement.appendChild(dialogueContainerElement)
     pageContainer[0].appendChild(sideBarContainerDivElement);
 
-    /* Manipulate to netflix webpage */
+    /* 
+        Manipulate to netflix webpage
+    */
     videoContainer.style.right = "300px"; // need to add this to a class inside ('size-wrapper') to show and hide side bar
 }
 
@@ -333,7 +376,7 @@ let addCharacterNamesToPicker = (pickerElement) => {
     let option2 = allCharacters;
     optionElement2.text = option2;
     optionElement2.value = option2;
-    pickerElement.add(optionElement2);
+    pickerElement.add(optionElement2);222
 
     for (var character of contentInfo.characterNames) {
         const option = character;
@@ -367,18 +410,23 @@ let addCharacterNamesToPicker = (pickerElement) => {
 }
 
 let doneButtonOnClick = () => {
-    sendForComparison = true;   
+    currentGameState = gameStates.sendingUserAudio;
     hideUserSpeakContainer();
-    console.log("doneButtonOnClick Before : " + mediaRecorder.state);
     stopRecording();
-    console.log("doneButtonOnClick After : " + mediaRecorder.state);
+    playVideo();
     showResultsContainer();
 }
 
 let skipButtonOnClick = () => {
-    sendForComparison = false;   
+    currentGameState = gameStates.skippedDialogue
+    // var index = contentInfo.characterDialogueAlreadyViewed.indexOf(contentInfo.currentDialogueID);
+    // if (index > -1) {
+    //     contentInfo.characterDialogueAlreadyViewed.splice(index, 1);
+    // }
+    contentInfo.currentSpeakingDialogue = null
     hideUserSpeakContainer();
     stopRecording();
+    playVideo();
 }
 
 let addToResultsReceivedContainer = (result) => {
@@ -458,7 +506,9 @@ let resultsReceivedTemplate = (parentElement) => {
 }
 
 let showResultsReceived = () => {
-    hideLoader();
+    if(isLoaderDisplayed() === true) {
+        hideLoader();
+    }
     let resultsReceivedElement = document.getElementById('results-received-container');
     resultsReceivedElement.style.display = "block";
 }
@@ -466,6 +516,16 @@ let showResultsReceived = () => {
 let hideResultsReceived = () => {
     let resultsReceivedElement = document.getElementById('results-received-container');
     resultsReceivedElement.style.display = "none";
+}
+
+let isResultsReceivedDisplayed = () => {
+    let resultsReceivedElement = document.getElementById('results-received-container');
+
+    if(resultsReceivedElement.style.display === "none") {
+        return false;
+    } else {
+        return true;
+    }
 }
 
 let showLoader = () => {
@@ -478,28 +538,74 @@ let hideLoader = () => {
     loaderElement.style.display = "none";
 }
 
+let isLoaderDisplayed = () => {
+    let loaderElement = document.getElementById('loader');
+    if(loaderElement.style.display === "none") {
+        return false;
+    } else {
+        return true;
+    }
+}
+
 let showResultsContainer = () => { 
-    hideUserSpeakContainer();
+    // hideUserSpeakContainer();
+    if(currentGameState === gameStates.waitingForDialogueResult || currentGameState === gameStates.sendingUserAudio) {
+        if(isLoaderDisplayed() === false) {
+            showLoader();
+        }
+    } else {
+        if(isLoaderDisplayed() === true) {
+            hideLoader();
+        }
+    }
+    
     let resultsContainerElement = document.getElementById('results-container');
     resultsContainerElement.style.display = "block";
-    showLoader();
+    
 }
 
 let hideResultsContainer = () => {
     let resultsContainerElement = document.getElementById('results-container');
     resultsContainerElement.style.display = "none";
-    hideResultsReceived();
+    if(isLoaderDisplayed() === true) {
+        hideLoader();
+    }
+
+    if(isResultsReceivedDisplayed() === true) {
+        hideResultsReceived();
+    }
+}
+
+let isResultsContainerDisplayed = () => {
+    let resultsContainerElement = document.getElementById('results-container');
+
+    if(resultsContainerElement.style.display === "none") {
+        return false;
+    } else {
+        return true;
+    }
 }
 
 let showUserSpeakContainer = () => {
     hideResultsContainer();
     let userSpeakContainerElement = document.getElementById('user-speak-container');
     userSpeakContainerElement.style.display = "block";
+    showResultsContainer();
 }
 
 let hideUserSpeakContainer = () => {
     let userSpeakContainerElement = document.getElementById('user-speak-container');
     userSpeakContainerElement.style.display = "none";
+}
+
+let isUserSpeakContainerDisplayed = () => {
+    let userSpeakContainerElement = document.getElementById('user-speak-container');
+
+    if(userSpeakContainerElement.style.display === "none") {
+        return false;
+    } else {
+        return true;
+    }
 }
 
 let updateCurrentTimeElement = () => {
@@ -644,16 +750,37 @@ let hideDoneSkip = () => {
     showDoneContainerElement.style.display = "none";
 }
 
+// let checkDialogueIsCharacterPicked = () => {
+//     if (contentInfo.currentDialogueID !== null && contentInfo.characterPickedIDs !== null) {
+
+//         // on dialogue user picked
+//         if (contentInfo.characterPickedIDs.includes(contentInfo.currentDialogueID)) {
+//             if(currentVideoState === videoStates.playing && currentRecorderState !== recorderStates.recording && contentInfo.characterDialogueAlreadyViewed.includes(contentInfo.currentDialogueID) === false) {
+//                 contentInfo.characterDialogueAlreadyViewed.push(contentInfo.currentDialogueID);
+//                 pauseVideo();
+//                 startRecording();
+//                 showUserSpeakContainer();
+//             }
+            
+//             // not on dialogue user picked
+//         } else {
+//             hideUserSpeakContainer();
+//         }
+//     } else {
+//         hideUserSpeakContainer();
+//     }
+// }
+
 let checkDialogueIsCharacterPicked = () => {
     if (contentInfo.currentDialogueID !== null && contentInfo.characterPickedIDs !== null) {
 
         // on dialogue user picked
         if (contentInfo.characterPickedIDs.includes(contentInfo.currentDialogueID)) {
-            if(videoIsPlaying && audioIsRecording === false) {
-                console.log("checkDialogueIsCharacterPicked Before : " + mediaRecorder.state);
+            if(currentVideoState === videoStates.playing && currentRecorderState !== recorderStates.recording && contentInfo.currentDialogueID !== contentInfo.currentSpeakingDialogue) {
+                contentInfo.currentSpeakingDialogue = contentInfo.currentDialogueID;
+
                 pauseVideo();
                 startRecording();
-                console.log("checkDialogueIsCharacterPicked After : " + mediaRecorder.state);
                 showUserSpeakContainer();
             }
             
@@ -696,8 +823,6 @@ let checkAllDialogues = () => {
 }
 
 
-
-
 // Netflix API
 
 // document.addEventListener('RW759_connectExtension', function(e) {
@@ -723,11 +848,13 @@ let checkAllDialogues = () => {
 
 let pauseVideo = () => {
     document.dispatchEvent(new CustomEvent('pauseVideo', {}));
+    currentVideoState = videoStates.paused;
 }
 
 
 let playVideo = () => {
     document.dispatchEvent(new CustomEvent('playVideo', {}));
+    currentVideoState = videoStates.playing
 }
 
 let seek = (time) => {
@@ -758,8 +885,14 @@ setupEventListeners = () => {
     });
 
     document.addEventListener('getPaused', (response) => {
-        videoIsPaused = response.detail;
-        videoIsPlaying = !videoIsPaused;
+        const videoPaused = response.detail;
+        
+        if(videoPaused === true) {
+            currentVideoState = videoStates.paused;
+        } else {
+            currentVideoState = videoStates.playing;
+        }
+        
     });
 }
 
@@ -795,11 +928,13 @@ let compareDialogue = (currentAudioBlob, callback) => {
 let startRecording = () => {
     console.log("startRecording");
     mediaRecorder.start();
+    currentRecorderState = recorderStates.recording;
 }
 
 let stopRecording = () => {
     console.log("stopRecording");
     mediaRecorder.stop();
+    currentRecorderState = recorderStates.stopped;
 }
 
 let micInitialization = () => {
@@ -827,26 +962,28 @@ let micInitialization = () => {
 
             // recording stopped
             mediaRecorder.onstop = (e) => {
-                console.log("audioAvailable");
-                console.log(sendForComparison);
-                
-                if(sendForComparison) {
-                    const audioBlob = new Blob(audioChunks);
-                    console.log(audioBlob);
             
-                    sendForComparison = false;
+                console.log("audioAvailable");
+
+                if(currentGameState === gameStates.sendingUserAudio) {
+                    const audioBlob = new Blob(audioChunks);
+            
+                    currentGameState = gameStates.waitingForDialogueResult;
                     compareDialogue(audioBlob, (result) => {
                         console.log("Got Results from CompareDialogue");
                         console.log(JSON.parse(result));
                         addToResultsReceivedContainer(JSON.parse(result));
                     })
+                } else if(currentGameState === gameStates.skippedDialogue) {
+                    // skipped dialogue
                 }
+
+                audioChunks = [];
             }
             
             // recording data available
             mediaRecorder.ondataavailable = (e) =>{
                 console.log("mediaRecorder ondataavailable");
-                audioChunks = [];
                 audioChunks.push(e.data);
             }
 
