@@ -65,7 +65,6 @@ let currentVideoState = videoStates.inactive
 let currentRecorderState = recorderStates.inactive
 
 
-
 // content info
 
 let contentInfo = {
@@ -83,8 +82,6 @@ let contentInfo = {
     currentSpeakingDialogue : null,
     allCharacterIDs : null
 }
-
-
 
 let gameInitialization = (username, watchID) => {
     return new Promise((resolve, reject) => {
@@ -961,9 +958,9 @@ let stopRecording = () => {
 let micInitialization = () => {
     // monkeypatch for AudioContext, getUserMedia and URL
     
-    window.AudioContext = window.AudioContext || window.webkitAudioContext;
-    navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia;
-    window.URL = window.URL || window.webkitURL;
+    // window.AudioContext = window.AudioContext || window.webkitAudioContext;
+    // navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia;
+    // window.URL = window.URL || window.webkitURL;
 
     if (navigator.mediaDevices) {
         console.log('getUserMedia supported.');
