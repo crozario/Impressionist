@@ -1,4 +1,10 @@
 
+table {
+  border-radius: 5px;
+}
+
+
+
 .animate-bottom {
      position: relative;
     -webkit-animation-name: animatebottom;
