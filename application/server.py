@@ -10,14 +10,19 @@ if (os.getcwd() != os.path.dirname(os.path.realpath(__file__))):
     print("cwd:", os.getcwd())
     exit()
 
-SAVE_USER_AUDIO = False
+from flask import Flask, render_template
+from flask_socketio import SocketIO, emit
+import json
+import sys
+import threading
+
+SAVE_USER_AUDIO = True
 CWD = os.getcwd()
 CONTENT_DIR = os.path.join(os.path.dirname(CWD), 'contentData')
 FRIENDS_DIR_2_12 = os.path.join(
     CONTENT_DIR, 'tvShows/Friends/02/12-The-One-After-The-Superbowl-Part1')
 USER_DIALOGUE_DIR = os.path.join(FRIENDS_DIR_2_12, "userAudio")
 
-import sys
 sys.path.insert(0, 'signalComparison/')
 sys.path.insert(0, 'speech_to_text/')
 sys.path.insert(0, 'speech_to_emotion/')
@@ -25,10 +30,6 @@ sys.path.insert(0, 'databuilder/')
 from compareAudio import performThreeComparisons, sendScoreToBack
 
 PORT = 3000        # Port to listen on (non-privileged ports are > 1023)
-
-from flask import Flask, render_template
-from flask_socketio import SocketIO, emit
-import json
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'secret!'
@@ -68,11 +69,14 @@ def handle_compareDialogue(message):
     if not SAVE_USER_AUDIO: os.remove(wavFile)
     os.remove(webmFile)
 
-
     print("send to db", resultBYTES)
     # FIXME: don't wanna wait until back responds 
-    response = sendScoreToBack(resultBYTES)
-    print("response:", response)
+    # SOLUTION: async process
+    thr = threading.Thread(target=sendScoreToBack, args=(resultBYTES, True))
+    thr.start()
+    # response = sendScoreToBack(resultBYTES)
+    # print("response:", response)
+    print("returned to front")
 
     return resultJSON
 
