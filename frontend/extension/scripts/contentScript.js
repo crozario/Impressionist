@@ -311,6 +311,8 @@ let injectSideBar = () => {
     resultsContainer.style.overflow = "auto";
     resultsContainer.style.borderTop = "1px solid gray";
     resultsContainer.style.borderBottom = "1px solid gray";
+    resultsContainer.style.margin = "10px 2px";
+    resultsContainer.style.padding = "2px 0";
 
     let loaderContainer = document.createElement('div');
     loaderContainer.id = "loader";
