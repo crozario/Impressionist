@@ -343,7 +343,7 @@ let injectSideBar = () => {
     dialogueContainerElement.style.width = "100%";
     dialogueContainerElement.style.position = "absolute";
     dialogueContainerElement.style.bottom = "0";
-    dialogueContainerElement.style.height = "150px";
+    dialogueContainerElement.style.height = "160px";
     dialogueContainerElement.style.margin = "0";
     dialogueContainerElement.style.padding = "0";
     dialogueContainerElement.style.textAlign = "center";
@@ -352,8 +352,8 @@ let injectSideBar = () => {
     let dialogueTitleElement = document.createElement('h2');
     dialogueTitleElement.innerHTML = "Dialogue Interaction";
     dialogueTitleElement.style.borderTop = "1px solid gray";
-    dialogueTitleElement.style.margin = "10px 10px";
-    dialogueTitleElement.style.padding = "10px 10px";
+    dialogueTitleElement.style.margin = "10px 5px";
+    dialogueTitleElement.style.padding = "5px 5px";
     dialogueContainerElement.appendChild(dialogueTitleElement);
 
     let previousDialogueButton = createButton("Previous", "previous-button", dialogueContainerElement, 0);
@@ -1069,7 +1069,7 @@ let getDuration = startTime => {
 }
 
 let getUsername = () => {
-    return "c.rozario"
+    return "parzival"
 }
 
 let getWatchID = () => {
