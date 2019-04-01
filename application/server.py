@@ -46,10 +46,10 @@ def test_disconnect():
 
 @socketio.on('compareDialogue')
 def handle_compareDialogue(message):
-    print("on compareDialogue")
-    print(message['gameID'])
-    print(message['netflixWatchID'])
-    print(message['dialogueID'])
+    print("Data received (on compareDialogue)")
+    print("gameID:", message['gameID'])
+    print("netflixWatchID:", message['netflixWatchID'])
+    print("dialogueID:", message['dialogueID'])
     # print(message['audioBlob'])
     stream = message['audioBlob']
 
