@@ -186,7 +186,7 @@ def performThreeComparisons(netflixWatchID, dialogueID, audioFile, gameID, verbo
 
     return resultBYTES, resultJSON
 
-def sendScoreToBack(resultBYTES):
+def sendScoreToBack(resultBYTES, verbose):
     # send to back
     req = urllib.request.Request(URLuserDB_storeScoreData, method='POST')
     req.add_header('Content-Type', 'application/json; charset=utf-8')
@@ -194,6 +194,7 @@ def sendScoreToBack(resultBYTES):
     backResponse = urllib.request.urlopen(req, resultBYTES)
     backResponse = backResponse.read().decode('utf-8')
     backResponse = json.loads(backResponse)
+    if verbose: print("userDB response: ", backResponse)
     return backResponse
 
 if __name__=='__main__':
