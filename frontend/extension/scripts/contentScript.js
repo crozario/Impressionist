@@ -318,7 +318,7 @@ let injectSideBar = () => {
 
     let resultsReceivedContainer = document.createElement('div');
     resultsReceivedContainer.id = "results-received-container";
-    resultsReceivedContainer.style.height = "400px";
+    resultsReceivedContainer.style.height = "300px";
     // resultsReceivedContainer.style.border = "1px solid gray";
     // resultsReceivedContainer.className = "animate-bottom";
     // resultsReceivedContainer.style.display = "none";
