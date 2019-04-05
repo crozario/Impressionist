@@ -1,0 +1,135 @@
+* {
+    font-family: Heiti TC;
+    color: gray;
+}
+
+html, body {
+    margin:0px;
+    padding:0px;
+    height: 580px;
+    width: 320px;
+    background: linear-gradient(to bottom left, #3A4A64 0%, #141A31 100%);
+}
+
+
+button {
+    background: linear-gradient(to right, #0BBFD6 0%, #5ACCC1 100%);
+    color: white;
+    cursor: pointer;
+    padding: 6px 6px; 
+    margin: 8px 0;
+    font-size: 11pt;
+    border-radius: 5px;
+    border: 0px;
+}
+
+button:hover {
+    opacity: 0.8;
+}
+
+textarea {
+    font-size: 10pt;
+    resize: none;
+    border-radius: 5px;
+}
+
+input {
+    font-size: 10pt;
+    padding: 6px 6px;
+    margin: 10px 0px;
+    border: 0;
+    background: transparent;
+    outline: 0;
+    border-bottom: 1px solid gray;
+    width: 100%;
+}
+
+
+.search-tab {
+    background-color: #555;
+    color: white;
+    float: left;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    padding: 14px 16px;
+    font-size: 17px;
+    width: 50%;
+}
+
+.user-tab {
+    background-color: #555;
+    color: white;
+    float: left;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    padding: 14px 16px;
+    font-size: 17px;
+    width: 50%;
+}
+
+.title-contrainer {
+    text-align: center;
+    margin: 20px 0px;
+    padding: 0px;
+    /* position: fixed;
+    top: 0; */
+    width: 100%;
+    height: 50px;
+    
+} 
+
+.tab-container {
+    text-align: center;
+    margin: 0px;
+    padding: 0px;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    height: 50px;
+}
+
+.authentication-container {
+    margin-top: 40px;
+    padding: 5px 16px;
+    border-radius: 2px;
+    
+    display: block;
+}
+
+#login-form {
+    margin: auto;
+    text-align: center;
+    color: #005792;
+}
+
+
+#signup-form {
+    margin: auto;
+    text-align: center;
+    color: #005792;
+}
+
+#login-button {
+    width: 100%;
+    margin: 10px 0;
+}
+
+#signup-button {
+    width: 100%;
+    margin: 10px 0;
+}
+
+.logo-container {
+    text-align: center;
+}
+
+
+#status { 
+    display: block;
+    padding: 10px;
+    background-color: #ff5959;
+    color: white;
+    border-radius: 5px;
+}
