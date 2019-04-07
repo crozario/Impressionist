@@ -1,7 +1,7 @@
 import numpy as np
 from scipy.signal import correlate
 from scipy.stats import pearsonr
-from plotSignals import plotTwoSignalsPartA, plotTwoSignalsPartB
+# from plotSignals import plotTwoSignalsPartA, plotTwoSignalsPartB
 
 # TODO: need to passing data_orig and data_new as arguments and return new arrays instead of using globals (unsafe) - use profiling to see which is faster
 def pad_shorter(a, b, ii=0):
@@ -81,6 +81,7 @@ def alignSignals(a, b, corrcol, skipcols=0, headers=None, plot=False):
     """
     # print("Aligning signals...")
     # Plot Before
+    if plot: from plotSignals import plotTwoSignalsPartA, plotTwoSignalsPartB
     if plot: plotTwoSignalsPartA(a, b, corrcol, headers=headers)
 
     # shift signals to align
