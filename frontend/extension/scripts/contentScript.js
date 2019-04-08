@@ -65,7 +65,16 @@ let currentGameState = gameStates.inactive
 let currentVideoState = videoStates.inactive
 let currentRecorderState = recorderStates.inactive
 
+/*
+    {
 
+    }
+
+*/
+
+let comparisonData = [
+
+]
 
 // content info
 
@@ -84,8 +93,6 @@ let contentInfo = {
     currentSpeakingDialogue : null,
     allCharacterIDs : null
 }
-
-
 
 let gameInitialization = (username, watchID) => {
     return new Promise((resolve, reject) => {
@@ -300,18 +307,24 @@ let injectSideBar = () => {
 
     let resultsContainer = document.createElement('div');
     resultsContainer.id = "results-container";
-    // resultsContainer.style.border = "1px solid gray";
-    
+    resultsContainer.style.overflow = "auto";
+    resultsContainer.style.borderTop = "1px solid gray";
+    resultsContainer.style.borderBottom = "1px solid gray";
+    resultsContainer.style.margin = "10px 2px";
+    resultsContainer.style.padding = "2px 0";
+
     let loaderContainer = document.createElement('div');
     loaderContainer.id = "loader";
     loaderContainer.style.display = "none";
 
     let resultsReceivedContainer = document.createElement('div');
     resultsReceivedContainer.id = "results-received-container";
-    resultsReceivedContainer.className = "animate-bottom";
-    resultsReceivedContainer.style.display = "none";
+    resultsReceivedContainer.style.height = "400px";
+    // resultsReceivedContainer.style.border = "1px solid gray";
+    // resultsReceivedContainer.className = "animate-bottom";
+    // resultsReceivedContainer.style.display = "none";
     
-    resultsReceivedTemplate(resultsReceivedContainer);
+    // resultsReceivedTemplate(resultsReceivedContainer);
 
     // resultsContainer.style.display = "none";
     resultsContainer.appendChild(loaderContainer);
@@ -329,7 +342,7 @@ let injectSideBar = () => {
     dialogueContainerElement.style.width = "100%";
     dialogueContainerElement.style.position = "absolute";
     dialogueContainerElement.style.bottom = "0";
-    dialogueContainerElement.style.height = "150px";
+    dialogueContainerElement.style.height = "160px";
     dialogueContainerElement.style.margin = "0";
     dialogueContainerElement.style.padding = "0";
     dialogueContainerElement.style.textAlign = "center";
@@ -338,8 +351,8 @@ let injectSideBar = () => {
     let dialogueTitleElement = document.createElement('h2');
     dialogueTitleElement.innerHTML = "Dialogue Interaction";
     dialogueTitleElement.style.borderTop = "1px solid gray";
-    dialogueTitleElement.style.margin = "10px 10px";
-    dialogueTitleElement.style.padding = "10px 10px";
+    dialogueTitleElement.style.margin = "10px 5px";
+    dialogueTitleElement.style.padding = "5px 5px";
     dialogueContainerElement.appendChild(dialogueTitleElement);
 
     let previousDialogueButton = createButton("Previous", "previous-button", dialogueContainerElement, 0);
@@ -440,7 +453,7 @@ let doneButtonOnClick = () => {
     
     stopRecording();
     playVideo();
-    showResultsContainer();
+    // showResultsContainer();
 }
 
 let skipButtonOnClick = () => {
@@ -455,75 +468,113 @@ let skipButtonOnClick = () => {
     playVideo();
 }
 
-let addToResultsReceivedContainer = (result) => {
-    let resultDialogueID = document.getElementById('resultDialogueID');
-    resultDialogueID.innerHTML = "Dialogue ID : " + result.dialogueID;
+let appendResultsToView = (resultJSON) => {
+    console.log("appendResultsToView");
+    console.log(resultJSON);
 
-    let resultOriginalCaption = document.getElementById('resultOriginalCaption');
-    resultOriginalCaption.innerHTML = "Original Caption : " + result.originalCaption;
+    let resultsReceivedContainer = document.getElementById("results-received-container");
+
+    let resultTable = document.createElement('table');
+
+     // dialogue id and average score titles
+    let row1 = document.createElement("tr");
+    let cell1 = document.createElement("td");
+    cell1.appendChild(document.createTextNode("Dialogue ID"));
+    cell1.style.fontWeight = 'bold';
+
+    let cell2 = document.createElement("td");
+    cell2.appendChild(document.createTextNode("Average Score"));
+    cell2.style.fontWeight = 'bold';
+    row1.appendChild(cell1);
+    row1.appendChild(cell2);
+
+    // dialogue id and average score numbers row
+    let row2 = document.createElement("tr");
+    let cell3 = document.createElement("td");
+    cell3.appendChild(document.createTextNode(resultJSON.dialogueID));
+    cell3.style.fontWeight = 'bold';
     
-    let resultUserTranscript = document.getElementById('resultUserTranscript');
-    resultUserTranscript.innerHTML = "User Transcript : " + result.userTranscript;
+    let cell4 = document.createElement("td");
+    cell4.appendChild(document.createTextNode(resultJSON.averageScore));
+    cell4.style.fontWeight = 'bold';
 
-    // let resultOriginalEmotion = document.getElementById('resultOriginalEmotion');
-    // resultOriginalEmotion.innerHTML = "Original Emotion : " + result.originalEmotion;
+    row2.appendChild(cell3);
+    row2.appendChild(cell4);
+
+    // original caption row 
+    let row3 = document.createElement("tr");
+    let cell5 = document.createElement("td");
+    cell5.appendChild(document.createTextNode("Original Caption"));
+ 
+    let cell6 = document.createElement("td");
+    cell6.appendChild(document.createTextNode(resultJSON.originalCaption));
+
+    row3.appendChild(cell5);
+    row3.appendChild(cell6);
+
+    // user transcript row  
+    let row4 = document.createElement("tr");
+    let cell7 = document.createElement("td");
+    cell7.appendChild(document.createTextNode("User Transcript"));
+ 
+    let cell8 = document.createElement("td");
+    cell8.appendChild(document.createTextNode(resultJSON.userTranscript));
+
+    row4.appendChild(cell7);
+    row4.appendChild(cell8);
+
+    // phonetic score row 
+    let row5 = document.createElement("tr");
+    let cell9 = document.createElement("td");
+    cell9.appendChild(document.createTextNode("Phonetic Score"));
+ 
+    let cell10 = document.createElement("td");
+    cell10.appendChild(document.createTextNode(resultJSON.phoneticScore));
+
+    row5.appendChild(cell9);
+    row5.appendChild(cell10);
+
+    // lyrical score row 
+    let row6 = document.createElement("tr");
+    let cell11 = document.createElement("td");
+    cell11.appendChild(document.createTextNode("Lyrical Score"));
+ 
+    let cell12 = document.createElement("td");
+    cell12.appendChild(document.createTextNode(resultJSON.lyricalScore));
+
+    row6.appendChild(cell11);
+    row6.appendChild(cell12);
+
+    resultTable.appendChild(row1);
+    resultTable.appendChild(row2);
+    resultTable.appendChild(row3);
+    resultTable.appendChild(row4);
+    resultTable.appendChild(row5);
+    resultTable.appendChild(row6);
+    
+    resultsReceivedContainer.prepend(resultTable);
+}
+
+let removeLastTable = () => {
+    let resultsReceivedContainer = document.getElementById("results-received-container");
+    if(resultsReceivedContainer.children.length > 1) {
+        resultsReceivedContainer.removeChild(resultsReceivedContainer.lastChild);
+    }
+}
+
+let addToResultsReceivedContainer = (result) => {
+
 
     let resultPhoneticScore = document.getElementById('resultPhoneticScore');
     resultPhoneticScore.innerHTML = "Phonetic Score : " + result.phoneticScore;
-    
-    // let resultEmotionScore = document.getElementById('resultEmotionScore');
-    // resultEmotionScore.innerHTML = "Emotion Score : " + result.emotionScore;
+
 
     let resultLyricalScore = document.getElementById('resultLyricalScore');
     resultLyricalScore.innerHTML = "Lyrical Score : " + result.lyricalScore;
-
-    let resultAverageScore = document.getElementById('resultAverageScore');
-    resultAverageScore.innerHTML = "Average Score : " + result.averageScore;
-    
-    showResultsReceived();
 }
 
 // Manipulate Netflix DOM
 
-let resultsReceivedTemplate = (parentElement) => {
-    let titleElement = document.createElement('h3');
-    titleElement.innerHTML = "Results";
-
-    let resultDialogueID = document.createElement('p');
-    resultDialogueID.id = "resultDialogueID";
-
-    let resultOriginalCaption = document.createElement('p');
-    resultOriginalCaption.id = "resultOriginalCaption";
-    
-    let resultUserTranscript = document.createElement('p');
-    resultUserTranscript.id = "resultUserTranscript";
-
-    // let resultOriginalEmotion = document.createElement('p');
-    // resultOriginalEmotion.id = "resultOriginalEmotion";
-
-    let resultPhoneticScore = document.createElement('p');
-    resultPhoneticScore.id = "resultPhoneticScore";
-    
-    // let resultEmotionScore = document.createElement('p');
-    // resultEmotionScore.id = "resultEmotionScore";
-
-    let resultLyricalScore = document.createElement('p');
-    resultLyricalScore.id = "resultLyricalScore";
-
-    let resultAverageScore = document.createElement('p');
-    resultAverageScore.id = "resultAverageScore";
-
-    parentElement.appendChild(titleElement);
-    parentElement.appendChild(resultDialogueID);
-    parentElement.appendChild(resultOriginalCaption);
-    parentElement.appendChild(resultUserTranscript);
-    // parentElement.appendChild(resultOriginalEmotion);
-    parentElement.appendChild(resultPhoneticScore);
-    // parentElement.appendChild(resultEmotionScore);
-    parentElement.appendChild(resultLyricalScore);
-    parentElement.appendChild(resultAverageScore);
-
-}
 
 let showResultsReceived = () => {
     if(isLoaderDisplayed() === true) {
@@ -568,16 +619,16 @@ let isLoaderDisplayed = () => {
 }
 
 let showResultsContainer = () => { 
-    // hideUserSpeakContainer();
-    if(currentGameState === gameStates.waitingForDialogueResult || currentGameState === gameStates.sendingUserAudio) {
-        if(isLoaderDisplayed() === false) {
-            showLoader();
-        }
-    } else {
-        if(isLoaderDisplayed() === true) {
-            hideLoader();
-        }
-    }
+
+    // if(currentGameState === gameStates.waitingForDialogueResult || currentGameState === gameStates.sendingUserAudio) {
+    //     if(isLoaderDisplayed() === false) {
+    //         showLoader();
+    //     }
+    // } else {
+    //     if(isLoaderDisplayed() === true) {
+    //         hideLoader();
+    //     }
+    // }
     
     let resultsContainerElement = document.getElementById('results-container');
     resultsContainerElement.style.display = "block";
@@ -587,13 +638,6 @@ let showResultsContainer = () => {
 let hideResultsContainer = () => {
     let resultsContainerElement = document.getElementById('results-container');
     resultsContainerElement.style.display = "none";
-    if(isLoaderDisplayed() === true) {
-        hideLoader();
-    }
-
-    if(isResultsReceivedDisplayed() === true) {
-        hideResultsReceived();
-    }
 }
 
 let isResultsContainerDisplayed = () => {
@@ -607,10 +651,8 @@ let isResultsContainerDisplayed = () => {
 }
 
 let showUserSpeakContainer = () => {
-    hideResultsContainer();
     let userSpeakContainerElement = document.getElementById('user-speak-container');
     userSpeakContainerElement.style.display = "block";
-    showResultsContainer();
 }
 
 let hideUserSpeakContainer = () => {
@@ -925,6 +967,7 @@ setupEventListeners = () => {
 // “originalCaption”: “La-la-la-la, la-la-la-la\\\\NLa-la-la-la, la-la-la-la-la-la”, “phoneticScore”: 42.1394788624328,  
 // “emotionScore”: 0.0, “lyricalScore”: 12.389380530973451, “score”: 18.17628646446875}
 
+
 let compareDialogue = (currentAudioBlob, callback) => {
     console.log("compareDialogue Event");
 
@@ -937,13 +980,13 @@ let compareDialogue = (currentAudioBlob, callback) => {
         audioBlob: currentAudioBlob
     }, (response) => {
         console.log("compareDialogue took : " + getDuration(startTime));
-        if (typeof (callback) == "function") {
-            callback(response);
+        const resultJSON = JSON.parse(response);
+
+        if (typeof(callback) == "function") {
+            callback(resultJSON);
         }
     });
 }
-
-
 
 // audio
 
@@ -962,9 +1005,9 @@ let stopRecording = () => {
 let micInitialization = () => {
     // monkeypatch for AudioContext, getUserMedia and URL
     
-    window.AudioContext = window.AudioContext || window.webkitAudioContext;
-    navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia;
-    window.URL = window.URL || window.webkitURL;
+    // window.AudioContext = window.AudioContext || window.webkitAudioContext;
+    // navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia;
+    // window.URL = window.URL || window.webkitURL;
 
     if (navigator.mediaDevices) {
         console.log('getUserMedia supported.');
@@ -981,7 +1024,7 @@ let micInitialization = () => {
             };
 
             mediaRecorder = new MediaRecorder(stream, options);
-
+            
             // recording stopped
             mediaRecorder.onstop = (e) => {
             
@@ -991,11 +1034,12 @@ let micInitialization = () => {
                     const audioBlob = new Blob(audioChunks);
             
                     currentGameState = gameStates.waitingForDialogueResult;
+
                     compareDialogue(audioBlob, (result) => {
-                        console.log("Got Results from CompareDialogue");
-                        console.log(JSON.parse(result));
-                        addToResultsReceivedContainer(JSON.parse(result));
+
+                        appendResultsToView(result)
                     })
+
                 } else if(currentGameState === gameStates.skippedDialogue) {
                     // skipped dialogue
                 }
@@ -1024,7 +1068,7 @@ let getDuration = startTime => {
 }
 
 let getUsername = () => {
-    return "c.rozario"
+    return "parzival"
 }
 
 let getWatchID = () => {
