@@ -12,6 +12,7 @@ Description: Content script to interact with the webpage
 // socket.io connection
 const applicationServerPort = 3000;
 const applicationServerHost = "http://localhost";
+// const applicationServerHost = "18.223.101.151"
 // const serverHost = "10.202.133.175"
 // const serverHost = "https://impressionist.localtunnel.me"
 const socketAddress = applicationServerHost + ":" + applicationServerPort;
