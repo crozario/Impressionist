@@ -16,6 +16,9 @@ module.exports = (app) => {
 	// retrieve data to initialize game
 	app.post('/cont/initializeGame', cont.initializeGame);
 
+	// retrieve hot content; retrieve content that is not supported, but has been requested by users
+	app.post('/cont/hotContent', cont.hotContent);
+
 	// store and retrieve file from database
 	// app.post('/cont/storeRetrieve', cont.storeRetrieve);
 
