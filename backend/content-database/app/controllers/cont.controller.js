@@ -260,6 +260,22 @@ exports.initializeGame = (req,res) => {
 	})
 };
 
+// retrieve hot content; retrieve content that is not supported, but has been requested by users
+exports.hotContent = (req,res) => {
+	schema.Cont.find({'supported': false}, {'netflixWatchID':1, 'supported':1, 'missedCounter':1})
+	.then(docs => {
+		return res.json({
+			status: "success",
+			data: docs
+		});
+	}).catch(err => {
+		return res.status(500).json({
+			status: "failure",
+			error: err.message || "error retrieving information from the database"
+		});
+	});
+};
+
 // store and retrieve file from database
 // exports.storeRetrieve = (req,res) => {
 // 	const info = req.body;
