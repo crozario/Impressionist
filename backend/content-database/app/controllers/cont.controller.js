@@ -182,6 +182,7 @@ exports.retrieveContentData = (req,res) => {
 	});
 };
 
+// retrieve all documents from content database
 exports.retrieveAllContent = (req,res) => {
 	schema.Cont.find({},'mediaType title seasonNumber episodeNumber episodeTitle length characterNames')
 	.then(result => {
@@ -197,6 +198,7 @@ exports.retrieveAllContent = (req,res) => {
 	});
 };
 
+// retrieve data to initialize game
 exports.initializeGame = (req,res) => {
 	const info = req.body;
 	// validate request
@@ -206,19 +208,50 @@ exports.initializeGame = (req,res) => {
 			error: "watchID was not provided"
 		});
 	}
-	schema.Cont.findOne({'netflixWatchID': info.netflixWatchID }, {'characterNames':1, 'captions':1 , 'characterDialogueIDs':1})
+	schema.Cont.findOne({'netflixWatchID': info.netflixWatchID }) //, {'characterNames':1, 'captions':1 , 'characterDialogueIDs':1})
 	.then(data => {
-		if(data) {
-			return res.json({
-				supported : true,
-				characterNames : data.characterNames,
-				characterDialogueIDs : data.characterDialogueIDs,
-				captions : data.captions
+		if(data==null) {
+			// add new document to database that contains netflixWatchID, supported==false, missedCounter=0
+			global.content = new schema.Cont({
+				netflixWatchID: info.netflixWatchID,
+				missedCounter: 0,
+				supported: false
+			});
+			content.save()
+			.then(data => {
+				return res.json({
+					supported: false
+				});
+			}).catch(err => {
+				return res.status(500).json({
+					status: "failure",
+					error: err.message || "error storing data in the database"
+				});
 			});
 		} else {
-			return res.json({
-				supported : false
-			});
+			if(data.supported == true) {
+				// return data for supported content document
+					return res.json({
+						supported: data.supported,
+						characterNames: data.characterNames,
+						characterDialogueIDs: data.characterDialogueIDs,
+						captions: data.captions
+					});
+			} else {
+				// increment missedCounter for the document
+				data.missedCounter = data.missedCounter + 1;
+				data.save()
+				.then(result => {
+					return res.json({
+						supported: false
+					});
+				}).catch(err => {
+					return res.status(500).json({
+						status: "failure",
+						error: err.message || "error updating missedCounter"
+					});
+				});
+			}
 		}
 	}).catch(err => {
 		return res.status(500).json({
@@ -226,3 +259,43 @@ exports.initializeGame = (req,res) => {
 		});
 	})
 };
+
+// store and retrieve file from database
+// exports.storeRetrieve = (req,res) => {
+// 	const info = req.body;
+// 	console.log(info.file);
+// 	schema.User.findOne({'credentials.username': info.username})
+// 	.then(doc => {
+// 		if(doc) {
+// 			doc.featureFile = info.file;
+// 			console.log(doc.featureFile);
+// 			doc.save()
+// 			.then(result => {
+// 				schema.User.findOne({'credentials.username': info.username})
+// 				.then(doc2 => {
+// 					if(doc2) {
+// 						return res.json({
+// 							status: "success",
+// 							file: doc2.featureFile
+// 						});
+// 					}
+// 				}).catch(err => {
+// 					return res.status(500).json({
+// 						status: "failure",
+// 						error: err.message || "error retrieving information from the database"
+// 					});
+// 				});
+// 			}).catch(err => {
+// 				return res.status(500).json({
+// 					status: "failure",
+// 					error: err.message || "error storing data into the database"
+// 				});
+// 			});
+// 		}
+// 	}).catch(err => {
+// 		return res.status(500).json({
+// 			status: "failure",
+// 			error: err.message || "error retrieving information from the database"
+// 		});
+// 	});
+// };
