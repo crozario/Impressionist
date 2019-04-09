@@ -10,13 +10,16 @@ const ContentSchema = mongoose.Schema({
 	mediaFileLocation: String,
 	captions: {type: [Array], default: undefined},
 	featureFileLocations: Array,
+	featureFile: {binData: Buffer},
 	emotionsList: Array,
 	netflixTitleID: String,
 	netflixWatchID: String,
 	netflixMediaURL: String,
 	netflixSubtitleOffset: Number,
 	characterNames: Array,
-	characterDialogueIDs: Map
+	characterDialogueIDs: Map,
+	missedCounter: Number,
+	supported: Boolean
 }, {
 	collection: 'content'
 });
