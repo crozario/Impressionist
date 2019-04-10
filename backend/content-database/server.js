@@ -33,7 +33,7 @@ mongoose.connect(dbConfig.url, {
 
 // define a simple route
 app.get('/', (req,res) => {
-	res.json({"message": "Welcome to Impressionist!"})
+	res.json({"message": "Welcome to the Impressionist Content Database Rest API!"})
 });
 
 // require Content routes

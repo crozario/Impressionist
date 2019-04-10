@@ -26,7 +26,3 @@ Entrepreneur Team members:
 ```bash
 ./runServers.sh
 ```
-
-## All Dependencies
-
-- ffmpeg
