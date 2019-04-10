@@ -27,6 +27,9 @@ var audioContext;
 var mediaRecorder;
 var audioChunks = [];
 
+
+var speechRecognition;
+
 let contentSupported = false;
 
 // let state = {
@@ -39,9 +42,17 @@ let contentSupported = false;
     states
 */
 
+const speechAndAudioData = {
+    speechAvailable : false,
+    audioAvailable : false,
+    currentAudioBlob : null,
+    currentSpeech : null
+}
+
 const gameStates = {
     inactive : "inactive",
     userSpeakingDialogue : "user speaking dialogue",
+    speechAndAudioAvailable : "speech and audio available",
     sendingUserAudio : "sending user audio",
     waitingForDialogueResult : "waiting for dialogue result",
     skippedDialogue : "skipped Dialogue"
@@ -967,16 +978,18 @@ setupEventListeners = () => {
 // “emotionScore”: 0.0, “lyricalScore”: 12.389380530973451, “score”: 18.17628646446875}
 
 
-let compareDialogue = (currentAudioBlob, callback) => {
+let compareDialogue = (currentAudioBlob, currentSpeech, callback) => {
     console.log("compareDialogue Event");
-
+    console.log(currentSpeech);
+    
     const startTime = Date.now();
 
     socket.emit("compareDialogue", {
         gameID: contentInfo.gameID,
         netflixWatchID: contentInfo.netflixWatchID,
         dialogueID: contentInfo.currentDialogueID,
-        audioBlob: currentAudioBlob
+        audioBlob: currentAudioBlob,
+        userTranscript : currentSpeech
     }, (response) => {
         console.log("compareDialogue took : " + getDuration(startTime));
         const resultJSON = JSON.parse(response);
@@ -987,17 +1000,32 @@ let compareDialogue = (currentAudioBlob, callback) => {
     });
 }
 
+let sendDialogueWhenSpeechAndAudioAvailable = () => {
+    if(speechAndAudioData.speechAvailable && speechAndAudioData.audioAvailable) {
+        compareDialogue(speechAndAudioData.currentAudioBlob, speechAndAudioData.currentSpeech, (result) => {
+            appendResultsToView(result)
+        })
+
+        speechAndAudioData.speechAvailable = false;
+        speechAndAudioData.audioAvailable = false;
+        speechAndAudioData.currentAudioBlob = null;
+        speechAndAudioData.currentSpeech = null;
+    }
+}
+
 // audio
 
 let startRecording = () => {
     console.log("startRecording");
     mediaRecorder.start();
+    speechRecognition.start();
     currentRecorderState = recorderStates.recording;
 }
 
 let stopRecording = () => {
     console.log("stopRecording");
     mediaRecorder.stop();
+    speechRecognition.stop();
     currentRecorderState = recorderStates.stopped;
 }
 
@@ -1023,21 +1051,23 @@ let micInitialization = () => {
             };
 
             mediaRecorder = new MediaRecorder(stream, options);
+
+            speechRecognition = new webkitSpeechRecognition();
+            speechRecognition.lang = "en-US";
+            speechRecognition.continuous = true;
             
             // recording stopped
             mediaRecorder.onstop = (e) => {
-            
+                
                 console.log("audioAvailable");
 
                 if(currentGameState === gameStates.sendingUserAudio) {
-                    const audioBlob = new Blob(audioChunks);
+                    speechAndAudioData.currentAudioBlob = new Blob(audioChunks);
             
                     currentGameState = gameStates.waitingForDialogueResult;
 
-                    compareDialogue(audioBlob, (result) => {
-
-                        appendResultsToView(result)
-                    })
+                    speechAndAudioData.audioAvailable = true;
+                    sendDialogueWhenSpeechAndAudioAvailable();
 
                 } else if(currentGameState === gameStates.skippedDialogue) {
                     // skipped dialogue
@@ -1050,6 +1080,13 @@ let micInitialization = () => {
             mediaRecorder.ondataavailable = (e) =>{
                 console.log("mediaRecorder ondataavailable");
                 audioChunks.push(e.data);
+            }
+
+            speechRecognition.onresult = speechEvent => {
+                speechAndAudioData.currentSpeech = speechEvent.results[0][0].transcript
+                speechAndAudioData.speechAvailable = true;
+                sendDialogueWhenSpeechAndAudioAvailable();
+
             }
 
         })
