@@ -18,4 +18,7 @@ module.exports = (app) => {
 
 	// close game and set 'completed' field to true
 	app.post('/user/closeGame', user.closeGame);
+
+	// retrieve all user gameHistory totalScore and netflixWatchID for all games completed
+	app.post('/user/userStats', user.userStats);
 }
