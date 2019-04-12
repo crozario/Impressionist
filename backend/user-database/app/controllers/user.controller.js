@@ -286,15 +286,15 @@ exports.closeGame = (req,res) => {
 		doc.gameHistory.id(mongoose.Types.ObjectId(info.gameID)).completed=true;
 		// compute total score for the movie/episode
 		var total=0;
-		var count=0;
+		// var count=0;
 		for(var entry of doc.gameHistory.id(mongoose.Types.ObjectId(info.gameID)).scores.scores.entries()) {
 			total+=entry[1].averageScore;
 			// console.log("key: "+entry[0]+"     value: "+entry[1].averageScore);
-			count+=1;
+			// count+=1;
 		}
-		var avg = total/count;
+		// var avg = total/count;
 		// console.log("total: "+avg+"\ncount: "+count+"\naverage: "+avg);
-		doc.gameHistory.id(mongoose.Types.ObjectId(info.gameID)).totalScore=avg;
+		doc.gameHistory.id(mongoose.Types.ObjectId(info.gameID)).totalScore=total;
 		doc.save()
 		.then(data => {
 			return res.json({
