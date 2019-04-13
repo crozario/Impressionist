@@ -34,6 +34,10 @@ PORT = 3000        # Port to listen on (non-privileged ports are > 1023)
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'secret!'
 
+@app.route("/")
+def home_screen():
+    return "Welcome to the Impressionist Application Server!"
+
 socketio = SocketIO(app)
 
 @socketio.on('connect')

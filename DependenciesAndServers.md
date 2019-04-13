@@ -9,6 +9,7 @@
 
 ## Docker 
 
+```bash
 sudo apt-get remove docker docker-engine docker.io containerd runc
 
 sudo apt-get update
@@ -30,20 +31,31 @@ sudo add-apt-repository \
 sudo apt-get update
 
 sudo apt-get install docker-ce docker-ce-cli containerd.io
-
+```
 
 ### Application Server
+
+```bash
 docker build -t crozario/impressionist-application-server .
-docker run -d -p 3000:3000 crozario/impressionist-application-server
+
+docker run -p 3000:3000 crozario/impressionist-application-server
+```
 
 ### User Database
- 
+
+```bash
 docker build -t crozario/impressionist-user-database-rest-api .
+
 docker run -d -e "NODE_ENV=production" -p 3001:3001 crozario/impressionist-user-database-rest-api
+```
 
 ### Content Database
+
+```bash
 docker build -t crozario/impressionist-content-database-rest-api .
+
 docker run -d -e "NODE_ENV=production" -p 3002:3002 crozario/impressionist-content-database-rest-api
+```
 
 **Useful Docker Commands**
 - docker system prune -a (removes everything from docker)
@@ -59,4 +71,27 @@ https://docs.docker.com/install/linux/docker-ce/ubuntu/
 ## Dependencies
 
 - Docker
+- nginx
+
+### Application Server
+
 - opensmile (https://www.audeering.com/download/opensmile-2-3-0-tar-gz/?wpdmdl=4782)
+- build-essential
+- g++
+- gcc
+- autotools-dev
+- autoconf
+- libtool
+- python3
+	- uwsgi 
+	- eventlet
+	- Flask
+	- Flask-SocketIO
+	- google-cloud-speech
+	- scipy
+	- urllib3
+	- matplotlib
+
+### User Database
+
+### Content Database
