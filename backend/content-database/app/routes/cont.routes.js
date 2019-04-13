@@ -19,6 +19,9 @@ module.exports = (app) => {
 	// retrieve hot content; retrieve content that is not supported, but has been requested by users
 	app.post('/cont/hotContent', cont.hotContent);
 
+	// search in db for specific keywords sent from front and return all relevant documents
+	app.post('/cont/keywordSearch', cont.keywordSearch);
+
 	// store and retrieve file from database
 	// app.post('/cont/storeRetrieve', cont.storeRetrieve);
 
