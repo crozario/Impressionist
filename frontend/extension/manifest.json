@@ -5,6 +5,8 @@
     "options_page": "options.html",
     "permissions": [
       "http://localhost/",
+      "http://ec2-18-223-101-151.us-east-2.compute.amazonaws.com/",
+      "http://ec2-3-82-150-208.compute-1.amazonaws.com",
       "activeTab", 
       "declarativeContent", 
       "storage"

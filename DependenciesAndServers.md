@@ -2,9 +2,9 @@
 
 ## Server Hosting
 
-- Application Server -> ???
-- User Database Rest API -> http://ec2-54-202-153-164.us-west-2.compute.amazonaws.com:3001
-- Content Database Rest API -> http://ec2-54-202-153-164.us-west-2.compute.amazonaws.com:3002
+- Application Server -> http://ec2-18-223-101-151.us-east-2.compute.amazonaws.com:3000
+- User Database Rest API -> http://ec2-3-82-150-208.compute-1.amazonaws.com:3001
+- Content Database Rest API -> http://ec2-3-82-150-208.compute-1.amazonaws.com:3002
 
 
 ## Docker 
