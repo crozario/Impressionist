@@ -3,6 +3,7 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 
 const PORT = 3001;
+
 // create express app
 const app = express();
 
@@ -13,7 +14,6 @@ app.use(cors())
 app.use(bodyParser.urlencoded({ extended: true }))
 // parse application/json
 app.use(bodyParser.json())
-
 
 // configuring the database
 const dbConfig = require('./config/database.config.js');
@@ -41,6 +41,6 @@ require("./app/routes/user.routes.js")(app);
 
 // listen for requests
 app.listen(PORT, () => {
-	console.log("User Database Server is listening on port "+PORT);
+	console.log("User Database Server is listening on port " + PORT);
 });
 

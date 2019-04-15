@@ -31,6 +31,8 @@ sudo add-apt-repository \
 sudo apt-get update
 
 sudo apt-get install docker-ce docker-ce-cli containerd.io
+
+sudo apt-get install docker-compose
 ```
 
 ### Application Server
@@ -56,11 +58,11 @@ docker build -t crozario/impressionist-content-database-rest-api .
 
 docker run -d -e "NODE_ENV=production" -p 3002:3002 crozario/impressionist-content-database-rest-api
 
-docker compose up -d
+docker-compose up -d
 ```
 
 **Useful Docker Commands**
-- docker system prune -a (removes everything from docker)
+- docker system prune -a (removes all images that are not running)
 - docker ps (get running docker processes)
 - docker logs <container id> (print output of application)
 - docker run -d (-d -> detached mode, -e -> environment variable)
