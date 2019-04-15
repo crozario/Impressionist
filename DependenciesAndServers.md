@@ -38,7 +38,7 @@ sudo apt-get install docker-ce docker-ce-cli containerd.io
 ```bash
 docker build -t crozario/impressionist-application-server .
 
-docker run -p 3000:3000 crozario/impressionist-application-server
+docker run -d -p 3000:3000 crozario/impressionist-application-server
 ```
 
 ### User Database
@@ -55,6 +55,8 @@ docker run -d -e "NODE_ENV=production" -p 3001:3001 crozario/impressionist-user-
 docker build -t crozario/impressionist-content-database-rest-api .
 
 docker run -d -e "NODE_ENV=production" -p 3002:3002 crozario/impressionist-content-database-rest-api
+
+docker compose up -d
 ```
 
 **Useful Docker Commands**
@@ -62,6 +64,9 @@ docker run -d -e "NODE_ENV=production" -p 3002:3002 crozario/impressionist-conte
 - docker ps (get running docker processes)
 - docker logs <container id> (print output of application)
 - docker run -d (-d -> detached mode, -e -> environment variable)
+- docker kill $(docker ps -q) (stop all containers)
+- docker rm $(docker ps -a -q) (remove all containers)
+- docker rmi $(docker images -q) (remove all docker images)
 
 https://github.com/nodejs/docker-node/blob/master/docs/BestPractices.md (running node with docker best practices)
 
@@ -95,3 +100,20 @@ https://docs.docker.com/install/linux/docker-ce/ubuntu/
 ### User Database
 
 ### Content Database
+
+
+## Security
+
+### HTTPS
+
+https://security.stackexchange.com/questions/5126/whats-the-difference-between-ssl-tls-and-https
+https://expressjs.com/en/advanced/best-practice-security.html
+
+
+https://letsencrypt.readthedocs.io/en/latest/using.html#running-with-docker
+
+## Nginx
+
+https://www.digitalocean.com/community/tutorials/understanding-nginx-server-and-location-block-selection-algorithms
+
+
