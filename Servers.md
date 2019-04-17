@@ -1,8 +1,7 @@
 # Servers and Containerization
 
-# Impresionist Project 
+![Server Architecture](images/server-diagram.png)
 
-- git clone https://github.com/crozario/Impressionist.git
 
 ## Server Hosting
 
