@@ -1,11 +1,14 @@
-# Dependencies and Containerization
+# Servers and Containerization
+
+# Impresionist Project 
+
+- git clone https://github.com/crozario/Impressionist.git
 
 ## Server Hosting
 
-- Application Server -> http://ec2-18-223-101-151.us-east-2.compute.amazonaws.com:3000
-- User Database Rest API -> http://ec2-3-82-150-208.compute-1.amazonaws.com:3001
-- Content Database Rest API -> http://ec2-3-82-150-208.compute-1.amazonaws.com:3002
-
+- Application Server -> https://ec2-18-223-101-151.us-east-2.compute.amazonaws.com
+- User Database Rest API -> https://ec2-3-82-150-208.compute-1.amazonaws.com
+- Content Database Rest API -> https://ec2-34-227-109-120.compute-1.amazonaws.com
 
 ## Docker 
 
@@ -30,9 +33,8 @@ sudo add-apt-repository \
 
 sudo apt-get update
 
-sudo apt-get install docker-ce docker-ce-cli containerd.io
+sudo apt-get install docker-ce docker-ce-cli containerd.io docker-compose
 
-sudo apt-get install docker-compose
 ```
 
 ### Application Server
@@ -46,63 +48,31 @@ docker run -d -p 3000:3000 crozario/impressionist-application-server
 ### User Database
 
 ```bash
-docker build -t crozario/impressionist-user-database-rest-api .
-
-docker run -d -e "NODE_ENV=production" -p 3001:3001 crozario/impressionist-user-database-rest-api
+docker-compose up -d
 ```
 
 ### Content Database
 
 ```bash
-docker build -t crozario/impressionist-content-database-rest-api .
-
-docker run -d -e "NODE_ENV=production" -p 3002:3002 crozario/impressionist-content-database-rest-api
-
 docker-compose up -d
 ```
 
 **Useful Docker Commands**
-- docker system prune -a (removes all images that are not running)
+- docker build -t <username>/<project-name> . (build docker to an image)
+- docker run -d (-d -> detach mode, -e "ENV=production" -> environment variable, -p 3000:3000 -> port mapping, first port is actual computer, second port is docker container's, -it -> shows stdout with tty, interactive)
 - docker ps (get running docker processes)
+- docker system prune -a (removes all images that are not running)
 - docker logs <container id> (print output of application)
-- docker run -d (-d -> detached mode, -e -> environment variable)
 - docker kill $(docker ps -q) (stop all containers)
 - docker rm $(docker ps -a -q) (remove all containers)
 - docker rmi $(docker images -q) (remove all docker images)
 
 https://github.com/nodejs/docker-node/blob/master/docs/BestPractices.md (running node with docker best practices)
 
+https://docs.docker.com/compose/compose-file/ (docker compose)
+
 ### Installing Docker on Ubuntu Server
 https://docs.docker.com/install/linux/docker-ce/ubuntu/
-
-## Dependencies
-
-- Docker
-- nginx
-
-### Application Server
-
-- opensmile (https://www.audeering.com/download/opensmile-2-3-0-tar-gz/?wpdmdl=4782)
-- build-essential
-- g++
-- gcc
-- autotools-dev
-- autoconf
-- libtool
-- python3
-	- uwsgi 
-	- eventlet
-	- Flask
-	- Flask-SocketIO
-	- google-cloud-speech
-	- scipy
-	- urllib3
-	- matplotlib
-
-### User Database
-
-### Content Database
-
 
 ## Security
 
@@ -110,8 +80,6 @@ https://docs.docker.com/install/linux/docker-ce/ubuntu/
 
 https://security.stackexchange.com/questions/5126/whats-the-difference-between-ssl-tls-and-https
 https://expressjs.com/en/advanced/best-practice-security.html
-
-
 https://letsencrypt.readthedocs.io/en/latest/using.html#running-with-docker
 
 ## Nginx

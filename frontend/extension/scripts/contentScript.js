@@ -9,8 +9,8 @@ Description: Content script to interact with the webpage
 // message passing connection through the shared DOM
 // var port = chrome.runtime.connect();
 
-const userDatabaseRestAPIHost = "http://ec2-3-82-150-208.compute-1.amazonaws.com:3001";
-const contentDatabaseRestAPIHost = "http://ec2-3-82-150-208.compute-1.amazonaws.com:3002";
+const userDatabaseRestAPIHost = "https://ec2-3-82-150-208.compute-1.amazonaws.com";
+const contentDatabaseRestAPIHost = "https://ec2-34-227-109-120.compute-1.amazonaws.com";
 
 // socket.io connection
 const applicationServerPort = 3000;
