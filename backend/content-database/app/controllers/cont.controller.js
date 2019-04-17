@@ -276,6 +276,23 @@ exports.hotContent = (req,res) => {
 	});
 };
 
+// search in db for specific keywords sent from front and return all relevant documents
+exports.keywordSearch = (req,res) => {
+	const info = req.body;
+	schema.Cont.find({$text: {$search: info.keywords}}, {'title':1, 'netflixWatchID':1, 'episodeTitle':1, 'mediaType':1})
+	.then(docs => {
+		return res.json({
+			status: "success",
+			data: docs
+		});
+	}).catch(err => {
+		return res.status(500).json({
+			status: "failure",
+			error: err.message || "error retrieving information from the database"
+		});
+	});
+};
+
 // store and retrieve file from database
 // exports.storeRetrieve = (req,res) => {
 // 	const info = req.body;

@@ -326,7 +326,11 @@ exports.userStats = (req,res) => {
 				userGameStats.push({'netflixWatchID': currentDoc.netflixWatchID, 'totalScore': currentDoc.totalScore});
 			}
 		}
-		console.log(userGameStats);
+		// sort objects in userGameStats by totalScore in descending order
+		userGameStats.sort(function(x,y) {
+			return y.totalScore - x.totalScore;
+		});
+		// console.log(userGameStats);
 		return res.json({
 			status: "success",
 			data: userGameStats
