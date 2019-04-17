@@ -1,6 +1,16 @@
 version: '3'
 
 services:
+
+  user-database:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: user-database
+    ports:
+      - "3001:3001"
+    container_name: user-database
+    restart: unless-stopped
   nginx:
     build:
       context: ./nginx
@@ -9,15 +19,6 @@ services:
     container_name: nginx
     ports:
       - "80:80"
-      - "443:443"
-    restart: unless-stopped
-  user-database:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    image: user-database
-    container_name: user-database
     restart: unless-stopped
     depends_on:
-      - nginx
-  
+      - user-database

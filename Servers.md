@@ -2,7 +2,6 @@
 
 ![Server Architecture](images/server-architecture-diagram.png)
 
-
 ## Server Hosting
 
 - Application Server -> https://ec2-18-223-101-151.us-east-2.compute.amazonaws.com
@@ -10,6 +9,9 @@
 - Content Database Rest API -> https://ec2-34-227-109-120.compute-1.amazonaws.com
 
 ## Docker 
+
+### Installing Docker on Ubuntu Server
+https://docs.docker.com/install/linux/docker-ce/ubuntu/
 
 ```bash
 sudo apt-get remove docker docker-engine docker.io containerd runc
@@ -36,21 +38,19 @@ sudo apt-get install docker-ce docker-ce-cli containerd.io docker-compose
 
 ```
 
-### Application Server
-
-```bash
-docker build -t crozario/impressionist-application-server .
-
-docker run -d -p 3000:3000 crozario/impressionist-application-server
-```
-
-### User Database
+### Run Application Server Containers
 
 ```bash
 docker-compose up -d
 ```
 
-### Content Database
+### Run User Database REST API Containers
+
+```bash
+docker-compose up -d
+```
+
+### Run Content Database REST API Containers
 
 ```bash
 docker-compose up -d
@@ -70,9 +70,6 @@ https://github.com/nodejs/docker-node/blob/master/docs/BestPractices.md (running
 
 https://docs.docker.com/compose/compose-file/ (docker compose)
 
-### Installing Docker on Ubuntu Server
-https://docs.docker.com/install/linux/docker-ce/ubuntu/
-
 ## Security
 
 ### HTTPS
@@ -83,6 +80,20 @@ https://letsencrypt.readthedocs.io/en/latest/using.html#running-with-docker
 
 ## Nginx
 
+- Will be used as the frontend web server for all servers.
+- Used as a Reverse proxy (https://docs.nginx.com/nginx/admin-guide/web-server/reverse-proxy/)
+
+
+**useful tools**
+- curl
+- seige (load testing web servers -> https://www.linode.com/docs/tools-reference/tools/load-testing-with-siege/) 
+
+
+**research later**
+
 https://www.digitalocean.com/community/tutorials/understanding-nginx-server-and-location-block-selection-algorithms
+
+
+
 
 
