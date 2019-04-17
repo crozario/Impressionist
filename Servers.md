@@ -1,6 +1,6 @@
 # Servers and Containerization
 
-![Server Architecture](images/server-diagram.png)
+![Server Architecture](images/server-architecture-diagram.png)
 
 
 ## Server Hosting
