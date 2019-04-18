@@ -16,13 +16,14 @@
 ### Signal Processing
 - OpenSMILE
 
-## Setup Process
-
-#### Run Server
+## Run Server
 
 ```bash
 python3 server.py
 ```
+
+## Setup Process
+> update this
 
 # Individual File Descriptions
 ## **`appendContentDB.py`**
