@@ -47,11 +47,14 @@ def test_disconnect():
 @socketio.on('compareDialogue')
 def handle_compareDialogue(message):
     print("Data received (on compareDialogue)")
-    print("gameID:", message['gameID'])
-    print("netflixWatchID:", message['netflixWatchID'])
-    print("dialogueID:", message['dialogueID'])
+    # print("gameID:", message['gameID'])
+    # print("netflixWatchID:", message['netflixWatchID'])
+    # print("dialogueID:", message['dialogueID'])
     # print(message['audioBlob'])
     stream = message['audioBlob']
+
+    userTranscript = message['userTranscript']
+    # print(message)
 
     prefix = "diag"+str(message['dialogueID']+1)
     webmname = prefix + ".webm"
@@ -64,7 +67,7 @@ def handle_compareDialogue(message):
     with open(webmFile, 'wb') as aud:
         aud.write(stream)
 
-    resultBYTES, resultJSON = performThreeComparisons(message['netflixWatchID'], message['dialogueID'], webmFile, message['gameID'], profile=True)
+    resultBYTES, resultJSON = performThreeComparisons(message['netflixWatchID'], message['dialogueID'], webmFile, message['gameID'], message['userTranscript'], profile=True)
 
     if not SAVE_USER_AUDIO: os.remove(wavFile)
     os.remove(webmFile)

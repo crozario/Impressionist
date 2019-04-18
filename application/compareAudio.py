@@ -20,7 +20,7 @@ from databuilder.extractFeatures import extractFeature as extract
 sys.path.insert(0, 'signalComparison/')
 from signalComparison.compareSig import compareSignals as compare
 sys.path.insert(0, 'speech_to_text/')
-from speech_to_text.sub_user_similarity import compareToDialogue
+from speech_to_text.sub_user_similarity import compareToDialogue, similar
 
 CONTENTDB_PORT = 3002
 USERDB_PORT = 3001
@@ -126,16 +126,17 @@ def compareEmotionSimilarity(audioFile, emotion, verbose=False, profile=False):
         print("(profile) compare emotion : ", end-start)
     return (prediction == emotion)
 
-def compareLyricalSimilarity(audioFile, originalCaption, verbose=False, profile=False):
+def compareLyricalSimilarity(userTranscript, originalCaption, verbose=False, profile=False):
     """Convert audioFile to text and compares against originalCaption string"""
     if (profile): start = time.time()
-    cmp = compareToDialogue(audioFile, originalCaption, verbose=verbose)
+    # cmp = compareToDialogue(audioFile, originalCaption, verbose=verbose)
+    cmp = similar(userTranscript, originalCaption)
     if (profile):
         end = time.time()
         print("(profile) lyrical similarity :", end-start)
-    return compareToDialogue(audioFile, originalCaption, verbose=verbose)
+    return cmp
 
-def performThreeComparisons(netflixWatchID, dialogueID, audioFile, gameID, verbose=False, profile=False):
+def performThreeComparisons(netflixWatchID, dialogueID, audioFile, gameID, userTranscript, verbose=False, profile=False):
     """Perform comparison 
     $ python compareAudio.py audioFile(.webm), netflixWatchID(str), dialogueID(number), gameID(str)
         - NOTE: gameID to report to userDB
@@ -170,8 +171,8 @@ def performThreeComparisons(netflixWatchID, dialogueID, audioFile, gameID, verbo
     if verbose: print("Similar emotion:", resultDICT["emotionScore"])
     overallscore += resultDICT["emotionScore"]
     # 5. Compare Lyrics
-    lyricalSimilarity, userDialogue = compareLyricalSimilarity(audioFile, originalCaption, verbose=False, profile=profile)
-    resultDICT["userTranscript"] = userDialogue
+    lyricalSimilarity = compareLyricalSimilarity(userTranscript, originalCaption, verbose=False, profile=profile)
+    resultDICT["userTranscript"] = userTranscript
     resultDICT["lyricalScore"] = lyricalSimilarity*100
     if verbose: print("Lyrical Similarity:", resultDICT["lyricalScore"])
     overallscore += resultDICT["lyricalScore"]
