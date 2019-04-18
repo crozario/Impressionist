@@ -1,35 +1,27 @@
 # Application 
 
+> TODO: update this
+
 ## Dependencies
 
-- [node v10.15.2](https://nodejs.org/en/download/)
-
-- npm v6.4.1 (installs with node)
-
-### Node Dependencies
-
-- Express
-
-- Socket.io
 
 ### Python Dependencies
 - scipy
 - numpy
 - urllib2
+- flask
+- flask-socketio
+- eventlet (to use websocket for flask-socketio)
 
-### Other
+### Signal Processing
 - OpenSMILE
 
-#### Setup
-
-```bash
-npm install
-```
+## Setup Process
 
 #### Run Server
 
 ```bash
-node server.js 
+python3 server.py
 ```
 
 # Individual File Descriptions
@@ -54,15 +46,3 @@ Rules / notes
 ### Socket.IO
 
 https://stackoverflow.com/questions/38506952/how-to-send-response-back-to-client-using-socket-io
-
-### Flask Socket.IO
-
-#### Python Dependencies
-- flask
-- flask-socketio
-- eventlet (to use websocket for flask-socketio)
-
-**Run Flask Server**
-```bash
-python3 server.py
-```
