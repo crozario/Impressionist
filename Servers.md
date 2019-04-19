@@ -65,6 +65,7 @@ docker-compose up -d
 - docker kill $(docker ps -q) (stop all containers)
 - docker rm $(docker ps -a -q) (remove all containers)
 - docker rmi $(docker images -q) (remove all docker images)
+- docker exec -t -i <container id> /bin/bash (run bash inside docker conatiner to expore container state)
 
 **Resources**
 
