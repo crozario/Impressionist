@@ -5,7 +5,7 @@
 ## Server Hosting
 
 - Application Server -> https://ec2-18-223-101-151.us-east-2.compute.amazonaws.com
-- User Database Rest API -> https://ec2-3-82-150-208.compute-1.amazonaws.com
+- User Database Rest API -> user-db-api-east-1.crossley.tech
 - Content Database Rest API -> https://ec2-34-227-109-120.compute-1.amazonaws.com
 
 ## Docker 
@@ -56,16 +56,52 @@ docker-compose up -d
 docker-compose up -d
 ```
 
-**Useful Docker Commands**
-- docker build -t <username>/<project-name> . (build docker to an image)
-- docker run -d (-d -> detach mode, -e "ENV=production" -> environment variable, -p 3000:3000 -> port mapping, first port is actual computer, second port is docker container's, -it -> shows stdout with tty, interactive)
-- docker ps (get running docker processes)
-- docker system prune -a (removes all images that are not running)
-- docker logs <container id> (print output of application)
-- docker kill $(docker ps -q) (stop all containers)
-- docker rm $(docker ps -a -q) (remove all containers)
-- docker rmi $(docker images -q) (remove all docker images)
-- docker exec -t -i <container id> /bin/bash (run bash inside docker conatiner to expore container state)
+### Useful Docker Commands
+
+**build docker to an image**
+```
+docker build -t <username>/<project-name> . 
+``` 
+
+**-d -> detach mode, -e "ENV=production" -> environment variable, -p 3000:3000 -> port mapping, first port is actual computer, second port is docker container's, -it -> shows stdout with tty, interactive**
+```
+docker run -d
+``` 
+
+**get running docker processes**
+```
+docker ps 
+``` 
+
+**removes all images that are not running**
+```
+docker system prune -a
+``` 
+
+**print output of application**
+```
+docker logs <container id>
+``` 
+
+**stop all containers**
+```
+docker kill $(docker ps -q)
+```
+
+**remove all containers**
+```
+docker rm $(docker ps -a -q)
+``` 
+
+**remove all docker images**
+```
+docker rmi $(docker images -q) 
+``` 
+
+**run bash inside docker conatiner to expore container state**
+```
+docker exec -t -i <container id> /bin/bash
+``` 
 
 **Resources**
 
@@ -77,6 +113,36 @@ docker-compose up -d
 ## Security
 
 ### HTTPS
+
+**Let's Encrypt**
+- To enable HTTPS on your website, you need to get a certificate (a type of file) from a Certificate Authority (CA) like Let' Encrypt.
+    1. prove to CA that server controls the domain.
+    2. request, renew and revoke certificated for the domain.
+
+- Certbot supports the ACME protocol and will be used to automate certification.
+
+staging example of let's encrypt
+```
+sudo docker run -it --rm \
+-v /docker-volumes/etc/letsencrypt:/etc/letsencrypt \
+-v /docker-volumes/var/lib/letsencrypt:/var/lib/letsencrypt \
+-v /docker/letsencrypt-docker-nginx/src/letsencrypt/letsencrypt-site:/data/letsencrypt \
+-v "/docker-volumes/var/log/letsencrypt:/var/log/letsencrypt" \
+certbot/certbot \
+certonly --webroot \
+--register-unsafely-without-email --agree-tos \
+--webroot-path=/data/letsencrypt \
+--staging \
+-d impressionist-user-db-api-east-1.crossley.tech -d www.impressionist-user-db-api-east-1.crossley.tech
+```
+
+
+**Certbot**
+
+
+**Resources**
+https://letsencrypt.org/getting-started/
+https://letsencrypt.org/how-it-works/
 
 https://security.stackexchange.com/questions/5126/whats-the-difference-between-ssl-tls-and-https
 https://expressjs.com/en/advanced/best-practice-security.html
