@@ -5,10 +5,7 @@ FROM node:10
 LABEL maintainer="Crossley Rozario <crozariodev@gmail.com"
 
 RUN apt-get update && \
-	apt-get -y install build-essential && \
-	apt-get -y install openssl
-
-RUN mkdir -p dh-param && openssl dhparam -out ./dh-param/dhparam-2048.pem 2048
+	apt-get -y install build-essential
 
 WORKDIR /usr/src/app
 

@@ -8,6 +8,11 @@
 - User Database Rest API -> user-db-api-east-1.crossley.tech
 - Content Database Rest API -> https://ec2-34-227-109-120.compute-1.amazonaws.com
 
+### Setting up HTTPS on Server
+- get initial tls certificate 
+-
+
+
 ## Docker 
 
 ### Installing Docker on Ubuntu Server
