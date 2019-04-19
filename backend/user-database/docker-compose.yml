@@ -15,7 +15,7 @@ services:
   production-nginx-container:
     container_name: 'production-nginx-container'
     image: nginx:alpine
-    command: [sh, -c, "apt-get -y install openssl && mkdir -p dh-param && openssl dhparam -out ./dh-param/dhparam-2048.pem 2048"]
+    command: [sh, -c, "apk add --update openssl && mkdir -p dh-param && openssl dhparam -out ./dh-param/dhparam-2048.pem 2048"]
     ports:
       - "80:80"
       - "443:443"
