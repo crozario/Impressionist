@@ -1,76 +1,119 @@
-//#1 import jquery
-var jqry = document.createElement('script');
-jqry.src = "https://code.jquery.com/jquery-3.3.1.min.js";
-document.getElementsByTagName('head')[0].appendChild(jqry);
-
-//#2 returns the whole div element which contains subs
-function getSubs2(){
-  if (document.getElementsByClassName('player-timedtext')[0].children[0] != null){
-  return document.getElementsByClassName('player-timedtext')[0];
-  }
+function setjQuery() {
+  var jqry = document.createElement('script');
+  jqry.src = "https://code.jquery.com/jquery-3.3.1.min.js";
+  document.getElementsByTagName('head')[0].appendChild(jqry);
+  //jQuery.noConflict();
 }
 
-//#3 creates object to control netflix player
+//do something about this at some point
 const videoPlayer = netflix.appContext.state.playerApp.getAPI().videoPlayer
-// Getting player id
 const playerSessionId = videoPlayer.getAllPlayerSessionIds()[0]
 const player = videoPlayer.getVideoPlayerBySessionId(playerSessionId)
 
-//#4 adds highligh/definition functions to span.sub-word elements during hover
-function hoverHighlight() {
-    $('span.sub-word').hover(
-    function() {
-      $('#word').text($(this).css('background-color', '#ffff66').text());
-      //maybe add api call etc here? nope, add a function call with the word
-      //wordsAPI($(this).css('background-color', '#ffff66').text())
-      },
-    function() {
-      $('#word').text('');
-      $(this).css('background-color', '');
-      }
-    );
+function getSubs() {
+  if (document.getElementsByClassName('player-timedtext')[0].children[0] != null) {
+    return document.getElementsByClassName('player-timedtext')[0];
+  }
 }
 
-//#5 API request for definition
-function  wordsAPI(word){
-	var url1 = 'https://wordsapiv1.p.rapidapi.com/words/' + word + '/definitions/'
-
-	var params1 ={
-		method: 'GET',
-		headers: {
-		'cache-control': 'no-cache',
-		'Content-Type': 'application/json',
-		"X-RapidAPI-Host": "wordsapiv1.p.rapidapi.com",
-		"X-RapidAPI-Key": "e26dcc4bbdmsh0842a0791e370ffp11181ajsn05b018a504ba"
-	  }
-	}
-
-	fetch(url1, params1)
-	.then(data=>{return data.json()})
-	.then(res=>{console.log(res)})
-	.then(error=>console.log(error))
-}
-
-//#6 Last but not least, controller perhaps?
-//Calls all the other functions in order to create our functionality of hover/highlight/definition
 //Appends subtitle element with new container/subs elements based on netflix'subs
-function setSubs(){
-  //need to disable netflix subs
-  player.setTimedTextVisibility(false);
-  //need movieId
+function setSubs() {
+  //need movieId to find container element to add the new subtitle element to
   var movieId = player.getMovieId();
+  var netflixSubs = getSubs();
   //make sure to check if subs exist first
-  var subs = getSubs2().cloneNode(true);
+  var subs = netflixSubs.cloneNode(true);
   //modify subs to style z-index=2 so that the appear in the foreground of the player and allow for hover capability, stolen from eJOY
   subs.children[0].style.zIndex = 2;
-  //add sub-word class to subs
-  subs.firstChild.firstChild.className = 'sub-word';
   //display the subs
   subs.style.display = 'block';
   //split up subs into spans for each word
-  subs.innerText.replace(/\b(\w+)\b/g, "<span class=\"sub-word\">$1</span>")
+  var mytext = netflixSubs.innerText.replace(/\b(\w+\W?\s?)\b/g, "<span class=\"sub-word\">$1</span>");
+  //carry over the style from netflix's subs
+  subs.firstChild.style.cssText += netflixSubs.firstChild.firstChild.style.cssText;
+  //places all the new span tags into the contianer element
+  subs.firstChild.innerHTML = mytext.replace(/\n/, '<br>');
   //append outer subtitle container with modified subs
   document.getElementById(movieId).insertAdjacentHTML('beforeend', subs.outerHTML);
-  //add hightlighting with hover, maybe change this so highlighting is done before element is added
-  hoverHighlight();
 }
+
+function hoverHighlight() {
+  $('span.sub-word').hover(
+    function() {
+      //$('#word').text($(this).css('background-color', '#ffff66').text());
+      //changes color of font to yellow w/ mouseover
+      $(this).css('color', 'yellow');
+      //maybe add api call etc here? nope, add a function call with the word
+      wordsAPI($(this).text().replace(/\W/, '').trim());
+    },
+    function() {
+      //$('#word').text('');
+      //reverts color after mouseaway
+      $(this).css('color', '');
+    }
+  );
+}
+
+function wordsAPI(word) {
+  var url = 'https://wordsapiv1.p.rapidapi.com/words/' + word + '/definitions/'
+
+  var params = {
+    method: 'GET',
+    headers: {
+      'cache-control': 'no-cache',
+      'Content-Type': 'application/json',
+      "X-RapidAPI-Host": "wordsapiv1.p.rapidapi.com",
+      //need to store this key somewhere safe, can't be in plain text here :/
+      "X-RapidAPI-Key": "e26dcc4bbdmsh0842a0791e370ffp11181ajsn05b018a504ba"
+    }
+  }
+
+  fetch(url, params)
+    .then(data => {
+      return data.json()
+    })
+    .then(res => {
+      console.log(res)
+    })
+    .then(error => console.log(error))
+}
+
+//add jQuery to page
+setjQuery();
+
+function updateSubs() {
+  var textContainers = document.getElementsByClassName('player-timedtext');
+  if (textContainers[0].firstChild != null) {
+    var netflixSubText = textContainers[0].innerText;
+    //check if our subs elem is present
+    if (textContainers.length > 1) {
+      var mySub = textContainers[1];
+      var mySubText = mySub.innerText;
+      //if subs have changed, remove our sub, then create new sub
+      if (netflixSubText != mySubText) {
+        player.setTimedTextVisibility(true);
+        mySub.remove()
+        setSubs();
+        //disable netflix subs
+        player.setTimedTextVisibility(false);
+        //add hightlighting with hover
+        hoverHighlight();
+      } else return; //if subs haven't changed, then don't update any elements
+    } else {
+      player.setTimedTextVisibility(true);
+      //if our subs aren't present, create them
+      setSubs();
+      player.setTimedTextVisibility(false);
+      hoverHighlight();
+    }
+  } else {
+    //if our sub is present but netflix'subs isn't, then delete our subs
+    if (textContainers.length > 1) {
+      textContainers[1].remove();
+    }
+  }
+}
+
+var idNum = setInterval(updateSubs, 40);
+
+console.log("Started scriptorino: ", idNum);
