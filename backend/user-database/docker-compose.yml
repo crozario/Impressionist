@@ -15,7 +15,6 @@ services:
   production-nginx-container:
     container_name: 'production-nginx-container'
     image: nginx:latest
-    command: [sh, -c, "apt-get openssl && openssl dhparam -out ./dh-param/dhparam-2048.pem 2048"]
     ports:
       - "80:80"
       - "443:443"
