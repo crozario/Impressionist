@@ -66,9 +66,12 @@ docker-compose up -d
 - docker rm $(docker ps -a -q) (remove all containers)
 - docker rmi $(docker images -q) (remove all docker images)
 
-https://github.com/nodejs/docker-node/blob/master/docs/BestPractices.md (running node with docker best practices)
+**Resources**
 
-https://docs.docker.com/compose/compose-file/ (docker compose)
+- https://github.com/nodejs/docker-node/blob/master/docs/BestPractices.md (running node with docker best practices)
+- https://docs.docker.com/compose/compose-file/ (docker compose)
+- https://www.humankode.com/ssl/how-to-set-up-free-ssl-certificates-from-lets-encrypt-using-docker-and-nginx (docker server setup with HTTPS)
+
 
 ## Security
 
@@ -90,7 +93,7 @@ https://letsencrypt.readthedocs.io/en/latest/using.html#running-with-docker
 
 
 **research later**
-
+https://success.docker.com/article/networking
 https://www.digitalocean.com/community/tutorials/understanding-nginx-server-and-location-block-selection-algorithms
 
 
