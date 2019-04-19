@@ -114,14 +114,14 @@ docker exec -t -i <container id> /bin/bash
 
 ### HTTPS
 
-**Let's Encrypt**
+**Let's Encrypt and CertBot**
 - To enable HTTPS on your website, you need to get a certificate (a type of file) from a Certificate Authority (CA) like Let' Encrypt.
     1. prove to CA that server controls the domain.
     2. request, renew and revoke certificated for the domain.
 
 - Certbot supports the ACME protocol and will be used to automate certification.
 
-staging example of let's encrypt
+staging certificate
 ```
 sudo docker run -it --rm \
 -v /docker-volumes/etc/letsencrypt:/etc/letsencrypt \
@@ -133,11 +133,32 @@ certonly --webroot \
 --register-unsafely-without-email --agree-tos \
 --webroot-path=/data/letsencrypt \
 --staging \
--d impressionist-user-db-api-east-1.crossley.tech -d www.impressionist-user-db-api-east-1.crossley.tech
+-d impressionist-user-db-api-east-1.crossley.tech
 ```
 
+production certificate
+```
+sudo docker run -it --rm \
+-v /docker-volumes/etc/letsencrypt:/etc/letsencrypt \
+-v /docker-volumes/var/lib/letsencrypt:/var/lib/letsencrypt \
+-v /docker/letsencrypt-docker-nginx/src/letsencrypt/letsencrypt-site:/data/letsencrypt \
+-v "/docker-volumes/var/log/letsencrypt:/var/log/letsencrypt" \
+certbot/certbot \
+certonly --webroot \
+--email crozariodev@gmail.com --agree-tos --no-eff-email \
+--webroot-path=/data/letsencrypt \
+-d impressionist-user-db-api-east-1.crossley.tech
+```
 
-**Certbot**
+cronjob to renew certificates
+
+```
+sudo crontab -e
+
+# add to the end of file
+0 23 * * * docker run --rm -it --name certbot -v "/docker-volumes/etc/letsencrypt:/etc/letsencrypt" -v "/docker-volumes/var/lib/letsencrypt:/var/lib/letsencrypt" -v "/docker-volumes/data/letsencrypt:/data/letsencrypt" -v "/docker-volumes/var/log/letsencrypt:/var/log/letsencrypt" certbot/certbot renew --webroot -w /data/letsencrypt --quiet && docker kill --signal=HUP production-nginx-container
+```
+
 
 
 **Resources**
