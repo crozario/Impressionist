@@ -24,6 +24,8 @@ services:
       - /docker-volumes/data/letsencrypt:/data/letsencrypt
     depends_on: 
       - user-database
+    links:
+      - "user-database"
     networks:
       - docker-network
     restart: unless-stopped
