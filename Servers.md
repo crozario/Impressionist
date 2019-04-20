@@ -2,43 +2,21 @@
 
 ![Server Architecture](images/server-architecture-diagram.png)
 
-## Server Hosting
+## Server Hosted URL
 
-- Application Server -> https://ec2-18-223-101-151.us-east-2.compute.amazonaws.com
-- User Database Rest API -> https://impressionist-user-db-api-east-1.crossley.tech
-- Content Database Rest API -> https://ec2-34-227-109-120.compute-1.amazonaws.com
+**Application Server**
 
-### Setting up HTTPS on Server
-- get initial tls certificate 
+* https://impressionist-application-east-1.crossley.tech (hks32)
 
+**User Database Rest API**
+* https://impressionist-user-db-api-east-1.crossley.tech (cbr22)
 
-- sudo mkdir -p /docker/user-database/
-- sudo mkdir -p /docker/user-database/dh-param
-- cd Impressionist/backend/user-database
-- cp * /docker/user-database/
-- sudo apt-get -y install openssl  
-- sudo openssl dhparam -out /docker/user-database/dh-param/dhparam-2048.pem 2048
-- cd /docker/user-database/
-- sudo docker-compose up -d
-- sudo crontab -e
-
-cd ~/Impressionist/
-git pull
-cp ~/Impressionist/backend/user-database/production.conf ~/Impressionist/backend/user-database/Dockerfile ~/Impressionist/backend/user-database/docker-compose.yml /docker/user-database
-cd /docker/user-database 
-sudo docker-compose up
-
-If you want nginx (>= 1.3.13) to handle websocket requests as well, add the following lines in the location / section:
-proxy_http_version 1.1;
-proxy_set_header Upgrade $http_upgrade;
-proxy_set_header Connection "upgrade";
-
-**add to cron**
-0 23 * * * docker run --rm -it --name certbot -v "/docker-volumes/etc/letsencrypt:/etc/letsencrypt" -v "/docker-volumes/var/lib/letsencrypt:/var/lib/letsencrypt" -v "/docker-volumes/data/letsencrypt:/data/letsencrypt" -v "/docker-volumes/var/log/letsencrypt:/var/log/letsencrypt" certbot/certbot renew --webroot -w /data/letsencrypt --quiet && docker kill --signal=HUP production-nginx-container
+**Content Database Rest API**
+* https://impressionist-content-db-api-east-1.crossley.tech (crozariodev)
 
 ## Docker 
 
-### Installing Docker on Ubuntu Server
+### Installing Docker and Docker Compose on Ubuntu Server
 https://docs.docker.com/install/linux/docker-ce/ubuntu/
 
 ```bash
@@ -66,25 +44,114 @@ sudo apt-get install docker-ce docker-ce-cli containerd.io docker-compose
 
 ```
 
-### Run Application Server Containers
+## Server Setup using Docker 
 
-```bash
-docker-compose up -d
+### User Database and Content Database
+
+**generate initial tls certificate**
+
+```
+cd initial-tls-certificate
+
+sudo docker-compose up -d
+
 ```
 
-### Run User Database REST API Containers
+**staging a certificate (fake generate a certificate)**
 
-```bash
-docker-compose up -d
+```
+# rename <SERVER URL>
+
+sudo docker run -it --rm \
+-v /docker-volumes/etc/letsencrypt:/etc/letsencrypt \
+-v /docker-volumes/var/lib/letsencrypt:/var/lib/letsencrypt \
+-v /docker/letsencrypt-docker-nginx/src/letsencrypt/letsencrypt-site:/data/letsencrypt \
+-v "/docker-volumes/var/log/letsencrypt:/var/log/letsencrypt" \
+certbot/certbot \
+certonly --webroot \
+--register-unsafely-without-email --agree-tos \
+--webroot-path=/data/letsencrypt \
+--staging \
+-d <SERVER URL>
+
+# get more information
+
+sudo docker run --rm -it --name certbot \
+-v /docker-volumes/etc/letsencrypt:/etc/letsencrypt \
+-v /docker-volumes/var/lib/letsencrypt:/var/lib/letsencrypt \
+-v /docker/letsencrypt-docker-nginx/src/letsencrypt/letsencrypt-site:/data/letsencrypt \
+certbot/certbot \
+--staging \
+certificates
+
+#removes staging files
+
+sudo rm -rf /docker-volumes/
 ```
 
-### Run Content Database REST API Containers
 
-```bash
-docker-compose up -d
+**generating an actual certificate**
 ```
+#replace <EMAIL> and <SERVER URL>
+
+sudo docker run -it --rm \
+-v /docker-volumes/etc/letsencrypt:/etc/letsencrypt \
+-v /docker-volumes/var/lib/letsencrypt:/var/lib/letsencrypt \
+-v /docker/letsencrypt-docker-nginx/src/letsencrypt/letsencrypt-site:/data/letsencrypt \
+-v "/docker-volumes/var/log/letsencrypt:/var/log/letsencrypt" \
+certbot/certbot \
+certonly --webroot \
+--email <EMAIL> --agree-tos --no-eff-email \
+--webroot-path=/data/letsencrypt \
+-d <SERVER URL>
+
+# stop server 
+
+sudo docker-compose down
+```
+
+**generate dh param key**
+
+```
+sudo apt-get -y install openssl
+
+sudo mkdir -p dh-param
+
+sudo openssl dhparam -out ./dh-param/dhparam-2048.pem 2048
+```
+
+**run node server and nginx server (docker)**
+
+```
+sudo docker-compose up -d
+```
+
+**add a cron job to renew tls certificate**
+```
+sudo crontab -e
+
+# add to end of cron file
+0 23 * * * docker run --rm -it --name certbot -v "/docker-volumes/etc/letsencrypt:/etc/letsencrypt" -v "/docker-volumes/var/lib/letsencrypt:/var/lib/letsencrypt" -v "/docker-volumes/data/letsencrypt:/data/letsencrypt" -v "/docker-volumes/var/log/letsencrypt:/var/log/letsencrypt" certbot/certbot renew --webroot -w /data/letsencrypt --quiet && docker kill --signal=HUP nginx-reverse-proxy
+```
+
+
+
+proxy_http_version 1.1;
+proxy_set_header Upgrade $http_upgrade;
+proxy_set_header Connection "upgrade";
+
 
 ### Useful Docker Commands
+
+**run docker compose**
+```
+docker-compose up -d
+```
+
+**stop docker compose**
+```
+docker-compose down
+```
 
 **build docker to an image**
 ```
@@ -133,14 +200,12 @@ docker exec -t -i <container id> /bin/bash
 
 **Resources**
 
+- https://www.humankode.com/ssl/how-to-set-up-free-ssl-certificates-from-lets-encrypt-using-docker-and-nginx (docker server setup with HTTPS)
 - https://github.com/nodejs/docker-node/blob/master/docs/BestPractices.md (running node with docker best practices)
 - https://docs.docker.com/compose/compose-file/ (docker compose)
-- https://www.humankode.com/ssl/how-to-set-up-free-ssl-certificates-from-lets-encrypt-using-docker-and-nginx (docker server setup with HTTPS)
 
 
-## Security
-
-### HTTPS
+## HTTPS
 
 **Let's Encrypt and CertBot**
 - To enable HTTPS on your website, you need to get a certificate (a type of file) from a Certificate Authority (CA) like Let' Encrypt.
@@ -148,35 +213,6 @@ docker exec -t -i <container id> /bin/bash
     2. request, renew and revoke certificated for the domain.
 
 - Certbot supports the ACME protocol and will be used to automate certification.
-
-staging certificate
-```
-sudo docker run -it --rm \
--v /docker-volumes/etc/letsencrypt:/etc/letsencrypt \
--v /docker-volumes/var/lib/letsencrypt:/var/lib/letsencrypt \
--v /docker/letsencrypt-docker-nginx/src/letsencrypt/letsencrypt-site:/data/letsencrypt \
--v "/docker-volumes/var/log/letsencrypt:/var/log/letsencrypt" \
-certbot/certbot \
-certonly --webroot \
---register-unsafely-without-email --agree-tos \
---webroot-path=/data/letsencrypt \
---staging \
--d impressionist-user-db-api-east-1.crossley.tech
-```
-
-production certificate
-```
-sudo docker run -it --rm \
--v /docker-volumes/etc/letsencrypt:/etc/letsencrypt \
--v /docker-volumes/var/lib/letsencrypt:/var/lib/letsencrypt \
--v /docker/letsencrypt-docker-nginx/src/letsencrypt/letsencrypt-site:/data/letsencrypt \
--v "/docker-volumes/var/log/letsencrypt:/var/log/letsencrypt" \
-certbot/certbot \
-certonly --webroot \
---email crozariodev@gmail.com --agree-tos --no-eff-email \
---webroot-path=/data/letsencrypt \
--d impressionist-user-db-api-east-1.crossley.tech
-```
 
 **Resources**
 https://letsencrypt.org/getting-started/
@@ -201,7 +237,4 @@ https://letsencrypt.readthedocs.io/en/latest/using.html#running-with-docker
 https://success.docker.com/article/networking
 https://www.digitalocean.com/community/tutorials/understanding-nginx-server-and-location-block-selection-algorithms
 
-
-
-
-
+## Security
