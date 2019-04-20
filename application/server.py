@@ -67,7 +67,7 @@ def handle_compareDialogue(message):
     with open(webmFile, 'wb') as aud:
         aud.write(stream)
 
-    resultBYTES, resultJSON = performThreeComparisons(message['netflixWatchID'], message['dialogueID'], webmFile, message['gameID'], message['userTranscript'], profile=True)
+    resultBYTES, resultJSON = performThreeComparisons(message['netflixWatchID'], message['dialogueID'], webmFile, message['gameID'], message['userTranscript'], profile=False)
 
     if not SAVE_USER_AUDIO: os.remove(wavFile)
     os.remove(webmFile)
@@ -75,10 +75,11 @@ def handle_compareDialogue(message):
     # print("send to db", resultBYTES)
     # FIXME: don't wanna wait until back responds 
     # SOLUTION: async process
-    # thr = threading.Thread(target=sendScoreToBack, args=(resultBYTES, True))
-    # thr.start()
+    thr = threading.Thread(target=sendScoreToBack, args=(resultBYTES, True))
+    thr.start()
     # response = sendScoreToBack(resultBYTES)
     # print("response:", response)
+    
     print(resultJSON)
 
     return resultJSON
