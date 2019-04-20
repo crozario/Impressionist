@@ -10,8 +10,19 @@
 
 ### Setting up HTTPS on Server
 - get initial tls certificate 
--
 
+- sudo mkdir -p /docker/user-database/
+- sudo mkdir -p /docker/user-database/dh-param
+- cd Impressionist/backend/user-database
+- cp * /docker/user-database/
+- sudo apt-get -y install openssl  
+- sudo openssl dhparam -out /docker/user-database/dh-param/dhparam-2048.pem 2048
+- cd /docker/user-database/
+- sudo docker-compose up -d
+- sudo crontab -e
+
+**add to cron**
+0 23 * * * docker run --rm -it --name certbot -v "/docker-volumes/etc/letsencrypt:/etc/letsencrypt" -v "/docker-volumes/var/lib/letsencrypt:/var/lib/letsencrypt" -v "/docker-volumes/data/letsencrypt:/data/letsencrypt" -v "/docker-volumes/var/log/letsencrypt:/var/log/letsencrypt" certbot/certbot renew --webroot -w /data/letsencrypt --quiet && docker kill --signal=HUP production-nginx-container
 
 ## Docker 
 
@@ -154,17 +165,6 @@ certonly --webroot \
 --webroot-path=/data/letsencrypt \
 -d impressionist-user-db-api-east-1.crossley.tech
 ```
-
-cronjob to renew certificates
-
-```
-sudo crontab -e
-
-# add to the end of file
-0 23 * * * docker run --rm -it --name certbot -v "/docker-volumes/etc/letsencrypt:/etc/letsencrypt" -v "/docker-volumes/var/lib/letsencrypt:/var/lib/letsencrypt" -v "/docker-volumes/data/letsencrypt:/data/letsencrypt" -v "/docker-volumes/var/log/letsencrypt:/var/log/letsencrypt" certbot/certbot renew --webroot -w /data/letsencrypt --quiet && docker kill --signal=HUP production-nginx-container
-```
-
-
 
 **Resources**
 https://letsencrypt.org/getting-started/
