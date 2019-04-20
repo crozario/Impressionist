@@ -1,3 +1,4 @@
+from speech_to_emotion.emotion_classifier_nn import livePredictions
 """
 Application server (Flask)
 $ python3 server.py
@@ -36,9 +37,14 @@ app.config['SECRET_KEY'] = 'secret!'
 
 socketio = SocketIO(app)
 
+# load emotion comparison model
+emoPredictor = livePredictions(path='speech_to_emotion/Emotion_Voice_Detection_Model.h5', file='speech-to-text/dummy.wav')
+emoPredictor.load_model()
+
 @socketio.on('connect')
 def test_connect():
     print('a user connected')
+
 
 @socketio.on('disconnect')
 def test_disconnect():
@@ -67,7 +73,7 @@ def handle_compareDialogue(message):
     with open(webmFile, 'wb') as aud:
         aud.write(stream)
 
-    resultBYTES, resultJSON = performThreeComparisons(message['netflixWatchID'], message['dialogueID'], webmFile, message['gameID'], message['userTranscript'], profile=False)
+    resultBYTES, resultJSON = performThreeComparisons(message['netflixWatchID'], message['dialogueID'], webmFile, message['gameID'], message['userTranscript'], emoPredictor, profile=True)
 
     if not SAVE_USER_AUDIO: os.remove(wavFile)
     os.remove(webmFile)
