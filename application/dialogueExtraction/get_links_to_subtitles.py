@@ -19,7 +19,7 @@ soup = BeautifulSoup(page.content, 'html5lib')
 links_with_tags = soup.find_all('li')
 
 # pilot = links_with_tags[0]
-episode_details = [] # info tuples (str link, str seasonNum, str episodeNum, str episodeTitle)
+episode_details = [] # info tuples (str link, int seasonNum, int episodeNum, str episodeTitle)
 couldntParse = [] # tuples (str tag, str error)
 for ii, tag in enumerate(links_with_tags):
     strtag = str(tag)
@@ -61,7 +61,7 @@ for ii, tag in enumerate(links_with_tags):
         couldntParse.append((strtag, "Unable to find link. Skipping..."))
         continue
     
-    info = (linkHome + link, seasonNum, episodeNum, episodeTitle)
+    info = (linkHome + link, int(seasonNum), int(episodeNum), episodeTitle)
     episode_details.append(info)
     print(info)
 
