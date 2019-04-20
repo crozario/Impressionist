@@ -47,13 +47,13 @@ function hoverHighlight() {
   $('span.sub-word').hover(
     function() {
       //changes color of font to yellow w/ mouseover
-      $(this).css('background-color', 'yellow');
+      $(this).css('color', 'yellow');
       //pause videoPlayer
       player.pause();
     },
     function() {
       //reverts color after mouseaway
-      $(this).css('background-color', '');
+      $(this).css('color', '');
       //resume videoPlayer
       player.play();
     }
@@ -116,6 +116,10 @@ function updateSubs() {
     //if our sub is present but netflix'subs isn't, then delete our subs
     if (textContainers.length > 1) {
       textContainers[1].remove();
+      //resume player if paused but no subs,
+      if (player.isPaused()){
+        player.play();
+        }
     }
   }
 }
