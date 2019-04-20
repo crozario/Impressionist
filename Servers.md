@@ -11,6 +11,7 @@
 ### Setting up HTTPS on Server
 - get initial tls certificate 
 
+
 - sudo mkdir -p /docker/user-database/
 - sudo mkdir -p /docker/user-database/dh-param
 - cd Impressionist/backend/user-database
@@ -20,6 +21,12 @@
 - cd /docker/user-database/
 - sudo docker-compose up -d
 - sudo crontab -e
+
+cd ~/Impressionist/
+git pull
+cp ~/Impressionist/backend/user-database/production.conf ~/Impressionist/backend/user-database/Dockerfile ~/Impressionist/backend/user-database/docker-compose.yml /docker/user-database
+cd /docker/user-database 
+sudo docker-compose up
 
 If you want nginx (>= 1.3.13) to handle websocket requests as well, add the following lines in the location / section:
 proxy_http_version 1.1;
