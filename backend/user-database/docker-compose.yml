@@ -7,8 +7,6 @@ services:
       context: .
       dockerfile: Dockerfile
     image: user-database
-    ports:
-      - "3001:3001"
     restart: unless-stopped
   production-nginx-container:
     container_name: 'production-nginx-container'
@@ -16,7 +14,6 @@ services:
     ports:
       - "80:80"
       - "443:443"
-      - "3001:3000"
     volumes:
       - ./production.conf:/etc/nginx/conf.d/default.conf
       - ./dh-param/dhparam-2048.pem:/etc/ssl/certs/dhparam-2048.pem
