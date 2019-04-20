@@ -38,18 +38,24 @@ function setSubs() {
 }
 
 function hoverHighlight() {
-  $('span.sub-word').hover(
+   $('span.sub-word').click(
     function() {
-      //$('#word').text($(this).css('background-color', '#ffff66').text());
-      //changes color of font to yellow w/ mouseover
-      $(this).css('color', 'yellow');
       //maybe add api call etc here? nope, add a function call with the word
       wordsAPI($(this).text().replace(/\W/, '').trim());
+    }
+  );
+  $('span.sub-word').hover(
+    function() {
+      //changes color of font to yellow w/ mouseover
+      $(this).css('background-color', 'yellow');
+      //pause videoPlayer
+      player.pause();
     },
     function() {
-      //$('#word').text('');
       //reverts color after mouseaway
-      $(this).css('color', '');
+      $(this).css('background-color', '');
+      //resume videoPlayer
+      player.play();
     }
   );
 }
@@ -88,7 +94,7 @@ function updateSubs() {
     //check if our subs elem is present
     if (textContainers.length > 1) {
       var mySub = textContainers[1];
-      var mySubText = mySub.innerText;
+      var mySubText = mySub.innerText.replace('\n', '');
       //if subs have changed, remove our sub, then create new sub
       if (netflixSubText != mySubText) {
         player.setTimedTextVisibility(true);
@@ -114,6 +120,6 @@ function updateSubs() {
   }
 }
 
-var idNum = setInterval(updateSubs, 40);
+var idNum = setInterval(updateSubs, 10);
 
 console.log("Started scriptorino: ", idNum);
