@@ -15,3 +15,4 @@ __pycache__
 smile.log
 contentData/tvShows/Friends/02/12-The-One-After-The-Superbowl-Part1/testAudio/
 contentData/tvShows/Friends/02/12-The-One-After-The-Superbowl-Part1/userAudio/
+application/.vscode/*
