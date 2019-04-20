@@ -7,6 +7,8 @@ services:
       context: .
       dockerfile: Dockerfile
     image: user-database
+    networks:
+      - docker-network
     restart: unless-stopped
   production-nginx-container:
     container_name: 'production-nginx-container'
