@@ -152,7 +152,7 @@ def performThreeComparisons(netflixWatchID, dialogueID, audioFile, gameID, userT
     """
     resultDICT = {"gameID" : gameID, "dialogueID" : dialogueID, "error" : "", "success" : True}
     overallscore = 0.0
-    totalScores = 3
+    totalScores = 2
     # 1. get processed data from contentDB
     featureFileURL, originalEmotion, originalCaption = getProcessedFromContentDB(netflixWatchID, dialogueID, profile=profile)
     resultDICT["originalEmotion"] = originalEmotion
@@ -167,7 +167,7 @@ def performThreeComparisons(netflixWatchID, dialogueID, audioFile, gameID, userT
     overallscore += resultDICT["phoneticScore"]
     # 4. Compare Emotion
     emotionSimilarity, userEmotion = compareEmotionSimilarity(audioFile, originalEmotion, emoPredictor, verbose=True, profile=profile)
-    resultDICT["emotionScore"] = 100.0 if emotionSimilarity else 0.0
+    resultDICT["emotionScore"] = 20.0 if emotionSimilarity else 0.0
     resultDICT["userEmotion"] = userEmotion
     if verbose: print("Similar emotion:", resultDICT["emotionScore"])
     overallscore += resultDICT["emotionScore"]

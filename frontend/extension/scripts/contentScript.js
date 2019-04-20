@@ -556,12 +556,35 @@ let appendResultsToView = (resultJSON) => {
     row6.appendChild(cell11);
     row6.appendChild(cell12);
 
+    // adding row to display emotion
+    let row7 = document.createElement("tr");
+    let cell13 = document.createElement("td");
+    cell13.appendChild(document.createTextNode("Emotion Bonus"));
+
+    let cell14 = document.createElement("td");
+    cell14.appendChild(document.createTextNode(resultJSON.emotionScore));
+
+    row7.appendChild(cell13);
+    row7.appendChild(cell14);
+
+    let row8 = document.createElement("tr");
+    let cell15 = document.createElement("td");
+    cell15.appendChild(document.createTextNode("Emotions"));
+
+    let cell16 = document.createElement("td");
+    cell16.appendChild(document.createTextNode("orig (" + resultJSON.originalEmotion + ")" + ", user (" + resultJSON.userEmotion + ")"));
+
+    row8.appendChild(cell15);
+    row8.appendChild(cell16);
+
     resultTable.appendChild(row1);
     resultTable.appendChild(row2);
     resultTable.appendChild(row3);
     resultTable.appendChild(row4);
     resultTable.appendChild(row5);
     resultTable.appendChild(row6);
+    resultTable.appendChild(row7);
+    resultTable.appendChild(row8);
     
     resultsReceivedContainer.prepend(resultTable);
 }
