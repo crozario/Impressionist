@@ -9,6 +9,9 @@ Description: Content script to interact with the webpage
 // message passing connection through the shared DOM
 // var port = chrome.runtime.connect();
 
+const userDatabaseRestAPIHost = "https://ec2-3-82-150-208.compute-1.amazonaws.com";
+const contentDatabaseRestAPIHost = "https://ec2-34-227-109-120.compute-1.amazonaws.com";
+
 // socket.io connection
 const applicationServerPort = 3000;
 const applicationServerHost = "http://localhost";
@@ -130,7 +133,7 @@ let gameInitialization = (username, watchID) => {
             }
         }
 
-        req.open("POST", "http://localhost:3001/user/initializeGame", true);
+        req.open("POST", userDatabaseRestAPIHost + "/user/initializeGame", true);
         req.setRequestHeader("Content-Type", "application/json");
         req.send(stringifedData);
     })
@@ -167,7 +170,7 @@ let ifGameSupported = (watchID) => {
             }
         }
 
-        req.open("POST", "http://localhost:3002/cont/initializeGame", true);
+        req.open("POST", contentDatabaseRestAPIHost + "/cont/initializeGame", true);
         req.setRequestHeader("Content-Type", "application/json");
         req.send(stringifedData);
     })
@@ -643,7 +646,6 @@ let showResultsContainer = () => {
     
     let resultsContainerElement = document.getElementById('results-container');
     resultsContainerElement.style.display = "block";
-    
 }
 
 let hideResultsContainer = () => {

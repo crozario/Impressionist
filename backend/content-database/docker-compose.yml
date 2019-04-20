@@ -1,0 +1,23 @@
+version: '3'
+
+services:
+  nginx:
+    build:
+      context: ./nginx
+      dockerfile: Dockerfile
+    image: nginx:mainline
+    container_name: nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    restart: unless-stopped
+  content-database:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: content-database
+    container_name: content-database
+    restart: unless-stopped
+    depends_on:
+      - nginx
+  

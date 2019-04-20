@@ -1,22 +1,44 @@
-# Dependencies and Containerization
+# Dependencies
 
-## Docker 
+- docker
+- nginx
 
-### User Database
- 
-docker build -t crozario/impressionist-user-database-rest-api .
-docker run -p 3001:3001 crozario/impressionist-user-database-rest-api
+## Application Server
 
-### Content Database
-docker build -t crozario/impressionist-content-database-rest-api .
-docker run -p 3002:3002 crozario/impressionist-content-database-rest-api
+- opensmile (https://www.audeering.com/download/opensmile-2-3-0-tar-gz/?wpdmdl=4782)
+- build-essential
+- g++
+- gcc
+- autotools-dev
+- autoconf
+- libtool
+- python3
+	- uwsgi 
+	- eventlet
+	- Flask
+	- Flask-SocketIO
+	- google-cloud-speech
+	- scipy
+	- urllib3
+	- matplotlib
 
-**Useful Docker Commands**
-- docker system prune -a (removes everything from docker)
-- docker ps (get running docker processes)
-- docker logs <container id> (print output of application)
+## User Database
 
+- node
+- npm
+	- express
+	- body-parser
+	- mongoose
+	- cors
+	- bcrypt
+- mongodb
 
-## Dependencies
+## Content Database
 
-- Docker
+- node
+- npm
+	- express
+	- body-parser
+	- mongoose
+	- cors
+- mongodb
