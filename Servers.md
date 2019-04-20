@@ -6,13 +6,13 @@
 
 **Application Server**
 
-* https://impressionist-application-east-1.crossley.tech (hks32)
+* https://impressionist-application-east-1.crossley.tech (hks32) (3.85.171.178)
 
 **User Database Rest API**
-* https://impressionist-user-db-api-east-1.crossley.tech (cbr22)
+* https://impressionist-user-db-api-east-1.crossley.tech (cbr22) (3.82.150.208)
 
 **Content Database Rest API**
-* https://impressionist-content-db-api-east-1.crossley.tech (crozariodev)
+* https://impressionist-content-db-api-east-1.crossley.tech (crozariodev) (34.227.109.120)
 
 ## Docker 
 
@@ -48,10 +48,20 @@ sudo apt-get install docker-ce docker-ce-cli containerd.io docker-compose
 
 ### User Database and Content Database
 
-**generate initial tls certificate**
+**run initial tls certificate website**
 
 ```
 cd initial-tls-certificate
+
+sudo mkdir -p /docker/letsencrypt-docker-nginx/src/letsencrypt/letsencrypt-site
+
+sudo cp docker-compose.yml /docker/letsencrypt-docker-nginx/src/letsencrypt/
+
+sudo cp nginx.conf /docker/letsencrypt-docker-nginx/src/letsencrypt/
+
+sudo cp letsencrypt-site/index.html /docker/letsencrypt-docker-nginx/src/letsencrypt/letsencrypt-site/
+
+cd /docker/letsencrypt-docker-nginx/src/letsencrypt
 
 sudo docker-compose up -d
 
@@ -89,10 +99,9 @@ certificates
 sudo rm -rf /docker-volumes/
 ```
 
-
 **generating an actual certificate**
 ```
-#replace <EMAIL> and <SERVER URL>
+#replace EMAIL and <SERVER URL>
 
 sudo docker run -it --rm \
 -v /docker-volumes/etc/letsencrypt:/etc/letsencrypt \
@@ -101,7 +110,7 @@ sudo docker run -it --rm \
 -v "/docker-volumes/var/log/letsencrypt:/var/log/letsencrypt" \
 certbot/certbot \
 certonly --webroot \
---email <EMAIL> --agree-tos --no-eff-email \
+--email crozariodev@gmail.com --agree-tos --no-eff-email \
 --webroot-path=/data/letsencrypt \
 -d <SERVER URL>
 
@@ -133,7 +142,6 @@ sudo crontab -e
 # add to end of cron file
 0 23 * * * docker run --rm -it --name certbot -v "/docker-volumes/etc/letsencrypt:/etc/letsencrypt" -v "/docker-volumes/var/lib/letsencrypt:/var/lib/letsencrypt" -v "/docker-volumes/data/letsencrypt:/data/letsencrypt" -v "/docker-volumes/var/log/letsencrypt:/var/log/letsencrypt" certbot/certbot renew --webroot -w /data/letsencrypt --quiet && docker kill --signal=HUP nginx-reverse-proxy
 ```
-
 
 
 proxy_http_version 1.1;
