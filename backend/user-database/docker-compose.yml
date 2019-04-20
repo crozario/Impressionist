@@ -7,6 +7,8 @@ services:
       context: .
       dockerfile: Dockerfile
     image: user-database
+    ports:
+      - "3001:3001"
     restart: unless-stopped
   production-nginx-container:
     container_name: 'production-nginx-container'
