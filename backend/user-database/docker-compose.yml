@@ -21,7 +21,7 @@ services:
       - /docker-volumes/etc/letsencrypt/live/impressionist-user-db-api-east-1.crossley.tech/privkey.pem:/etc/letsencrypt/live/impressionist-user-db-api-east-1.crossley.tech/privkey.pem
       - /docker-volumes/data/letsencrypt:/data/letsencrypt
     depends_on: 
-      user-database
+      - user-database
     networks:
       - docker-network
     restart: unless-stopped
