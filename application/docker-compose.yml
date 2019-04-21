@@ -1,12 +1,12 @@
 version: '3.1'
 
 services:
-  flask-uwsgi:
-    container_name: 'flask-uwsgi'
+  flask-app:
+    container_name: 'flask-app'
     build:
       context: .
       dockerfile: Dockerfile
-    image: flask-uwsgi
+    image: flask-app
     networks:
       - docker-network
     restart: unless-stopped
@@ -23,9 +23,9 @@ services:
       - /docker-volumes/etc/letsencrypt/live/impressionist-application-east-1.crossley.tech/privkey.pem:/etc/letsencrypt/live/impressionist-application-east-1.crossley.tech/privkey.pem
       - /docker-volumes/data/letsencrypt:/data/letsencrypt
     depends_on: 
-      - flask-uwsgi
+      - flask-app
     links:
-      - "flask-uwsgi"
+      - "flask-app"
     networks:
       - docker-network
     restart: unless-stopped

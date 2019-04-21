@@ -47,6 +47,6 @@ COPY ./ /usr/src/app
 
 EXPOSE 3000
 
-CMD [ "uwsgi", "--ini", "app.ini" ]
+CMD ["python3", "server2.py"]
 
 

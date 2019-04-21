@@ -253,3 +253,4 @@ https://www.digitalocean.com/community/tutorials/understanding-nginx-server-and-
 
 **Resources**
 https://docs.nginx.com/nginx/admin-guide/web-server/app-gateway-uwsgi-django/
+https://flask-socketio.readthedocs.io/en/latest/
