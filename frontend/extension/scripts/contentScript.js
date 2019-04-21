@@ -197,7 +197,7 @@ window.onload = () => {
             contentInfo.gameID = jsonResult.gameID
 
             const startTime = Date.now();
-            socket = io.connect(socketAddress);
+            socket = io.connect(socketAddress, {secure: true});
             console.log("socket connection : " + getDuration(startTime));
 
 

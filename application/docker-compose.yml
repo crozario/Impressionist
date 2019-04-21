@@ -1,12 +1,12 @@
 version: '3.1'
 
 services:
-  content-database:
-    container_name: 'content-database'
+  flask-uwsgi:
+    container_name: 'flask-uwsgi'
     build:
       context: .
       dockerfile: Dockerfile
-    image: content-database
+    image: flask-uwsgi
     networks:
       - docker-network
     restart: unless-stopped
@@ -23,9 +23,9 @@ services:
       - /docker-volumes/etc/letsencrypt/live/impressionist-application-east-1.crossley.tech/privkey.pem:/etc/letsencrypt/live/impressionist-application-east-1.crossley.tech/privkey.pem
       - /docker-volumes/data/letsencrypt:/data/letsencrypt
     depends_on: 
-      - content-database
+      - flask-uwsgi
     links:
-      - "content-database"
+      - "flask-uwsgi"
     networks:
       - docker-network
     restart: unless-stopped

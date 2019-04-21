@@ -2,17 +2,27 @@
 
 ![Server Architecture](images/server-architecture-diagram.png)
 
-## Server Hosted URL
+## Server Hosting Information
+
+**Domain**
+- crossley.tech
+- nameservers hosted using cloudflare
+- domain received from namecheap
+
+**User Database Rest API**
+
+* ec2 t2.micro instance, n.virginia, us-east-1b
+* https://impressionist-user-db-api-east-1.crossley.tech (cbr22) (3.214.84.249 -> Elastic/Static IP)
+
+**Content Database Rest API**
+
+* ec2 t2.micro instance, n.virginia, us-east-1b
+* https://impressionist-content-db-api-east-1.crossley.tech (crozariodev) (3.213.86.81  -> Elastic/Static IP)
 
 **Application Server**
 
-* https://impressionist-application-east-1.crossley.tech (hks32) (3.85.171.178)
-
-**User Database Rest API**
-* https://impressionist-user-db-api-east-1.crossley.tech (cbr22) (3.82.150.208)
-
-**Content Database Rest API**
-* https://impressionist-content-db-api-east-1.crossley.tech (crozariodev) (34.227.109.120)
+* ec2 t2.micro instance, n.virginia, us-east-1c
+* https://impressionist-application-east-1.crossley.tech (hks32) (3.91.111.9 -> Elastic/Static IP)
 
 ## Docker 
 
@@ -45,8 +55,6 @@ sudo apt-get install docker-ce docker-ce-cli containerd.io docker-compose
 ```
 
 ## Server Setup using Docker 
-
-### User Database and Content Database
 
 **run initial tls certificate website**
 
@@ -101,7 +109,8 @@ sudo rm -rf /docker-volumes/
 
 **generating an actual certificate**
 ```
-#replace EMAIL and <SERVER URL>
+# replace EMAIL and <SERVER URL>
+# generates the certificate onto local machine folder /docker-volumes ... 
 
 sudo docker run -it --rm \
 -v /docker-volumes/etc/letsencrypt:/etc/letsencrypt \
@@ -129,7 +138,7 @@ sudo mkdir -p dh-param
 sudo openssl dhparam -out ./dh-param/dhparam-2048.pem 2048
 ```
 
-**run node server and nginx server (docker)**
+**run docker containers/services for the server**
 
 ```
 sudo docker-compose up -d
@@ -142,11 +151,6 @@ sudo crontab -e
 # add to end of cron file
 0 23 * * * docker run --rm -it --name certbot -v "/docker-volumes/etc/letsencrypt:/etc/letsencrypt" -v "/docker-volumes/var/lib/letsencrypt:/var/lib/letsencrypt" -v "/docker-volumes/data/letsencrypt:/data/letsencrypt" -v "/docker-volumes/var/log/letsencrypt:/var/log/letsencrypt" certbot/certbot renew --webroot -w /data/letsencrypt --quiet && docker kill --signal=HUP nginx-reverse-proxy
 ```
-
-
-proxy_http_version 1.1;
-proxy_set_header Upgrade $http_upgrade;
-proxy_set_header Connection "upgrade";
 
 
 ### Useful Docker Commands
@@ -236,7 +240,7 @@ https://letsencrypt.readthedocs.io/en/latest/using.html#running-with-docker
 - Used as a Reverse proxy (https://docs.nginx.com/nginx/admin-guide/web-server/reverse-proxy/)
 
 
-**useful tools**
+**Useful Tools**
 - curl
 - seige (load testing web servers -> https://www.linode.com/docs/tools-reference/tools/load-testing-with-siege/) 
 
@@ -245,4 +249,7 @@ https://letsencrypt.readthedocs.io/en/latest/using.html#running-with-docker
 https://success.docker.com/article/networking
 https://www.digitalocean.com/community/tutorials/understanding-nginx-server-and-location-block-selection-algorithms
 
-## Security
+## WSGI and Flask
+
+**Resources**
+https://docs.nginx.com/nginx/admin-guide/web-server/app-gateway-uwsgi-django/
