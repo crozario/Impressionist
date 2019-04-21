@@ -30,7 +30,7 @@ RUN pip3 install uwsgi && \
 
 COPY ./ ./app
 
-WORKDIR ./app
+WORKDIR /usr/src/app
 
 # RUN pip3 install -r requirements.txt
 
@@ -58,4 +58,5 @@ EXPOSE 3000
 ENTRYPOINT ["python3"]
 
 CMD ["server.py"]
+
 

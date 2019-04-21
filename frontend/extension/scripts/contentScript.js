@@ -5,7 +5,6 @@ Description: Content script to interact with the webpage
 
 */
 
-
 // message passing connection through the shared DOM
 // var port = chrome.runtime.connect();
 
@@ -13,12 +12,14 @@ const userDatabaseRestAPIHost = "https://impressionist-user-db-api-east-1.crossl
 const contentDatabaseRestAPIHost = "https://impressionist-content-db-api-east-1.crossley.tech";
 
 // socket.io connection
-const applicationServerPort = 3000;
-const applicationServerHost = "http://localhost";
+// const applicationServerPort = 3000;
+const applicationServerHost = "https://impressionist-application-east-1.crossley.tech";
 // const applicationServerHost = "18.223.101.151"
 // const serverHost = "10.202.133.175"
 // const serverHost = "https://impressionist.localtunnel.me"
-const socketAddress = applicationServerHost + ":" + applicationServerPort;
+// const socketAddress = applicationServerHost + ":" + applicationServerPort;
+
+const socketAddress = applicationServerHost;
 let socket;
 
 const timeDelay = 50;
