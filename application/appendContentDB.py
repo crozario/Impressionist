@@ -301,6 +301,7 @@ if __name__=='__main__':
     req.add_header('Content-Type', 'application/json; charset=utf-8')
     jsondataasbytes = contentJSON.encode('utf-8') # convert to bytes
     req.add_header('Content-Length', len(jsondataasbytes))
+    req.add_header('User-Agent', 'Chrome')
     # print("sent jsonbytes:", jsondataasbytes)
     response = urllib.request.urlopen(req, jsondataasbytes)
     resultJSON = response.read().decode('utf-8')
