@@ -20,12 +20,16 @@ from databuilder.extractFeatures import extractFeature as extract
 sys.path.insert(0, 'signalComparison/')
 from signalComparison.compareSig import compareSignals as compare
 # sys.path.insert(0, 'speech_to_text/')
-# from speech_to_text.sub_user_similarity import compareToDialogue, similar
+from speech_to_text.sub_user_similarity import similar
 
 CONTENTDB_PORT = 3002
 USERDB_PORT = 3001
-URLcontentDB_gamePlay = "http://localhost:"+str(CONTENTDB_PORT)+"/cont/play"
-URLuserDB_storeScoreData = "http://localhost:"+str(USERDB_PORT)+"/user/score"
+# URLcontentDB_gamePlay = "http://localhost:"+str(CONTENTDB_PORT)+"/cont/play"
+URLcontentDB_gamePlay = "https://impressionist-content-db-api-east-1.crossley.tech/"
+URLcontentDB_gamePlay += "cont/play"
+# URLuserDB_storeScoreData = "http://localhost:"+str(USERDB_PORT)+"/user/score"
+URLuserDB_storeScoreData = "https://impressionist-user-db-api-east-1.crossley.tech/"
+URLuserDB_storeScoreData += "user/score"
 
 def validateAudioFileFormat(audioFile, profile=False):
     if (profile): start = time.time()
@@ -93,8 +97,9 @@ def getProcessedFromContentDB(netflixWatchID, dialogueID, profile=False):
     req = urllib.request.Request(URLcontentDB_gamePlay, method='POST')
     req.add_header('Content-Type', 'application/json; charset=utf-8')
     req.add_header('Content-Length', len(reqbytes))
+    req.add_header('User-Agent', 'Chrome')
     # send request
-    # print("reqbytes:", reqbytes)
+    print("reqbytes:", reqbytes)
     response = urllib.request.urlopen(req, reqbytes)
     resString = response.read().decode('utf-8')
     resjson = json.loads(resString)
@@ -170,7 +175,6 @@ def performThreeComparisons(netflixWatchID, dialogueID, audioFile, gameID, userT
     resultDICT["emotionScore"] = 20.0 if emotionSimilarity else 0.0
     resultDICT["userEmotion"] = userEmotion
     if verbose: print("Similar emotion:", resultDICT["emotionScore"])
-    overallscore += resultDICT["emotionScore"]
     # 5. Compare Lyrics
     lyricalSimilarity = compareLyricalSimilarity(userTranscript, originalCaption, verbose=False, profile=profile)
     resultDICT["userTranscript"] = userTranscript
@@ -178,6 +182,7 @@ def performThreeComparisons(netflixWatchID, dialogueID, audioFile, gameID, userT
     if verbose: print("Lyrical Similarity:", resultDICT["lyricalScore"])
     overallscore += resultDICT["lyricalScore"]
     overallscore /= totalScores
+    overallscore += resultDICT["emotionScore"] # add emotion bonus
 
     # add average score
     resultDICT["averageScore"] = overallscore
@@ -193,6 +198,7 @@ def sendScoreToBack(resultBYTES, verbose):
     req = urllib.request.Request(URLuserDB_storeScoreData, method='POST')
     req.add_header('Content-Type', 'application/json; charset=utf-8')
     req.add_header('Content-Length', len(resultBYTES))
+    req.add_header('User-Agent', 'Chrome')
     backResponse = urllib.request.urlopen(req, resultBYTES)
     backResponse = backResponse.read().decode('utf-8')
     backResponse = json.loads(backResponse)
