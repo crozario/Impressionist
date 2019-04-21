@@ -19,8 +19,8 @@ sys.path.insert(0, 'databuilder/')
 from databuilder.extractFeatures import extractFeature as extract
 sys.path.insert(0, 'signalComparison/')
 from signalComparison.compareSig import compareSignals as compare
-sys.path.insert(0, 'speech_to_text/')
-from speech_to_text.sub_user_similarity import compareToDialogue, similar
+# sys.path.insert(0, 'speech_to_text/')
+# from speech_to_text.sub_user_similarity import compareToDialogue, similar
 
 CONTENTDB_PORT = 3002
 USERDB_PORT = 3001
