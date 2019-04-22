@@ -17,7 +17,7 @@ import json
 import sys
 import threading
 
-SAVE_USER_AUDIO = True
+SAVE_USER_AUDIO = False # FOR NOW
 CWD = os.getcwd()
 CONTENT_DIR = os.path.join(os.path.dirname(CWD), 'contentData')
 FRIENDS_DIR_2_12 = os.path.join(
