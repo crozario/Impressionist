@@ -12,12 +12,12 @@ const userDatabaseRestAPIHost = "https://impressionist-user-db-api-east-1.crossl
 const contentDatabaseRestAPIHost = "https://impressionist-content-db-api-east-1.crossley.tech";
 
 // socket.io connection
-const applicationServerPort = 3000;
-// const applicationServerHost = "https://impressionist-application-east-1.crossley.tech";
-const applicationServerHost = "localhost"
-const socketAddress = applicationServerHost + ":" + applicationServerPort;
+// const applicationServerPort = 3000;
+const applicationServerHost = "https://impressionist-application-east-1.crossley.tech";
+// const applicationServerHost = "localhost"
+// const socketAddress = applicationServerHost + ":" + applicationServerPort;
 
-// const socketAddress = applicationServerHost;
+const socketAddress = applicationServerHost;
 let socket;
 
 const timeDelay = 50;
