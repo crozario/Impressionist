@@ -214,6 +214,11 @@ docker rmi $(docker images -q)
 docker exec -t -i <container id> /bin/bash
 ``` 
 
+**rebuild a specific service on docker-compose before running**
+```
+docker-compose up --no-deps --build <service_name>
+``` 
+
 **Resources**
 
 - https://www.humankode.com/ssl/how-to-set-up-free-ssl-certificates-from-lets-encrypt-using-docker-and-nginx (docker server setup with HTTPS)

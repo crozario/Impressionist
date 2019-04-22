@@ -1018,6 +1018,9 @@ let compareDialogue = (currentAudioBlob, currentSpeech, callback) => {
         userTranscript : currentSpeech
     }, (response) => {
         console.log("compareDialogue took : " + getDuration(startTime));
+        console.log(response);
+        return
+        
         const resultJSON = JSON.parse(response);
 
         if (typeof(callback) == "function") {

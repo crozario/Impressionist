@@ -6,8 +6,6 @@ $ python3 server.py
 
 from flask import Flask, render_template
 from flask_socketio import SocketIO, emit
-import json
-k
 
 PORT = 3000        # Port to listen on (non-privileged ports are > 1023)
 
