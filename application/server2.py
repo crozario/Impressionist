@@ -3,7 +3,6 @@ Application server (Flask)
 $ python3 server.py
 """
 
-
 from flask import Flask, render_template
 from flask_socketio import SocketIO, emit
 

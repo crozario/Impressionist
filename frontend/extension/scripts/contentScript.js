@@ -13,10 +13,8 @@ const contentDatabaseRestAPIHost = "https://impressionist-content-db-api-east-1.
 
 // socket.io connection
 const applicationServerPort = 3000;
-const applicationServerHost = "localhost";
-// const applicationServerHost = "18.223.101.151"
-// const serverHost = "10.202.133.175"
-// const serverHost = "https://impressionist.localtunnel.me"
+// const applicationServerHost = "https://impressionist-application-east-1.crossley.tech";
+const applicationServerHost = "localhost"
 const socketAddress = applicationServerHost + ":" + applicationServerPort;
 
 // const socketAddress = applicationServerHost;
@@ -197,7 +195,8 @@ window.onload = () => {
             contentInfo.gameID = jsonResult.gameID
 
             const startTime = Date.now();
-            socket = io.connect(socketAddress, {secure: true});
+            // socket = io.connect(socketAddress, { secure: true });
+            socket = io.connect(socketAddress);
             console.log("socket connection : " + getDuration(startTime));
 
 

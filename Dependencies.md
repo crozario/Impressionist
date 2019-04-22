@@ -12,15 +12,7 @@
 - autotools-dev
 - autoconf
 - libtool
-- python3
-	- uwsgi 
-	- eventlet
-	- Flask
-	- Flask-SocketIO
-	- google-cloud-speech
-	- scipy
-	- urllib3
-	- matplotlib
+- python3 (check requirements.txt for python3 dependencies)
 
 ## User Database
 
