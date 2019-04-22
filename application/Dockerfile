@@ -8,25 +8,24 @@ RUN apt-get update && \
 	apt-get -y install build-essential && \
     apt-get -y install python3 && \
     apt-get -y install python3-dev && \
-    apt-get -y install python3-pip && \
-    apt-get -y install autotools-dev && \
-    apt-get -y install autoconf && \
-    apt-get -y install libtool && \
-	apt-get -y install ffmpeg && \
-    apt-get -y install ca-certificates && \
-    apt-get -y install g++ && \
-    apt-get -y install gcc && \
-    apt-get -y install git
-
-ENV APP /usr/src/app
+    apt-get -y install python3-pip 
+	# && \
+    # apt-get -y install autotools-dev && \
+    # apt-get -y install autoconf && \
+    # apt-get -y install libtool && \
+	# apt-get -y install ffmpeg && \
+    # apt-get -y install ca-certificates && \
+    # apt-get -y install g++ && \
+    # apt-get -y install gcc && \
+    # apt-get -y install git
 
 WORKDIR /usr/src/app
 
-COPY requirements.txt .
+COPY requirements.txt ./
 
 RUN pip3 install -r requirements.txt	
 
-COPY ./ /usr/src/app
+COPY . .
 
 # shell env variable
 # RUN export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/lib && \
@@ -47,6 +46,8 @@ COPY ./ /usr/src/app
 
 EXPOSE 3000
 
-CMD ["python3", "server2.py"]
+ENTRYPOINT ["python3"]
+
+CMD ["server2.py"]
 
 

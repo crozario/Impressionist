@@ -168,11 +168,15 @@ docker-compose down
 **build docker to an image**
 ```
 docker build -t <username>/<project-name> . 
+
+docker build -t crozario/impressionist-application-server .
 ``` 
 
-**-d -> detach mode, -e "ENV=production" -> environment variable, -p 3000:3000 -> port mapping, first port is actual computer, second port is docker container's, -it -> shows stdout with tty, interactive**
+**run docker image -d -> detach mode, -e "ENV=production" -> environment variable, -p 3000:3000 -> port mapping, first port is actual computer, second port is docker container's, -it -> shows stdout with tty, interactive**
 ```
-docker run -d
+docker run
+
+docker run -d -p 3000:3000 crozario/impressionist-application-server
 ``` 
 
 **get running docker processes**
@@ -249,7 +253,9 @@ https://letsencrypt.readthedocs.io/en/latest/using.html#running-with-docker
 https://success.docker.com/article/networking
 https://www.digitalocean.com/community/tutorials/understanding-nginx-server-and-location-block-selection-algorithms
 
-## WSGI and Flask
+## Flask
+
+
 
 **Resources**
 https://docs.nginx.com/nginx/admin-guide/web-server/app-gateway-uwsgi-django/
