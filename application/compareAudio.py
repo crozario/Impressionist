@@ -159,7 +159,8 @@ def _logToFile(logsLst, logFile="logFile.txt"):
     """
     with open(logFile, "a+") as file:
         message = "\n".join(logsLst)
-        file.write("------------------Middle logs--------------------")
+        file.write("------------------Middle logs--------------------\n")
+        
         file.write(message + "\n")
         
 
@@ -189,6 +190,7 @@ def performThreeComparisons(netflixWatchID, dialogueID, audioFile, gameID, userT
     # 2. Validate audioFile
     audioFile = validateAudioFileFormat(audioFile, profile=profile)
     # 3. comparePhonetic
+    featureFileURL = "132.csv"
     phoneticSimilarity, error = comparePhoneticSimilarity(audioFile, featureFileURL, verbose=False, profile=profile)
     if error is not "":
         errorsLst.append(error)  # Log error
