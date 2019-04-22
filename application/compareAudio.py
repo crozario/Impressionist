@@ -64,7 +64,9 @@ def comparePhoneticSimilarity(audioFile, featureFile, verbose=False, profile=Fal
     configFile = 'databuilder/configs/prosodyShs.conf'
     error = ""
     if not (os.path.exists(configFile) and os.path.exists(audioFile) and os.path.exists(featureFile)):
-        error = "(middle) error: one or more files don't exist (check paths). Cannot compare phonetics. exiting..."
+        error = "(middle) error: one or more files don't exist (check paths). Cannot compare phonetics. exiting...\n"
+        for ff in (configFile, audioFile, featureFile):
+            if not os.path.exists(ff): error += "not found file: " + ff + "\n"
         print(error)
         return 0, error
     status, error = extract(audioFile, "test.csv", configFile, verbose=verbose)
