@@ -30,24 +30,29 @@ def getFriendsTranscriptsLinks(
         text = tag.get_text()
         tmp = text.split(":") # splitting `episode ###: The one with...`
         
-        if (len(tmp) is not 2):
-            couldntParse.append((strtag, "Couldn't parse tag.get_text(). Skipping..."))
-            continue
+        # if (len(tmp) is 2):  
+        if "Episode" in tmp[0] or "Epsiode" in tmp[0] or "Episdoe" in tmp[0]:
+            if (len(tmp) >= 2):
+                tmp[1] = " ".join(tmp[1:])
+            else:
+                couldntParse.apend((strtag), "Found episode but splits to less than 2. Skipping...")
+        else:
+            couldntParse.append((strtag, "Couldn't parse tag.get_text(). Skipping...", "; tag.get_text() =", tag.get_text()))
 
-        episode = tmp[0]
-        episode = episode.split() # splitting `episode ###` into two
-        if (len(episode) is not 2): 
-            couldntParse.append((strtag, "Expected episode (`episode ###`) to split into 2. Skipping..."))
+        episodeStr = tmp[0]
+        episodeStr = episodeStr.split() # splitting `episode ###` into two
+        if (len(episodeStr) is not 2): 
+            couldntParse.append((strtag, "Expected episodeStr (`episode ###`) to split into 2. Skipping..."))
             continue
         
         # get seasonNum and episodeNum
-        episode = episode[1]
-        if (len(episode) is 3): # for seasons 1-9 (Friends)
-            seasonNum = episode[0]
-            episodeNum = episode[1:]
-        elif (len(episode) is 4): # if season is 10
-            seasonNum = episode[:2]
-            episodeNum = episode[2:]
+        episodeStr = episodeStr[1]
+        if (len(episodeStr) is 3): # for seasons 1-9 (Friends)
+            seasonNum = episodeStr[0]
+            episodeNum = episodeStr[1:]
+        elif (len(episodeStr) is 4): # if season is 10
+            seasonNum = episodeStr[:2]
+            episodeNum = episodeStr[2:]
         else:
             couldntParse.append((strtag, "Unable to parse episodeNum (#### or ###). Skipping..."))
             continue
@@ -76,7 +81,39 @@ def getFriendsTranscriptsLinks(
     return episode_details, couldntParse
 
 if __name__ == "__main__":
+    import os
+    # Create folders
+    contentDir = "../../contentData/"
+    # for friends
+    friendsDir = os.path.join(contentDir, "tvShows/Friends")
+    if (not os.path.isdir(friendsDir)): 
+        print("Creating:", friendsDir)
+        os.makedirs(friendsDir)
+    
+    # initialize season 2 folders
     episodes, couldntParse = getFriendsTranscriptsLinks(season=2)
-    for e in episodes: print(e)
+    print("------------Couldn't parse------------")
+    for c in couldntParse: print(c)
+    print("--------------------------------------")
+    
+    assert (len(episodes) is not 0), "no episodes were extracted"
+    seasonNum = episodes[0][1]
+    if (seasonNum < 10): seasonNum = "0" + str(seasonNum)
+    seasonDir = os.path.join(friendsDir, seasonNum)
+    # create folder for season 02
+    if (not os.path.isdir(seasonDir)): 
+        print("Creating:", seasonDir)
+        os.makedirs(seasonDir)
+    
+    for ep in episodes:
+        num = str(ep[2]) + "-"
+        name = ep[3]
+        name = "-".join(name.split(" "))
+        folderName = num+name
+        fullFolderName = os.path.join(seasonDir, folderName)
+        if (not os.path.isdir(fullFolderName)): 
+            print("Creating dir:", fullFolderName)
+            os.makedirs(fullFolderName)
+            
 
 
