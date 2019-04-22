@@ -18,7 +18,7 @@ RUN apt-get update && \
     apt-get -y install gcc && \
     apt-get -y install git
 
-WORKDIR /usr/src/app
+WORKDIR /usr/src/application
 
 COPY requirements.txt ./
 
