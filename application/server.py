@@ -119,6 +119,6 @@ def initializeUserAudioDir():
 if __name__ == '__main__':
     print("Application Server is listening in port " + str(PORT))
     if SAVE_USER_AUDIO: initializeUserAudioDir()
-    app.debug=False
+    app.debug=True
     socketio.run(app, host='0.0.0.0', port=PORT)
         
