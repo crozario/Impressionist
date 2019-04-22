@@ -47,6 +47,6 @@ EXPOSE 3000
 
 ENTRYPOINT ["python3"]
 
-CMD ["server.py"]
+CMD ["server2.py"]
 
 
