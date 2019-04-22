@@ -4,18 +4,5 @@ Dockerfile
 initial-tls-certificate
 runServers.sh
 .gitignore
-
-databuilder
-dialogueExtraction
-featureExtraction_notes
-signalComparison
-speech_to_text
-speech_to_emotion
-appendContentDB.py
-compareAudio.pyoutput.htk
-smile.log
-test.csv
-server.py
-
 .dockerignore
 
