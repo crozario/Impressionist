@@ -77,7 +77,7 @@ def handle_compareDialogue(message):
     with open(webmFile, 'wb') as aud:
         aud.write(stream)
 
-    resultBYTES, resultJSON = performThreeComparisons(message['netflixWatchID'], message['dialogueID'], webmFile, message['gameID'], message['userTranscript'], emoPredictor, profile=True)
+    resultBYTES, resultJSON = performThreeComparisons(message['netflixWatchID'], message['dialogueID'], webmFile, message['gameID'], message['userTranscript'], emoPredictor, profile=True, logErrors=True)
 
     if not SAVE_USER_AUDIO: os.remove(wavFile)
     os.remove(webmFile)
