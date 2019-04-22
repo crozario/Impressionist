@@ -7,3 +7,5 @@ librosa==0.6.3
 tensorflow==1.13.1
 google-cloud-speech==1.0.0
 Keras==2.2.4
+matplotlib==3.0.3
+uWSGI==2.0.18

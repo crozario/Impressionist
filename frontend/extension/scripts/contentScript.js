@@ -195,8 +195,8 @@ window.onload = () => {
             contentInfo.gameID = jsonResult.gameID
 
             const startTime = Date.now();
-            // socket = io.connect(socketAddress, { secure: true });
-            socket = io.connect(socketAddress);
+            socket = io.connect(socketAddress, { secure: true });
+            // socket = io.connect(socketAddress);
             console.log("socket connection : " + getDuration(startTime));
 
 
@@ -1018,6 +1018,9 @@ let compareDialogue = (currentAudioBlob, currentSpeech, callback) => {
         userTranscript : currentSpeech
     }, (response) => {
         console.log("compareDialogue took : " + getDuration(startTime));
+        console.log(response);
+        return
+        
         const resultJSON = JSON.parse(response);
 
         if (typeof(callback) == "function") {
