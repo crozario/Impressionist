@@ -155,7 +155,7 @@ def compareLyricalSimilarity(userTranscript, originalCaption, verbose=False, pro
 def _logToFile(logsLst, logFile="logFile.txt"):
     """Log any errors / updates worth consideration to `logFile.txt`
     """
-    with open(logFile) as file:
+    with open(logFile, "a+") as file:
         message = "\n".join(logsLst)
         file.write("------------------Middle logs--------------------")
         file.write(message + "\n")
