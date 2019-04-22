@@ -14,7 +14,7 @@ const contentDatabaseRestAPIHost = "https://impressionist-content-db-api-east-1.
 // socket.io connection
 const applicationServerPort = 3000;
 // const applicationServerHost = "https://impressionist-application-east-1.crossley.tech";
-const applicationServerHost = "localhost"
+const applicationServerHost = "http://localhost"
 const socketAddress = applicationServerHost + ":" + applicationServerPort;
 
 // const socketAddress = applicationServerHost;
