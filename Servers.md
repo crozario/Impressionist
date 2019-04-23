@@ -216,8 +216,19 @@ docker exec -t -i <container id> /bin/bash
 
 **rebuild a specific service on docker-compose before running**
 ```
-docker-compose up --no-deps --build <service_name>
+docker-compose up -d --no-deps --build <service_name>
 ``` 
+
+**generate logs from all containers**
+```
+docker-compose logs -f -t
+``` 
+
+**generate logs from one container**
+```
+docker logs -t -f <container-name>
+``` 
+
 
 **Resources**
 
