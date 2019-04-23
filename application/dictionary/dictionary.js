@@ -91,7 +91,7 @@ async function myFunction(word, parent) {
   parent[0].appendChild(myelem);
   var myvar;
   await wordsAPI(word).then(res => {myvar = res});
-  //add code to catch exceptions
+  //add code to catch exceptions for no definitions
   myelem.innerText = myvar.definitions[0].definition;
   console.log(myvar);
   parent[0].children[0].classList.toggle("show");
@@ -198,7 +198,7 @@ function updateSubs() {
   }
 }
 
-var idNum = setInterval(updateSubs, 10);
+var idNum = setInterval(updateSubs, 50);
 
 console.log("Started scriptorino: ", idNum);
 
