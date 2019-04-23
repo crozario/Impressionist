@@ -17,7 +17,7 @@ import json
 import sys
 import threading
 
-SAVE_USER_AUDIO = True
+SAVE_USER_AUDIO = False # FOR NOW
 CWD = os.getcwd()
 CONTENT_DIR = os.path.join(os.path.dirname(CWD), 'contentData')
 FRIENDS_DIR_2_12 = os.path.join(
@@ -28,7 +28,7 @@ sys.path.insert(0, 'signalComparison/')
 sys.path.insert(0, 'speech_to_text/')
 sys.path.insert(0, 'speech_to_emotion/')
 sys.path.insert(0, 'databuilder/')
-from compareAudio import performThreeComparisons, sendScoreToBack
+from compareAudio import performThreeComparisons, sendScoreToBack, _logToFile
 
 PORT = 3000        # Port to listen on (non-privileged ports are > 1023)
 
@@ -77,11 +77,14 @@ def handle_compareDialogue(message):
     with open(webmFile, 'wb') as aud:
         aud.write(stream)
 
-    resultBYTES, resultJSON = performThreeComparisons(message['netflixWatchID'], message['dialogueID'], webmFile, message['gameID'], message['userTranscript'], emoPredictor, profile=True)
+    resultBYTES, resultJSON, errorLst = performThreeComparisons(message['netflixWatchID'], message['dialogueID'], webmFile, message['gameID'], message['userTranscript'], emoPredictor, profile=True, logErrors=True)
+
+    _logToFile(["Done comparing", "resultJSON from func"+resultJSON])
 
     if not SAVE_USER_AUDIO: os.remove(wavFile)
     os.remove(webmFile)
 
+    _logToFile(["about to use threading to talk to back userDB"])
     # print("send to db", resultBYTES)
     # FIXME: don't wanna wait until back responds 
     # SOLUTION: async process
@@ -89,8 +92,10 @@ def handle_compareDialogue(message):
     thr.start()
     # response = sendScoreToBack(resultBYTES)
     # print("response:", response)
+
     
     print(resultJSON)
+    _logToFile(["Returning JSON back to front!"])
 
     return resultJSON
 
@@ -121,4 +126,3 @@ if __name__ == '__main__':
     if SAVE_USER_AUDIO: initializeUserAudioDir()
     app.debug=False
     socketio.run(app, host='0.0.0.0', port=PORT)
-        

@@ -56,22 +56,30 @@ def validateAudioFileFormat(audioFile, profile=False):
     return audioFile
 
 def comparePhoneticSimilarity(audioFile, featureFile, verbose=False, profile=False):
+    """Compare tone with OpenSMILE
+    returns 0 score with error message if error occured
+    """
     if (profile): start = time.time()
     assert(".wav" in audioFile), "Expected .wav as audioFile"
     configFile = 'databuilder/configs/prosodyShs.conf'
+    error = ""
     if not (os.path.exists(configFile) and os.path.exists(audioFile) and os.path.exists(featureFile)):
-        print("One or more files don't exist (check paths). Cannot compare phonetics. exiting...")
-        return
+        error = "(middle) error: one or more files don't exist (check paths). Cannot compare phonetics. exiting...\n"
+        for ff in (configFile, audioFile, featureFile):
+            if not os.path.exists(ff): error += "not found file: " + ff + "\n"
+        print(error)
+        return 0, error
     status, error = extract(audioFile, "test.csv", configFile, verbose=verbose)
     if not status: #failed
+        error = "(middle) feature extraction error: " + error
         print(error)
-        return
+        return 0, error
     similarity = compare("test.csv", featureFile, 'prosody', delimiter=';', verbose=verbose, plot=False)
     if verbose: print("Similarity: ", similarity)
     if (profile):
         end = time.time()
         print("(profile) compare phonetic similarity : ", end-start)
-    return similarity
+    return similarity, error
 
 def getCaptionFromVTTcaptionFile(vttFile, dialogueID):
     """Returns the dialogueID-th caption from vttFile
@@ -120,6 +128,7 @@ def getProcessedFromContentDB(netflixWatchID, dialogueID, profile=False):
 
 def compareEmotionSimilarity(audioFile, emotion, emoPredictor, verbose=False, profile=False):
     """returns True (if same emotion)"""
+    error = ""
     if (profile): start = time.time()
     # from speech_to_emotion.emotion_classifier_nn import livePredictions
     # emoPredictor = livePredictions(path='speech_to_emotion/Emotion_Voice_Detection_Model.h5', file=audioFile)
@@ -130,19 +139,35 @@ def compareEmotionSimilarity(audioFile, emotion, emoPredictor, verbose=False, pr
     if (profile):
         end = time.time()
         print("(profile) compare emotion : ", end-start)
-    return (prediction == emotion), prediction
+    return (prediction == emotion), prediction, error
 
 def compareLyricalSimilarity(userTranscript, originalCaption, verbose=False, profile=False):
-    """Convert audioFile to text and compares against originalCaption string"""
+    """Convert audioFile to text and compares against originalCaption string
+    Returns 0 if an error occured
+    """
+    error = ""
     if (profile): start = time.time()
     # cmp = compareToDialogue(audioFile, originalCaption, verbose=verbose)
     cmp = similar(userTranscript, originalCaption)
     if (profile):
         end = time.time()
         print("(profile) lyrical similarity :", end-start)
-    return cmp
+    return cmp, error
 
-def performThreeComparisons(netflixWatchID, dialogueID, audioFile, gameID, userTranscript, emoPredictor, verbose=False, profile=False):
+def _logToFile(logsLst, resultJSON=None, logFile="logFile.txt"):
+    """Log any errors / updates worth consideration to `logFile.txt`
+    """
+    with open(logFile, "a+") as file:
+        message = "\n".join(logsLst)
+        file.write("------------------Middle logs--------------------\n")
+        file.write(message + "\n")
+        if resultJSON is not None:
+            file.write("resulting JSON after comparison:\n")
+            file.write(resultJSON)
+            file.write("\n")
+        
+
+def performThreeComparisons(netflixWatchID, dialogueID, audioFile, gameID, userTranscript, emoPredictor, verbose=False, profile=False, logErrors=True):
     """Perform comparison 
     $ python compareAudio.py audioFile(.webm), netflixWatchID(str), dialogueID(number), gameID(str)
         - NOTE: gameID to report to userDB
@@ -155,6 +180,8 @@ def performThreeComparisons(netflixWatchID, dialogueID, audioFile, gameID, userT
     4. compareEmotion
     5. compareLyrical
     """
+    logFile = "logFile.txt"
+    errorsLst = []
     resultDICT = {"gameID" : gameID, "dialogueID" : dialogueID, "error" : "", "success" : True}
     overallscore = 0.0
     totalScores = 2
@@ -166,17 +193,24 @@ def performThreeComparisons(netflixWatchID, dialogueID, audioFile, gameID, userT
     # 2. Validate audioFile
     audioFile = validateAudioFileFormat(audioFile, profile=profile)
     # 3. comparePhonetic
-    phoneticSimilarity= comparePhoneticSimilarity(audioFile, featureFileURL, verbose=False, profile=profile)
+    featureFileURL = "132.csv"
+    phoneticSimilarity, error = comparePhoneticSimilarity(audioFile, featureFileURL, verbose=False, profile=profile)
+    if error is not "":
+        errorsLst.append(error)  # Log error
     resultDICT["phoneticScore"] = phoneticSimilarity
     if verbose: print("Phonetic similarity:", resultDICT["phoneticScore"])
     overallscore += resultDICT["phoneticScore"]
     # 4. Compare Emotion
-    emotionSimilarity, userEmotion = compareEmotionSimilarity(audioFile, originalEmotion, emoPredictor, verbose=True, profile=profile)
+    emotionSimilarity, userEmotion, error = compareEmotionSimilarity(audioFile, originalEmotion, emoPredictor, verbose=True, profile=profile)
+    if error is not "":
+        errorsLst.append(error)  # Log error
     resultDICT["emotionScore"] = 20.0 if emotionSimilarity else 0.0
     resultDICT["userEmotion"] = userEmotion
     if verbose: print("Similar emotion:", resultDICT["emotionScore"])
     # 5. Compare Lyrics
-    lyricalSimilarity = compareLyricalSimilarity(userTranscript, originalCaption, verbose=False, profile=profile)
+    lyricalSimilarity, error = compareLyricalSimilarity(userTranscript, originalCaption, verbose=False, profile=profile)
+    if error is not "":
+        errorsLst.append(error)  # Log error
     resultDICT["userTranscript"] = userTranscript
     resultDICT["lyricalScore"] = lyricalSimilarity*100
     if verbose: print("Lyrical Similarity:", resultDICT["lyricalScore"])
@@ -191,7 +225,9 @@ def performThreeComparisons(netflixWatchID, dialogueID, audioFile, gameID, userT
     resultJSON = json.dumps(resultDICT)
     resultBYTES = resultJSON.encode('utf-8')
 
-    return resultBYTES, resultJSON
+    if logErrors: _logToFile(errorsLst, resultJSON=resultJSON, logFile=logFile)
+
+    return resultBYTES, resultJSON, errorsLst
 
 def sendScoreToBack(resultBYTES, verbose):
     # send to back
