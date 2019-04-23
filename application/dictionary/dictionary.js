@@ -170,7 +170,7 @@ function updateSubs() {
       var mySub = textContainers[1];
       var mySubText = mySub.innerText.replace('\n', '');
       //if subs have changed, remove our sub, then create new sub
-      if (netflixSubText != mySubText) {
+      if (netflixSubText != mySubText && player.isPaused() == false) {
         player.setTimedTextVisibility(true);
         mySub.remove()
         setSubs();
