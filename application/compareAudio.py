@@ -154,14 +154,17 @@ def compareLyricalSimilarity(userTranscript, originalCaption, verbose=False, pro
         print("(profile) lyrical similarity :", end-start)
     return cmp, error
 
-def _logToFile(logsLst, logFile="logFile.txt"):
+def _logToFile(logsLst, resultJSON=None, logFile="logFile.txt"):
     """Log any errors / updates worth consideration to `logFile.txt`
     """
     with open(logFile, "a+") as file:
         message = "\n".join(logsLst)
         file.write("------------------Middle logs--------------------\n")
-        
         file.write(message + "\n")
+        if resultJSON is not None:
+            file.write("resulting JSON after comparison:\n")
+            file.write(resultJSON)
+            file.write("\n")
         
 
 def performThreeComparisons(netflixWatchID, dialogueID, audioFile, gameID, userTranscript, emoPredictor, verbose=False, profile=False, logErrors=True):
@@ -222,7 +225,7 @@ def performThreeComparisons(netflixWatchID, dialogueID, audioFile, gameID, userT
     resultJSON = json.dumps(resultDICT)
     resultBYTES = resultJSON.encode('utf-8')
 
-    if logErrors: _logToFile(errorsLst, logFile=logFile)
+    if logErrors: _logToFile(errorsLst, resultJSON=resultJSON, logFile=logFile)
 
     return resultBYTES, resultJSON, errorsLst
 
