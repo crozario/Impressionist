@@ -41,7 +41,8 @@ RUN git clone https://github.com/naxingyu/opensmile.git && \
 	make && \
 	make install && \
 	cd ../ && \
-	rm -rf opensmile/
+	rm -rf opensmile/ && \
+	ldconfig
 
 EXPOSE 3000
 
