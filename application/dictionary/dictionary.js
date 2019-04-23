@@ -86,15 +86,19 @@ async function wordsAPI(word) {
 }
 
 async function myFunction(word, parent) {
-  var myelem = document.createElement('span');
-  myelem.className = "popuptext";
-  parent[0].appendChild(myelem);
-  var myvar;
-  await wordsAPI(word).then(res => {myvar = res});
-  //add code to catch exceptions for no definitions
-  myelem.innerText = myvar.definitions[0].definition;
-  console.log(myvar);
-  parent[0].children[0].classList.toggle("show");
+	var prevPopup = document.getElementsByClassName('popuptext')[0];
+	if (prevPopup != null){
+		prevPopup.remove()
+	}
+	var myelem = document.createElement('span');
+	myelem.className = "popuptext";
+	parent[0].appendChild(myelem);
+	var myvar;
+	await wordsAPI(word).then(res => {myvar = res});
+	//add code to catch exceptions for no definitions
+	myelem.innerText = myvar.definitions[0].definition;
+	console.log(myvar);
+	parent[0].children[0].classList.toggle("show");
 }
 
 (function(){
