@@ -79,9 +79,12 @@ def handle_compareDialogue(message):
 
     resultBYTES, resultJSON = performThreeComparisons(message['netflixWatchID'], message['dialogueID'], webmFile, message['gameID'], message['userTranscript'], emoPredictor, profile=True, logErrors=True)
 
+    _logToFile(["Done comparing", "resultJSON from func"+resultJSON])
+
     if not SAVE_USER_AUDIO: os.remove(wavFile)
     os.remove(webmFile)
 
+    _logToFile(["about to use threading to talk to back userDB"])
     # print("send to db", resultBYTES)
     # FIXME: don't wanna wait until back responds 
     # SOLUTION: async process
@@ -89,6 +92,7 @@ def handle_compareDialogue(message):
     thr.start()
     # response = sendScoreToBack(resultBYTES)
     # print("response:", response)
+    
     
     print(resultJSON)
     _logToFile(["Returning JSON back to front!"])
