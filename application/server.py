@@ -28,7 +28,7 @@ sys.path.insert(0, 'signalComparison/')
 sys.path.insert(0, 'speech_to_text/')
 sys.path.insert(0, 'speech_to_emotion/')
 sys.path.insert(0, 'databuilder/')
-from compareAudio import performThreeComparisons, sendScoreToBack
+from compareAudio import performThreeComparisons, sendScoreToBack, _logToFile
 
 PORT = 3000        # Port to listen on (non-privileged ports are > 1023)
 
@@ -91,6 +91,7 @@ def handle_compareDialogue(message):
     # print("response:", response)
     
     print(resultJSON)
+    _logToFile(["Returning JSON back to front!"])
 
     return resultJSON
 
