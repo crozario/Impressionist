@@ -22,6 +22,7 @@ services:
       - /docker-volumes/etc/letsencrypt/live/impressionist-application-east-1.crossley.tech/fullchain.pem:/etc/letsencrypt/live/impressionist-application-east-1.crossley.tech/fullchain.pem
       - /docker-volumes/etc/letsencrypt/live/impressionist-application-east-1.crossley.tech/privkey.pem:/etc/letsencrypt/live/impressionist-application-east-1.crossley.tech/privkey.pem
       - /docker-volumes/data/letsencrypt:/data/letsencrypt
+      - ~/contentData:/usr/src/contentData
     depends_on: 
       - flask-app
     links:
