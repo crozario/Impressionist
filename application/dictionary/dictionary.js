@@ -28,7 +28,7 @@ function setSubs() {
   //display the subs
   subs.style.display = 'block';
   //split up subs into spans for each word
-  var mytext = netflixSubs.innerText.replace(/\b(\w+\W?\s?)\b/g, "<span class=\"sub-word\" onclick=\"myFunction()\">$1</span>");
+  var mytext = netflixSubs.innerText.replace(/\b(\w+\W?\s?)\b/g, "<span class=\"sub-word\">$1</span>");
   //carry over the style from netflix's subs
   subs.firstChild.style.cssText += netflixSubs.firstChild.firstChild.style.cssText;
   //places all the new span tags into the contianer element
@@ -40,8 +40,7 @@ function setSubs() {
 function hoverHighlight() {
    $('span.sub-word').click(
     function() {
-      //maybe add api call etc here? nope, add a function call with the word
-      wordsAPI($(this).text().replace(/\W/, '').trim());
+      myFunction($(this).text().replace(/\W/, '').trim(), $(this))
     }
   );
   $('span.sub-word').hover(
@@ -86,18 +85,16 @@ async function wordsAPI(word) {
 	return myres;
 }
 
-async function myFunction() {
+async function myFunction(word, parent) {
   var myelem = document.createElement('span');
-  myelem.id = "Popup";
   myelem.className = "popuptext";
-  var popup = document.getElementsByClassName("sub-word")[0];
-  popup.appendChild(myelem);
+  parent[0].appendChild(myelem);
   var myvar;
-  await wordsAPI(popup.innerText).then(res => {myvar = res});
+  await wordsAPI(word).then(res => {myvar = res});
   //add code to catch exceptions
   myelem.innerText = myvar.definitions[0].definition;
   console.log(myvar);
-  popup.children[0].classList.toggle("show");
+  parent[0].children[0].classList.toggle("show");
 }
 
 (function(){
@@ -107,6 +104,7 @@ async function myFunction() {
   position: relative;
   display: inline-block;
   cursor: pointer;
+  white-space: pre-wrap;
 }
 
 /* The actual popup (appears on top) */
