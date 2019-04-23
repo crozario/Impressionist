@@ -28,7 +28,7 @@ function setSubs() {
   //display the subs
   subs.style.display = 'block';
   //split up subs into spans for each word
-  var mytext = netflixSubs.innerText.replace(/\b(\w+\W?\s?)\b/g, "<span class=\"sub-word\">$1</span>");
+  var mytext = netflixSubs.innerText.replace(/\b(\w+\W?\s?)\b/g, "<span class=\"sub-word\" onclick=\"myFunction()\">$1</span>");
   //carry over the style from netflix's subs
   subs.firstChild.style.cssText += netflixSubs.firstChild.firstChild.style.cssText;
   //places all the new span tags into the contianer element
@@ -60,29 +60,105 @@ function hoverHighlight() {
   );
 }
 
-function wordsAPI(word) {
-  var url = 'https://wordsapiv1.p.rapidapi.com/words/' + word + '/definitions/'
+async function wordsAPI(word) {
+	var url = 'https://wordsapiv1.p.rapidapi.com/words/' + word + '/definitions/'
 
-  var params = {
-    method: 'GET',
-    headers: {
-      'cache-control': 'no-cache',
-      'Content-Type': 'application/json',
-      "X-RapidAPI-Host": "wordsapiv1.p.rapidapi.com",
-      //need to store this key somewhere safe, can't be in plain text here :/
-      "X-RapidAPI-Key": "e26dcc4bbdmsh0842a0791e370ffp11181ajsn05b018a504ba"
-    }
-  }
+	var params = {
+	method: 'GET',
+	headers: {
+	  'cache-control': 'no-cache',
+	  'Content-Type': 'application/json',
+	  "X-RapidAPI-Host": "wordsapiv1.p.rapidapi.com",
+	  //need to store this key somewhere safe, can't be in plain text here :/
+	  "X-RapidAPI-Key": "e26dcc4bbdmsh0842a0791e370ffp11181ajsn05b018a504ba"
+	}
+	}
+	var myres;
+	await fetch(url, params)
+	.then(data => {
+	  return data.json()
+	})
+	.then(res => {
+		myres = res;
+	})
+	.then(error => console.log(error))
 
-  fetch(url, params)
-    .then(data => {
-      return data.json()
-    })
-    .then(res => {
-      console.log(res)
-    })
-    .then(error => console.log(error))
+	return myres;
 }
+
+async function myFunction() {
+  var myelem = document.createElement('span');
+  myelem.id = "Popup";
+  myelem.className = "popuptext";
+  var popup = document.getElementsByClassName("sub-word")[0];
+  popup.appendChild(myelem);
+  var myvar;
+  await wordsAPI(popup.innerText).then(res => {myvar = res});
+  //add code to catch exceptions
+  myelem.innerText = myvar.definitions[0].definition;
+  console.log(myvar);
+  popup.children[0].classList.toggle("show");
+}
+
+(function(){
+    let style = `<style>
+    /* Popup container */
+.sub-word {
+  position: relative;
+  display: inline-block;
+  cursor: pointer;
+}
+
+/* The actual popup (appears on top) */
+.sub-word .popuptext {
+  visibility: hidden;
+  width: 160px;
+  background-color: #555;
+  color: #fff;
+  text-align: center;
+  border-radius: 6px;
+  padding: 8px 0;
+  position: absolute;
+  z-index: 1;
+  bottom: 125%;
+  left: 50%;
+  margin-left: -80px;
+}
+
+/* Popup arrow */
+.sub-word .popuptext::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  margin-left: -5px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: #555 transparent transparent transparent;
+}
+
+/* Toggle this class when clicking on the popup container (hide and show the popup) */
+.sub-word .show {
+  visibility: visible;
+  -webkit-animation: fadeIn 1s;
+  animation: fadeIn 1s
+}
+
+/* Add animation (fade in the popup) */
+@-webkit-keyframes fadeIn {
+  from {opacity: 0;}
+  to {opacity: 1;}
+}
+
+@keyframes fadeIn {
+  from {opacity: 0;}
+  to {opacity:1 ;}
+}
+</style>
+`;
+
+document.head.insertAdjacentHTML("beforeend", style);
+})();
 
 //add jQuery to page
 setjQuery();
@@ -127,3 +203,5 @@ function updateSubs() {
 var idNum = setInterval(updateSubs, 10);
 
 console.log("Started scriptorino: ", idNum);
+
+//4140497
