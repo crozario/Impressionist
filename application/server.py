@@ -77,7 +77,7 @@ def handle_compareDialogue(message):
     with open(webmFile, 'wb') as aud:
         aud.write(stream)
 
-    resultBYTES, resultJSON = performThreeComparisons(message['netflixWatchID'], message['dialogueID'], webmFile, message['gameID'], message['userTranscript'], emoPredictor, profile=True, logErrors=True)
+    resultBYTES, resultJSON, errorLst = performThreeComparisons(message['netflixWatchID'], message['dialogueID'], webmFile, message['gameID'], message['userTranscript'], emoPredictor, profile=True, logErrors=True)
 
     _logToFile(["Done comparing", "resultJSON from func"+resultJSON])
 
@@ -92,7 +92,7 @@ def handle_compareDialogue(message):
     thr.start()
     # response = sendScoreToBack(resultBYTES)
     # print("response:", response)
-    
+
     
     print(resultJSON)
     _logToFile(["Returning JSON back to front!"])
