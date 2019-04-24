@@ -153,35 +153,38 @@ def createContentDirsFriends(season=2, episode=None, extractCharacters=False, sa
                 _writeDiagsToCSV(transcriptPairs, fullcsvFileName, delim=",")
             
             vttFiles = _getFilesFrom(fullEpisodeFolderName, extension=".vtt")
+            fullInputSubsPath = ""
+            fullOutputSubsPath = ""
             if (len(vttFiles) == 1): # there's only .vtt file (must be from netflix subs)
                 subs = vttFiles[0]
                 fullInputSubsPath = os.path.join(fullEpisodeFolderName, subs)
                 if ("netflix_subs" in subs):
                     outSubs = subs.replace("netflix_subs", "labeled_subs")
                     fullOutputSubsPath = os.path.join(fullEpisodeFolderName, outSubs)
-                    addCharNames(transcriptPairs, fullInputSubsPath, fullOutputSubsPath, verbose=True, detailedVerbose=False, interactive=True, interactiveResolve=False)
-                else:
-                    pass
             elif (len(vttFiles) > 1):
                 # rename old one
-                subs = ""
                 for f in vttFiles:
                     if "netflix_subs" in f:
-                        subs = f.replace("netflix_subs", "labeled_subs")
+                        fullInputSubsPath = os.path.join(fullEpisodeFolderName, f)
+                        outSubs = f.replace("netflix_subs", "labeled_subs")
+                        fullOutputSubsPath = os.path.join(fullEpisodeFolderName, outSubs)
                     elif "labeled_subs" in f:
                         num = 1
                         while (num < 11):
                             old = f.replace("labeled_subs", str(num)+"-old_labeled")
                             fullOld = os.path.join(fullEpisodeFolderName, old)
-                            if not (os.path.exists(fullOld)): break
+                            if not (os.path.exists(fullOld)): 
+                                # rename f_full -> fullOld
+                                f_full = os.path.join(fullEpisodeFolderName, f)
+                                os.rename(f_full, fullOld)
+                                break
                             num += 1
-                # find netflix subs `netflix_subs_...`
-                # check if previously labeled one is in here
-                # TODO: take argument overwriteLabeledVTT=True before overwriting it
-                pass
+            
+            if fullInputSubsPath != "" and fullOutputSubsPath != "":
+                print("getting charNames....")
+                addCharNames(transcriptPairs, fullInputSubsPath, fullOutputSubsPath, verbose=False, detailedVerbose=False, interactive=True, interactiveResolve=False)
             else:
-                # netflix subs haven't been added yet
-                pass
+                print("netflix_subs_...vtt file not found. Moving on.")
 
 
 CONTENT_DIR = "../../contentData/"
@@ -191,7 +194,7 @@ if (not os.path.isdir(CONTENT_DIR)):
     exit()
 
 if __name__ == "__main__":
-    createContentDirsFriends(season=2, episode=1, extractCharacters=True, saveTranscriptToCSV=False, verbose=True)
+    createContentDirsFriends(season=2, episode=None, extractCharacters=True, saveTranscriptToCSV=False, verbose=True)
     
     
     

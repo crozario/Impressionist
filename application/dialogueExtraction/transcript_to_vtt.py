@@ -10,6 +10,7 @@ import bs4
 from bs4 import BeautifulSoup
 from difflib import SequenceMatcher
 
+PUNCTUATION = '!"#$%&()*+,-./;<=>?@[\\]^_`{|}~'
 
 def printItrNicely(thing):
 	for t in thing:
@@ -75,8 +76,8 @@ def getFriendsDialogueDichotomy(linkToEpisode):
 		if (len(tmp) == 2):
 			tmp[0] = tmp[0].strip().upper()
 			# remove punctuations and white spaces
-			# tmp[1] = tmp[1].strip().lower().translate(str.maketrans('', '', string.punctuation))
-			tmp[1] = tmp[1].strip().lower().translate(str.maketrans(string.punctuation, ' '*len(string.punctuation)))
+			# tmp[1] = tmp[1].strip().lower().translate(str.maketrans('', '', PUNCTUATION))
+			tmp[1] = tmp[1].strip().lower().translate(str.maketrans(PUNCTUATION, ' '*len(PUNCTUATION)))
 			tmp[1] = " ".join(tmp[1].split())
 			dd.append((tmp[0], tmp[1]))
 	#             print(tmp)
@@ -117,7 +118,7 @@ def standardizeVttCaptionsForComparison(captionsLst):
 		tmp = tmp.replace("\n", " ")
 		tmp = remove_stage_directions(tmp)
 		tmp = remove_parens(tmp)
-		tmp = tmp.translate(str.maketrans(string.punctuation, ' '*len(string.punctuation)))
+		tmp = tmp.translate(str.maketrans(PUNCTUATION, ' '*len(PUNCTUATION)))
 		if tmp is "":
 			capToDel.append(i)
 			continue
@@ -138,7 +139,7 @@ def isMatch(caption, transcript, thres=0.75, verbose=False):
 	`caption` : is string
 	`transcript` : is string
 	"""
-	print("Merging to VTT file...")
+	# print("Merging to VTT file...")
 	if verbose:
 		print("COMP", caption, "|", transcript)
 	lsttra = transcript.split()
@@ -180,7 +181,7 @@ def addCharNames(transcriptPairs, inputVTTFile, outputVTTFile, verbose=False, de
 	notFoundIndices = []
 
 	mostRecentSkippedTranscripts = []
-	def interactiveResolve(cap_i):
+	def interactiveResolveDialogue(cap_i):
 		print("-----------caption------------")
 		print(stdVttCaptions[cap_i].text)
 		print("---------transcripts----------")
@@ -204,7 +205,7 @@ def addCharNames(transcriptPairs, inputVTTFile, outputVTTFile, verbose=False, de
 		nonlocal didntFindCount
 		nonlocal didntMatchCount
 		nonlocal foundFirst
-		mostRecentSkippedTranscripts.clear()
+		if interactiveResolve: mostRecentSkippedTranscripts.clear()
         # print("++Matched!++", transcriptPairs[tra_j][0], currCap)
 		# modify actual captions
 		stdVttCaptions[cap_i].text = "<v "+transcriptPairs[tra_j][0]+">"+stdVttCaptions[cap_i].text
@@ -227,17 +228,18 @@ def addCharNames(transcriptPairs, inputVTTFile, outputVTTFile, verbose=False, de
 		nonlocal tra_j
 		nonlocal didntMatchCount
 		nonlocal didntFindCount
-		mostRecentSkippedTranscripts.append(tra_j)
+		if interactiveResolve: mostRecentSkippedTranscripts.append(tra_j)
 		tra_j += 1
 		didntMatchCount += 1
 		if didntMatchCount > maxNotMatchedBeforeMovingOn or tra_j >= len(transcriptPairs):
 			
 			# manually resolve?
-			resolveSuccess = interactiveResolve(cap_i)
-			if resolveSuccess:
-				return True
-			else:
-				mostRecentSkippedTranscripts.clear()
+			if (interactiveResolve):
+				resolveSuccess = interactiveResolveDialogue(cap_i)
+				if resolveSuccess:
+					return True
+				else:
+					mostRecentSkippedTranscripts.clear()
 
 			if verbose: print("--Match not found:", currCap)
 
@@ -282,7 +284,7 @@ def addCharNames(transcriptPairs, inputVTTFile, outputVTTFile, verbose=False, de
 	
 	# save to new file 
 	if (interactive):
-		resp = input(str(len(notFoundIndices)) + "/" + str(totalOrigCaptions) + " were not labeled. Would you still like to save? (yes|no)")
+		resp = input(str(len(notFoundIndices)) + "/" + str(totalOrigCaptions) + " were not labeled. Would you still like to save? (yes|no) : ")
 		resp = resp.lower()
 		if resp == "yes": 
 			print("Saving labeled dialogues to: ", outputVTTFile)
