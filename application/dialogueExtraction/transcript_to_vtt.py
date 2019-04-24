@@ -29,28 +29,50 @@ def cleanUpEmpty(oldLst):
 	return newLst
 
 
+def _getMatch(linkToEpisode):
+	page = requests.get(linkToEpisode)
+	soup = BeautifulSoup(page.content, 'html5lib')
+	html = list(soup.children)
+	whole = html[0].prettify()
+	match = re.findall(r'(?:<br/>)([\s\S]*?)(?=<br/>)', whole)
+	if (len(match) > 10): return match
+	# another try
+	match = soup.find_all('p')
+	if (len(match) > 10):
+		match = [m.get_text() for m in match]
+		return match
+	else:
+		print("couldn't find transcript matches")
+		return False
+
 def getFriendsDialogueDichotomy(linkToEpisode):
 	# page = requests.get("http://www.livesinabox.com/friends/season2/215rryk.htm")
-	page = requests.get(linkToEpisode)
-	# page.content
+	# page = requests.get(linkToEpisode)
+	# # page.content
 
-	# ## Traverse webpage to extract dialogues with beautifulsoup
-	soup = BeautifulSoup(page.content, 'html5lib')
+	# # ## Traverse webpage to extract dialogues with beautifulsoup
+	# soup = BeautifulSoup(page.content, 'html5lib')
 
-	html = list(soup.children)
-	print(len(html))
-	for i, h in enumerate(html):
-		whole = h.prettify()
-		matches = re.findall(r'(?:<br/>)([\s\S]*?)(?=<br/>)', whole)
-		print(i, "- matches found", len(matches))
-	exit()
+	# html = list(soup.children)
+	# print(len(html))
+	# for i, h in enumerate(html):
+	# 	whole = h.prettify()
+	# 	matches = re.findall(r'(?:<br/>)([\s\S]*?)(?=<br/>)', whole)
+	# 	print(i, "- matches found", len(matches))
+	# exit()
 
-	whole = html[0].prettify()
-	# print(whole)
-	match = re.finditer(r'(?:<br/>)([\s\S]*?)(?=<br/>)', whole)
+	# whole = html[0].prettify()
+	# # print(whole)
+	# match = re.findall(r'(?:<br/>)([\s\S]*?)(?=<br/>)', whole)
+
+	match = _getMatch(linkToEpisode)
+	if not match:
+		return
+	
 	all_dialogues = []
 	for m in match:
-		tmp = m.group(0).replace("\n", " ")
+		# tmp = m.group(0).replace("\n", " ")
+		tmp = m.replace("\n", " ")
 		tmp = remove_html_tags(tmp).strip()
 		tmp = remove_parens(tmp)
 		tmp = remove_stage_directions(tmp)
@@ -69,7 +91,8 @@ def getFriendsDialogueDichotomy(linkToEpisode):
 		if (len(tmp) == 2):
 			tmp[0] = tmp[0].strip().upper()
 			# remove punctuations and white spaces
-			tmp[1] = tmp[1].strip().lower().translate(str.maketrans('', '', string.punctuation))
+			# tmp[1] = tmp[1].strip().lower().translate(str.maketrans('', '', string.punctuation))
+			tmp[1] = tmp[1].strip().lower().translate(str.maketrans(string.punctuation, ' '*len(string.punctuation)))
 			tmp[1] = " ".join(tmp[1].split())
 			dd.append((tmp[0], tmp[1]))
 	#             print(tmp)
@@ -99,7 +122,7 @@ def remove_stage_directions(data):
 def remove_parens(data):
 	"""remove things between parens (...)
 	"""
-	p = re.compile(r'\(.*\)')
+	p = re.compile(r'\(.*?\)')
 	return p.sub('', data)
 
 
@@ -110,7 +133,7 @@ def standardizeVttCaptionsForComparison(captionsLst):
 		tmp = tmp.replace("\n", " ")
 		tmp = remove_stage_directions(tmp)
 		tmp = remove_parens(tmp)
-		tmp = tmp.translate(str.maketrans('', '', string.punctuation))
+		tmp = tmp.translate(str.maketrans(string.punctuation, ' '*len(string.punctuation)))
 		if tmp is "":
 			capToDel.append(i)
 			continue
@@ -170,11 +193,33 @@ def addCharNames(transcriptPairs, inputVTTFile, outputVTTFile, verbose=False, de
 	maxNotFound = 20 # 20 consistent dialogues couldn't be matched with transcripts 
 	foundFirst = False
 	notFoundIndices = []
+
+	mostRecentSkippedTranscripts = []
+	def interactiveResolve(cap_i):
+		print("-----------caption------------")
+		print(stdVttCaptions[cap_i].text)
+		print("---------transcripts----------")
+		strOptions = [str(i+1) for i in range(4)]
+		for idx, ii in enumerate(mostRecentSkippedTranscripts):
+			print(idx+1, transcriptPairs[ii])
+		resolve = input("Hit <ENTER> to skip OR type <" + "|".join(strOptions) + "> to select: ")
+		print("received:", resolve)
+		if resolve not in strOptions:
+			print("unresolved... returning False")
+			return False
+		else:
+			nonlocal tra_j
+			print("resolved!", transcriptPairs[tra_j][0], "said ", stdVttCaptions[cap_i].text)
+			tra_j = mostRecentSkippedTranscripts[int(resolve)-1]
+			found()
+			return True
+
 	def found():
 		nonlocal cap_i
 		nonlocal didntFindCount
 		nonlocal didntMatchCount
 		nonlocal foundFirst
+		mostRecentSkippedTranscripts.clear()
         # print("++Matched!++", transcriptPairs[tra_j][0], currCap)
 		# modify actual captions
 		stdVttCaptions[cap_i].text = "<v "+transcriptPairs[tra_j][0]+">"+stdVttCaptions[cap_i].text
@@ -197,10 +242,18 @@ def addCharNames(transcriptPairs, inputVTTFile, outputVTTFile, verbose=False, de
 		nonlocal tra_j
 		nonlocal didntMatchCount
 		nonlocal didntFindCount
+		mostRecentSkippedTranscripts.append(tra_j)
 		tra_j += 1
 		didntMatchCount += 1
 		if didntMatchCount > maxNotMatchedBeforeMovingOn or tra_j >= len(transcriptPairs):
+			# manually resolve?
+			resolveSuccess = interactiveResolve(cap_i)
+			if resolveSuccess:
+				return True
+			else:
+				mostRecentSkippedTranscripts.clear()
 			if verbose: print("--Match not found:", currCap)
+
 			didntFindCount += 1
 			notFoundIndices.append(cap_i)
 			cap_i += 1

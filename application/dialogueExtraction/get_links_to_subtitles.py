@@ -159,7 +159,7 @@ def createContentDirsFriends(season=2, episode=None, extractCharacters=False, sa
                 if ("netflix_subs" in subs):
                     outSubs = subs.replace("netflix_subs", "labeled_subs")
                     fullOutputSubsPath = os.path.join(fullEpisodeFolderName, outSubs)
-                    addCharNames(transcriptPairs, fullInputSubsPath, fullOutputSubsPath, verbose=False, detailedVerbose=False, interactive=True)
+                    addCharNames(transcriptPairs, fullInputSubsPath, fullOutputSubsPath, verbose=True, detailedVerbose=False, interactive=True)
                 else:
                     pass
             elif (len(vttFiles) > 1):
