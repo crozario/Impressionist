@@ -14,6 +14,7 @@ import sys
 import os
 import json
 import urllib.request
+import datetime
 # sys.path.insert(0, '../')
 sys.path.insert(0, 'databuilder/')
 from databuilder.extractFeatures import extractFeature as extract
@@ -159,7 +160,10 @@ def _logToFile(logsLst, resultJSON=None, logFile="logFile.txt"):
     """
     with open(logFile, "a+") as file:
         message = "\n".join(logsLst)
-        file.write("------------------Middle logs--------------------\n")
+        file.write("------------------Logging--------------------\n")
+        file.write(str(datetime.datetime.now()) + "\n")
+        # file.write(str(datetime.datetime.utcnow()) + "\n")
+        file.write("---------------------------------------------\n")
         file.write(message + "\n")
         if resultJSON is not None:
             file.write("resulting JSON after comparison:\n")
