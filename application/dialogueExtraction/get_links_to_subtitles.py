@@ -6,8 +6,9 @@ From http://www.livesinabox.com/friends/scripts.shtml
 
 from bs4 import BeautifulSoup
 import requests
-
+import os
 import re
+from transcript_to_vtt import getFriendsDialogueDichotomy, addCharNames
 
 def getFriendsTranscriptsLinks(
     linkHome="http://www.livesinabox.com/friends/",
@@ -36,8 +37,10 @@ def getFriendsTranscriptsLinks(
                 tmp[1] = " ".join(tmp[1:])
             else:
                 couldntParse.apend((strtag), "Found episode but splits to less than 2. Skipping...")
+                continue
         else:
             couldntParse.append((strtag, "Couldn't parse tag.get_text(). Skipping...", "; tag.get_text() =", tag.get_text()))
+            continue
 
         episodeStr = tmp[0]
         episodeStr = episodeStr.split() # splitting `episode ###` into two
@@ -80,40 +83,110 @@ def getFriendsTranscriptsLinks(
                     episode_details.append(info)
     return episode_details, couldntParse
 
-if __name__ == "__main__":
-    import os
-    # Create folders
-    contentDir = "../../contentData/"
-    # for friends
-    friendsDir = os.path.join(contentDir, "tvShows/Friends")
-    if (not os.path.isdir(friendsDir)): 
-        print("Creating:", friendsDir)
-        os.makedirs(friendsDir)
-    
-    # initialize season 2 folders
-    episodes, couldntParse = getFriendsTranscriptsLinks(season=2)
+def _checkAndCreateFolder(folderPath, verbose=False):
+    """Create folder if doesn't exist"""
+    if (not os.path.isdir(folderPath)):
+        if verbose: print("Creating:", folderPath)
+        os.makedirs(folderPath)
+
+def _getFilesFrom(folderPath, extension="all", verbose=False):
+    """returns list of files from `folderPath` 
+    """
+    files = os.listdir(folderPath)
+    # files = [os.path.join(folderPath, f) for f in files] # don't return full paths
+    newFiles = [] # return this
+    if extension is "all": return files
+    else:
+        for f in files:
+            _, fext = os.path.splitext(f)
+            if fext == extension: newFiles.append(f)
+        return newFiles
+
+def _writeDiagsToCSV(tuplesList, fileName, delim=","):
+    print("_writeDiagsToCSV not implemented yet")
+
+def createContentDirsFriends(season=2, episode=None, extractCharacters=False, saveTranscriptToCSV=False, verbose=False):
+    """Create folders inside contentData folder
+    TODO: add a loop to do all seasons
+    `extractCharacters`
+    """
+    # Create Friends home directory
+    friendsDir = os.path.join(CONTENT_DIR, "tvShows/Friends")
+    _checkAndCreateFolder(friendsDir)
+
+    # initialize directories inside Friends
+    episodes, couldntParse = getFriendsTranscriptsLinks(season=season, episode=episode)
     print("------------Couldn't parse------------")
     for c in couldntParse: print(c)
     print("--------------------------------------")
-    
     assert (len(episodes) is not 0), "no episodes were extracted"
+
     seasonNum = episodes[0][1]
     if (seasonNum < 10): seasonNum = "0" + str(seasonNum)
     seasonDir = os.path.join(friendsDir, seasonNum)
     # create folder for season 02
-    if (not os.path.isdir(seasonDir)): 
-        print("Creating:", seasonDir)
-        os.makedirs(seasonDir)
+    _checkAndCreateFolder(seasonDir)
     
     for ep in episodes:
         num = str(ep[2]) + "-"
         name = ep[3]
         name = "-".join(name.split(" "))
-        folderName = num+name
-        fullFolderName = os.path.join(seasonDir, folderName)
-        if (not os.path.isdir(fullFolderName)): 
-            print("Creating dir:", fullFolderName)
-            os.makedirs(fullFolderName)
+        episodeFolderName = num+name
+        fullEpisodeFolderName = os.path.join(seasonDir, episodeFolderName)
+        _checkAndCreateFolder(fullEpisodeFolderName)
+
+        if (extractCharacters):
+            # get transcript and character name pairs
+            link = ep[0]
+            print("----------------------------------------------------------------------------")
+            print("**Extracting characters for :", fullEpisodeFolderName)
+            print("**FROM: ", link)
+            print("----------------------------------------------------------------------------")
+
+            transcriptPairs = getFriendsDialogueDichotomy(link)
+            
+            if (saveTranscriptToCSV):
+                csvFileName =  "-".join(["transcript", str(seasonNum), str(ep[2])])
+                csvFileName += ".csv"
+                fullcsvFileName = os.path.join(fullEpisodeFolderName, csvFileName)
+                print("Writing transcriptPairs to CSV file:", fullcsvFileName)
+                _writeDiagsToCSV(transcriptPairs, fullcsvFileName, delim=",")
+            
+            vttFiles = _getFilesFrom(fullEpisodeFolderName, extension=".vtt")
+            if (len(vttFiles) == 1): # there's only .vtt file (must be from netflix subs)
+                subs = vttFiles[0]
+                fullInputSubsPath = os.path.join(fullEpisodeFolderName, subs)
+                if ("netflix_subs" in subs):
+                    outSubs = subs.replace("netflix_subs", "labeled_subs")
+                    fullOutputSubsPath = os.path.join(fullEpisodeFolderName, outSubs)
+                    addCharNames(transcriptPairs, fullInputSubsPath, fullOutputSubsPath, verbose=False, detailedVerbose=False, interactive=True)
+                else:
+                    pass
+            elif (len(vttFiles) > 1):
+                # find netflix subs `netflix_subs_...`
+                # check if previously labeled one is in here
+                # TODO: take argument overwriteLabeledVTT=True before overwriting it
+                pass
+            else:
+                # netflix subs haven't been added yet
+                pass
+
+
+CONTENT_DIR = "../../contentData/"
+# don't run this script from anywhere else or if CONTENT_DIR is not at above location
+if (not os.path.isdir(CONTENT_DIR)):
+    print("Using relative paths. Please run this script from inside application/dialogueExtraction/ OR make sure "+CONTENT_DIR+" exists.")
+    exit()
+
+if __name__ == "__main__":
+    createContentDirsFriends(season=2, episode=1, extractCharacters=True, saveTranscriptToCSV=False, verbose=True)
+    
+    
+    
+    
+    
+    
+    
             
 
 
