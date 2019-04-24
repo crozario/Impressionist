@@ -87,6 +87,26 @@ async function wordsAPI(word) {
 	return myres;
 }
 
+async function mwAPI(word) {
+	var url = 'https://dictionaryapi.com/api/v3/references/collegiate/json/'+ word + '?key=1b4501d9-d118-40c3-8700-2f8d8b23ec86';
+
+	var params = {
+	method: 'GET'
+	}
+	var myres;
+	await fetch(url, params)
+	.then(data => {
+	  return data.json()
+	})
+	.then(res => {
+	    console.log(res);
+		myres = res;
+	})
+	.then(error => console.log(error))
+
+	return myres;
+}
+
 async function myFunction(word, parent) {
 	var prevPopup = document.getElementsByClassName('popuptext')[0];
 	if (prevPopup != null){
@@ -98,7 +118,11 @@ async function myFunction(word, parent) {
 	var myvar;
 	var mytext;
 	await wordsAPI(word).then(res => {myvar = res});
-	if (res.definitions[0] == null){
+	if (myvar.definitions[0] == null){
+		await mwAPI(word).then(res => {
+			console.log(res[0].shortdef);
+			mytext = res[0].shortdef;
+			myvar = res});
 	    console.log('no def found w/ WordsAPI');
 	}
 	else {
