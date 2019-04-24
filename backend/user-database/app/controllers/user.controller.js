@@ -231,9 +231,22 @@ exports.storeScoreData = (req,res) => {
 		if(doc) {
 			if(doc.gameHistory.id(mongoose.Types.ObjectId(info.gameID)).scores.dialogueIDs.indexOf(info.dialogueID)!=-1) {
 				// if the dialogueID from the request already exists in the db with scores, do not push the scores/dialogueID
+				// update the scores
+				doc.gameHistory.id(mongoose.Types.ObjectId(info.gameID)).scores.scores.set(info.dialogueID.toString(), {'phoneticScore': info.phoneticScore, 'lyricalScore': info.lyricalScore, 'emotionScore': info.emotionScore, 'averageScore': info.averageScore});
+				doc.gameHistory.id(mongoose.Types.ObjectId(info.gameID)).scores.dialogueIDs.push(info.dialogueID);
+				doc.save()
+				.then(result => {
+					return res.json({
+						status: "success"
+					});
+				}).catch(err => {
+					return res.status(500).json({
+						status: "failure",
+						error: err.message || "error occured when storing score data in the database"
+					});
+				});
 				return res.json({
-					status: "failure",
-					error: "scores for the dialogueID provided already exist"
+					status: "sucess"
 				});
 			} else {
 				// else, meaning the dialogueID from the request does not already exist in the db with scores, then add them in
