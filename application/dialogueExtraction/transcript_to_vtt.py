@@ -10,6 +10,7 @@ import bs4
 from bs4 import BeautifulSoup
 from difflib import SequenceMatcher
 
+PUNCTUATION = '!"#$%&()*+,-./;<=>?@[\\]^_`{|}~'
 
 def printItrNicely(thing):
 	for t in thing:
@@ -75,8 +76,8 @@ def getFriendsDialogueDichotomy(linkToEpisode):
 		if (len(tmp) == 2):
 			tmp[0] = tmp[0].strip().upper()
 			# remove punctuations and white spaces
-			# tmp[1] = tmp[1].strip().lower().translate(str.maketrans('', '', string.punctuation))
-			tmp[1] = tmp[1].strip().lower().translate(str.maketrans(string.punctuation, ' '*len(string.punctuation)))
+			# tmp[1] = tmp[1].strip().lower().translate(str.maketrans('', '', PUNCTUATION))
+			tmp[1] = tmp[1].strip().lower().translate(str.maketrans(PUNCTUATION, ' '*len(PUNCTUATION)))
 			tmp[1] = " ".join(tmp[1].split())
 			dd.append((tmp[0], tmp[1]))
 	#             print(tmp)
@@ -117,7 +118,7 @@ def standardizeVttCaptionsForComparison(captionsLst):
 		tmp = tmp.replace("\n", " ")
 		tmp = remove_stage_directions(tmp)
 		tmp = remove_parens(tmp)
-		tmp = tmp.translate(str.maketrans(string.punctuation, ' '*len(string.punctuation)))
+		tmp = tmp.translate(str.maketrans(PUNCTUATION, ' '*len(PUNCTUATION)))
 		if tmp is "":
 			capToDel.append(i)
 			continue
@@ -233,7 +234,6 @@ def addCharNames(transcriptPairs, inputVTTFile, outputVTTFile, verbose=False, de
 		if didntMatchCount > maxNotMatchedBeforeMovingOn or tra_j >= len(transcriptPairs):
 			
 			# manually resolve?
-			print("interactiveResolve:" , interactiveResolve)
 			if (interactiveResolve):
 				resolveSuccess = interactiveResolveDialogue(cap_i)
 				if resolveSuccess:

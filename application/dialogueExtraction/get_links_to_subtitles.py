@@ -182,7 +182,7 @@ def createContentDirsFriends(season=2, episode=None, extractCharacters=False, sa
             
             if fullInputSubsPath != "" and fullOutputSubsPath != "":
                 print("getting charNames....")
-                addCharNames(transcriptPairs, fullInputSubsPath, fullOutputSubsPath, verbose=True, detailedVerbose=False, interactive=True, interactiveResolve=False)
+                addCharNames(transcriptPairs, fullInputSubsPath, fullOutputSubsPath, verbose=False, detailedVerbose=False, interactive=True, interactiveResolve=False)
             else:
                 print("netflix_subs_...vtt file not found. Moving on.")
 
@@ -194,7 +194,7 @@ if (not os.path.isdir(CONTENT_DIR)):
     exit()
 
 if __name__ == "__main__":
-    createContentDirsFriends(season=2, episode=1, extractCharacters=True, saveTranscriptToCSV=False, verbose=True)
+    createContentDirsFriends(season=2, episode=None, extractCharacters=True, saveTranscriptToCSV=False, verbose=True)
     
     
     
