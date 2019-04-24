@@ -31,6 +31,7 @@ function setSubs() {
   var mytext = netflixSubs.innerText.replace(/\b(\w+\W?\s?)\b/g, "<span class=\"sub-word\">$1</span>");
   //carry over the style from netflix's subs
   subs.firstChild.style.cssText += netflixSubs.firstChild.firstChild.style.cssText;
+  subs.firstChild.style.whitespace = "pre-wrap";
   //places all the new span tags into the contianer element
   subs.firstChild.innerHTML = mytext; //.replace(/\n/, '<br>');
   //append outer subtitle container with modified subs
@@ -96,7 +97,17 @@ async function myFunction(word, parent) {
 	var myvar;
 	await wordsAPI(word).then(res => {myvar = res});
 	//add code to catch exceptions for no definitions
-	myelem.innerText = myvar.definitions[0].definition;
+  var mytext = myvar.definitions[0].partOfSpeech + '\n' + myvar.definitions[0].definition;
+  if (myvar.definitions.length > 1){
+    for (i=0; i<myvar.definitions.length; i++){
+      if (mytext.includes(myvar.definitions[i].partOfSpeech)){}
+      else {
+        mytext += '\n' + myvar.definitions[i].partOfSpeech + '\n' + myvar.definitions[i].definition;
+        break;
+      }
+    }
+  }
+	myelem.innerText = mytext;
 	console.log(myvar);
 	parent[0].children[0].classList.toggle("show");
 }
@@ -112,6 +123,7 @@ async function myFunction(word, parent) {
 
 /* The actual popup (appears on top) */
 .sub-word .popuptext {
+	font-size: small;
   visibility: hidden;
   width: 160px;
   background-color: #555;
