@@ -32,7 +32,7 @@ function setSubs() {
   //carry over the style from netflix's subs
   subs.firstChild.style.cssText += netflixSubs.firstChild.firstChild.style.cssText;
   //places all the new span tags into the contianer element
-  subs.firstChild.innerHTML = mytext.replace(/\n/, '<br>');
+  subs.firstChild.innerHTML = mytext; //.replace(/\n/, '<br>');
   //append outer subtitle container with modified subs
   document.getElementById(movieId).insertAdjacentHTML('beforeend', subs.outerHTML);
 }
@@ -106,7 +106,6 @@ async function myFunction(word, parent) {
     /* Popup container */
 .sub-word {
   position: relative;
-  display: inline-block;
   cursor: pointer;
   white-space: pre-wrap;
 }
