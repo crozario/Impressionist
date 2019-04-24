@@ -66,7 +66,7 @@ def handle_compareDialogue(message):
     userTranscript = message['userTranscript']
     # print(message)
 
-    prefix = "diag"+str(message['dialogueID']+1)
+    prefix = "diag"+str(int(message['dialogueID'])+1)
     webmname = prefix + ".webm"
     wavname = prefix + ".wav"
 
