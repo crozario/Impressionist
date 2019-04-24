@@ -159,10 +159,22 @@ def createContentDirsFriends(season=2, episode=None, extractCharacters=False, sa
                 if ("netflix_subs" in subs):
                     outSubs = subs.replace("netflix_subs", "labeled_subs")
                     fullOutputSubsPath = os.path.join(fullEpisodeFolderName, outSubs)
-                    addCharNames(transcriptPairs, fullInputSubsPath, fullOutputSubsPath, verbose=True, detailedVerbose=False, interactive=True)
+                    addCharNames(transcriptPairs, fullInputSubsPath, fullOutputSubsPath, verbose=True, detailedVerbose=False, interactive=True, interactiveResolve=False)
                 else:
                     pass
             elif (len(vttFiles) > 1):
+                # rename old one
+                subs = ""
+                for f in vttFiles:
+                    if "netflix_subs" in f:
+                        subs = f.replace("netflix_subs", "labeled_subs")
+                    elif "labeled_subs" in f:
+                        num = 1
+                        while (num < 11):
+                            old = f.replace("labeled_subs", str(num)+"-old_labeled")
+                            fullOld = os.path.join(fullEpisodeFolderName, old)
+                            if not (os.path.exists(fullOld)): break
+                            num += 1
                 # find netflix subs `netflix_subs_...`
                 # check if previously labeled one is in here
                 # TODO: take argument overwriteLabeledVTT=True before overwriting it

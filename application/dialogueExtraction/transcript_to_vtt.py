@@ -46,27 +46,11 @@ def _getMatch(linkToEpisode):
 		return False
 
 def getFriendsDialogueDichotomy(linkToEpisode):
-	# page = requests.get("http://www.livesinabox.com/friends/season2/215rryk.htm")
-	# page = requests.get(linkToEpisode)
-	# # page.content
-
-	# # ## Traverse webpage to extract dialogues with beautifulsoup
-	# soup = BeautifulSoup(page.content, 'html5lib')
-
-	# html = list(soup.children)
-	# print(len(html))
-	# for i, h in enumerate(html):
-	# 	whole = h.prettify()
-	# 	matches = re.findall(r'(?:<br/>)([\s\S]*?)(?=<br/>)', whole)
-	# 	print(i, "- matches found", len(matches))
-	# exit()
-
-	# whole = html[0].prettify()
-	# # print(whole)
-	# match = re.findall(r'(?:<br/>)([\s\S]*?)(?=<br/>)', whole)
-
+	"""Web scraping and returning tuples (CHARNAME, 'dialogue...')"""
+	print("Web scraping and obtaining dialogue dichotomy...")
 	match = _getMatch(linkToEpisode)
 	if not match:
+		print("Match not found")
 		return
 	
 	all_dialogues = []
@@ -154,6 +138,7 @@ def isMatch(caption, transcript, thres=0.75, verbose=False):
 	`caption` : is string
 	`transcript` : is string
 	"""
+	print("Merging to VTT file...")
 	if verbose:
 		print("COMP", caption, "|", transcript)
 	lsttra = transcript.split()
@@ -169,7 +154,7 @@ def isMatch(caption, transcript, thres=0.75, verbose=False):
 	return score, simScore
 
 
-def addCharNames(transcriptPairs, inputVTTFile, outputVTTFile, verbose=False, detailedVerbose=False, interactive=True):
+def addCharNames(transcriptPairs, inputVTTFile, outputVTTFile, verbose=False, detailedVerbose=False, interactive=False, interactiveResolve=False):
 	"""add character names to vtt captions (will return modified captions list)
 	`transcriptPairs` : list of tuples of size two 
 		[0] => characterName (ALL CAPS), 
@@ -209,8 +194,8 @@ def addCharNames(transcriptPairs, inputVTTFile, outputVTTFile, verbose=False, de
 			return False
 		else:
 			nonlocal tra_j
-			print("resolved!", transcriptPairs[tra_j][0], "said ", stdVttCaptions[cap_i].text)
 			tra_j = mostRecentSkippedTranscripts[int(resolve)-1]
+			print("resolved!", transcriptPairs[tra_j][0], "said ", stdVttCaptions[cap_i].text)
 			found()
 			return True
 
@@ -246,12 +231,14 @@ def addCharNames(transcriptPairs, inputVTTFile, outputVTTFile, verbose=False, de
 		tra_j += 1
 		didntMatchCount += 1
 		if didntMatchCount > maxNotMatchedBeforeMovingOn or tra_j >= len(transcriptPairs):
+			
 			# manually resolve?
 			resolveSuccess = interactiveResolve(cap_i)
 			if resolveSuccess:
 				return True
 			else:
 				mostRecentSkippedTranscripts.clear()
+
 			if verbose: print("--Match not found:", currCap)
 
 			didntFindCount += 1
@@ -295,13 +282,14 @@ def addCharNames(transcriptPairs, inputVTTFile, outputVTTFile, verbose=False, de
 	
 	# save to new file 
 	if (interactive):
-		resp = input(str(len(notFoundIndices)) + "/" + str(totalOrigCaptions) + " were not labeled. Would you still like to save? (yes|no|more)")
+		resp = input(str(len(notFoundIndices)) + "/" + str(totalOrigCaptions) + " were not labeled. Would you still like to save? (yes|no)")
 		resp = resp.lower()
 		if resp == "yes": 
 			print("Saving labeled dialogues to: ", outputVTTFile)
 			vtt.save(outputVTTFile)
 		elif resp == "no": pass
-		elif resp == "more":
+		elif resp == "more": 
+			# TODO: future functionality for iterative labeling
 			# view all unlabeled dialogues
 			pass
 	else:
