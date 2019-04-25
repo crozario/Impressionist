@@ -29,17 +29,20 @@ function setSubs() {
   subs.style.display = 'block';
   //split up subs into spans for each word
   var mytext = netflixSubs.innerText.replace(/\b(\w+\W?\s?)\b/g, "<span class=\"sub-word\">$1</span>");
-  //carry over the style from netflix's subs
-  subs.firstChild.style.cssText += netflixSubs.firstChild.firstChild.style.cssText;
+  //carry over the style from netflix's subs in the outer span of sub-words
+  var styleSpan = document.createElement('span');
+  styleSpan.style.cssText = netflixSubs.firstChild.firstChild.style.cssText;
+  //make styleSpan the parent of sub-words
+  styleSpan.appendChild(subs);
   subs.firstChild.style.whitespace = "pre-wrap";
   //places all the new span tags into the contianer element
   subs.firstChild.innerHTML = mytext; //.replace(/\n/, '<br>');
-  //append outer subtitle container with modified subs
-  document.getElementById(movieId).insertAdjacentHTML('beforeend', subs.outerHTML);
+  //append outer subtitle container with modified subs inside style container
+  document.getElementById(movieId).insertAdjacentHTML('beforeend', styleSpan.outerHTML);
 }
 
 function hoverHighlight() {
-   $('span.sub-word').click(
+  $('span.sub-word').click(
     function() {
       myFunction($(this).text().replace(/\W/, '').trim(), $(this))
     }
@@ -61,89 +64,90 @@ function hoverHighlight() {
 }
 
 async function wordsAPI(word) {
-	var url = 'https://wordsapiv1.p.rapidapi.com/words/' + word + '/definitions/'
+  var url = 'https://wordsapiv1.p.rapidapi.com/words/' + word + '/definitions/'
 
-	var params = {
-	method: 'GET',
-	headers: {
-	  'cache-control': 'no-cache',
-	  'Content-Type': 'application/json',
-	  "X-RapidAPI-Host": "wordsapiv1.p.rapidapi.com",
-	  //need to store this key somewhere safe, can't be in plain text here :/
-	  "X-RapidAPI-Key": "e26dcc4bbdmsh0842a0791e370ffp11181ajsn05b018a504ba"
-	}
-	}
-	var myres;
-	await fetch(url, params)
-	.then(data => {
-	  return data.json()
-	})
-	.then(res => {
-	    console.log(res);
-		myres = res;
-	})
-	.then(error => console.log(error))
+  var params = {
+    method: 'GET',
+    headers: {
+      'cache-control': 'no-cache',
+      'Content-Type': 'application/json',
+      "X-RapidAPI-Host": "wordsapiv1.p.rapidapi.com",
+      //need to store this key somewhere safe, can't be in plain text here :/
+      "X-RapidAPI-Key": "e26dcc4bbdmsh0842a0791e370ffp11181ajsn05b018a504ba"
+    }
+  }
+  var myres;
+  await fetch(url, params)
+    .then(data => {
+      return data.json()
+    })
+    .then(res => {
+      console.log(res);
+      myres = res;
+    })
+    .then(error => console.log(error))
 
-	return myres;
+  return myres;
 }
 
 async function mwAPI(word) {
-	var url = 'https://dictionaryapi.com/api/v3/references/collegiate/json/'+ word + '?key=1b4501d9-d118-40c3-8700-2f8d8b23ec86';
+  var url = 'https://dictionaryapi.com/api/v3/references/collegiate/json/' + word + '?key=1b4501d9-d118-40c3-8700-2f8d8b23ec86';
 
-	var params = {
-	method: 'GET'
-	}
-	var myres;
-	await fetch(url, params)
-	.then(data => {
-	  return data.json()
-	})
-	.then(res => {
-	    console.log(res);
-		myres = res;
-	})
-	.then(error => console.log(error))
+  var params = {
+    method: 'GET'
+  }
+  var myres;
+  await fetch(url, params)
+    .then(data => {
+      return data.json()
+    })
+    .then(res => {
+      console.log(res);
+      myres = res;
+    })
+    .then(error => console.log(error))
 
-	return myres;
+  return myres;
 }
 
 async function myFunction(word, parent) {
-	var prevPopup = document.getElementsByClassName('popuptext')[0];
-	if (prevPopup != null){
-		prevPopup.remove()
-	}
-	var myelem = document.createElement('span');
-	myelem.className = "popuptext";
-	parent[0].appendChild(myelem);
-	var myvar;
-	var mytext;
-	await wordsAPI(word).then(res => {myvar = res});
-	if (myvar.definitions[0] == null){
-		await mwAPI(word).then(res => {
-			mytext = res[0].fl + '\n\t' + res[0].shortdef;
-			myvar = res});
-	}
-	else {
-	    mytext = myvar.definitions[0].partOfSpeech + '\n\t' + myvar.definitions[0].definition;
-          if (myvar.definitions.length > 1){
-            for (i=0; i<myvar.definitions.length; i++){
-              if (mytext.includes(myvar.definitions[i].partOfSpeech) || myvar.definitions[i].partOfSpeech == null){}
-              else {
-                mytext += '<hr>' + myvar.definitions[i].partOfSpeech + '\n\t' + myvar.definitions[i].definition;
-                break;
-              }
-            }
-          }
+  var prevPopup = document.getElementsByClassName('popuptext')[0];
+  if (prevPopup != null) {
+    prevPopup.remove()
+  }
+  var myelem = document.createElement('span');
+  myelem.className = "popuptext";
+  parent[0].appendChild(myelem);
+  var myvar;
+  var mytext;
+  await wordsAPI(word).then(res => {
+    myvar = res
+  });
+  if (myvar.definitions[0] == null) {
+    await mwAPI(word).then(res => {
+      mytext = res[0].fl + '\n\t' + res[0].shortdef;
+      myvar = res
+    });
+  } else {
+    mytext = myvar.definitions[0].partOfSpeech + '\n\t' + myvar.definitions[0].definition;
+    if (myvar.definitions.length > 1) {
+      for (i = 0; i < myvar.definitions.length; i++) {
+        if (mytext.includes(myvar.definitions[i].partOfSpeech) || myvar.definitions[i].partOfSpeech == null) {} else {
+          mytext += '<hr>' + myvar.definitions[i].partOfSpeech + '\n\t' + myvar.definitions[i].definition;
+          break;
         }
-	//add code to catch exceptions for no definitions
+      }
+    }
+  }
+  //add code to catch exceptions for no definitions
 
-	myelem.innerHTML = mytext;
-	console.log(myvar);
-	parent[0].children[0].classList.toggle("show");
+  myelem.innerHTML = mytext;
+  console.log(myvar);
+  parent[0].children[0].classList.toggle("show");
 }
 
-(function(){
-    let style = `<style>
+(function() {
+  let style = `<style>
     /* Popup container */
 .sub-word {
   position: relative;
@@ -201,7 +205,7 @@ async function myFunction(word, parent) {
 </style>
 `;
 
-document.head.insertAdjacentHTML("beforeend", style);
+  document.head.insertAdjacentHTML("beforeend", style);
 })();
 
 //add jQuery to page
@@ -224,6 +228,8 @@ function updateSubs() {
         player.setTimedTextVisibility(false);
         //add hightlighting with hover
         hoverHighlight();
+      } else if (textContainers[1].firstChild.style != textContainers[0].firstChild.style){
+
       } else return; //if subs haven't changed, then don't update any elements
     } else {
       player.setTimedTextVisibility(true);
@@ -237,9 +243,9 @@ function updateSubs() {
     if (textContainers.length > 1) {
       textContainers[1].remove();
       //resume player if paused but no subs,
-      if (player.isPaused()){
+      if (player.isPaused()) {
         player.play();
-        }
+      }
     }
   }
 }
