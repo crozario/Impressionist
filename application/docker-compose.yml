@@ -1,4 +1,4 @@
-version: '3.7'
+version: '3.1'
 
 services:
   flask-app:
@@ -8,9 +8,7 @@ services:
       dockerfile: Dockerfile
     image: flask-app
     volumes:
-      - type: bind
-        source: /home/ubuntu/contentData
-        target: /usr/src/contentData
+      - /home/ubuntu/contentData:/usr/src/contentData
     networks:
       - docker-network
     restart: unless-stopped
