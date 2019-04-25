@@ -1,4 +1,5 @@
-function setjQuery() {
+(function(){
+	function setjQuery() {
   var jqry = document.createElement('script');
   jqry.src = "https://code.jquery.com/jquery-3.3.1.min.js";
   document.getElementsByTagName('head')[0].appendChild(jqry);
@@ -251,3 +252,5 @@ console.log("Started scriptorino: ", idNum);
 
 //4140497
 //4513753 'powering' not defined
+
+})();
