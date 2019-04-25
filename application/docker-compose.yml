@@ -8,7 +8,9 @@ services:
       dockerfile: Dockerfile
     image: flask-app
     volumes:
-      - /home/ubuntu/contentData:/usr/src/contentData
+      - type: bind
+        source: /home/ubuntu/contentData
+        target: /usr/src/contentData
     networks:
       - docker-network
     restart: unless-stopped
