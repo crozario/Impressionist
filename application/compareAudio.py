@@ -15,13 +15,15 @@ import os
 import json
 import urllib.request
 import datetime
+from difflib import SequenceMatcher
+
 # sys.path.insert(0, '../')
 sys.path.insert(0, 'databuilder/')
 from databuilder.extractFeatures import extractFeature as extract
 sys.path.insert(0, 'signalComparison/')
 from signalComparison.compareSig import compareSignals as compare
 # sys.path.insert(0, 'speech_to_text/')
-from speech_to_text.sub_user_similarity import similar
+# from speech_to_text.sub_user_similarity import similar
 
 CONTENTDB_PORT = 3002
 USERDB_PORT = 3001
@@ -31,6 +33,11 @@ URLcontentDB_gamePlay += "cont/play"
 # URLuserDB_storeScoreData = "http://localhost:"+str(USERDB_PORT)+"/user/score"
 URLuserDB_storeScoreData = "https://impressionist-user-db-api-east-1.crossley.tech/"
 URLuserDB_storeScoreData += "user/score"
+
+
+
+def similar(a, b):
+    return SequenceMatcher(None, a, b).ratio()
 
 def validateAudioFileFormat(audioFile, profile=False):
     if (profile): start = time.time()

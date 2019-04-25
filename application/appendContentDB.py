@@ -199,7 +199,7 @@ if __name__=='__main__':
     parser = argparse.ArgumentParser(
         description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("mediaDirectory", type=str, help="parent folder containing video file (.mkv or .mp4(tested)) and subtitle file (.vtt ; .srt WON'T work)")
-    parser.add_argument("netflixWatchID", type=str, help="watch id from netflix content's URL. REQUIRED argument because all video supported are currently netflix.")
+    # parser.add_argument("netflixWatchID", type=str, help="watch id from netflix content's URL. REQUIRED argument because all video supported are currently netflix.")
     # reason for offset is because netflix subtitles are shifted a bit
     parser.add_argument('--subsOffset', help="add the certain float offset, in milliseconds, to the times read from .vtt subtitle file above. (default) 0", type=float, default=0.0)
     args = parser.parse_args()
@@ -213,7 +213,8 @@ if __name__=='__main__':
     # used when converting video to audio
     samplingRate = 44100
     # FIXME: add `netflixSubtitleOffset` from front in a better way
-    netflixSubtitleOffset = args.subsOffset  # netflixSubtitleOffset = -2000
+    # netflixSubtitleOffset = args.subsOffset  # netflixSubtitleOffset = -2000
+    netflixSubtitleOffset = 0 # because only using netflix subtitles now (extracted using 'Subtitles for Netflix' chrome extension)
     netflixWatchID = args.netflixWatchID  # netflixWatchID = "70274032"
 
     """
@@ -296,7 +297,8 @@ if __name__=='__main__':
     # SEND jSON
     import urllib.request #ref: https://stackoverflow.com/a/26876308/7303112
     contentDB_PORT = str(3002)
-    backURL = "http://localhost:"+contentDB_PORT+"/cont/"
+    # backURL = "http://localhost:"+contentDB_PORT+"/cont/"
+    backURL = "https://impressionist-content-db-api-east-1.crossley.tech/cont/"
     req = urllib.request.Request(backURL, method='POST')
     req.add_header('Content-Type', 'application/json; charset=utf-8')
     jsondataasbytes = contentJSON.encode('utf-8') # convert to bytes
