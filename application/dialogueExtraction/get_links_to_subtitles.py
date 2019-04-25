@@ -132,8 +132,15 @@ def createContentDirsFriends(season=2, episode=None, extractCharacters=False, sa
         name = ep[3]
         name = "-".join(name.split(" "))
         episodeFolderName = num+name
+        # remove any \' from name
+        episodeFolderName = episodeFolderName.replace("'", "")
+        # FIXME: replace dots in name like "Ross-and-rachel...You-Know"
         fullEpisodeFolderName = os.path.join(seasonDir, episodeFolderName)
-        _checkAndCreateFolder(fullEpisodeFolderName)
+        if ("'" in fullEpisodeFolderName):
+            print("apostrophe in path. not supported yet. please change names")
+            continue
+        print(fullEpisodeFolderName)
+        # _checkAndCreateFolder(fullEpisodeFolderName)
 
         if (extractCharacters):
             # get transcript and character name pairs
@@ -194,7 +201,7 @@ if (not os.path.isdir(CONTENT_DIR)):
     exit()
 
 if __name__ == "__main__":
-    createContentDirsFriends(season=2, episode=None, extractCharacters=True, saveTranscriptToCSV=False, verbose=True)
+    createContentDirsFriends(season=2, episode=None, extractCharacters=False, saveTranscriptToCSV=False, verbose=True)
     
     
     
