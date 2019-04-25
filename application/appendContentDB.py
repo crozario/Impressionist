@@ -1,3 +1,4 @@
+from difflib import SequenceMatcher
 """Adds content to mongoDB contentDB
     $ python3 appendContentDB.py <parentFolder>
 NOTE: arg `parentFolder` is NOT individual file
@@ -16,6 +17,7 @@ import argparse
 import os
 import subprocess
 from datetime import timedelta
+import webvtt
 
 configFile = 'databuilder/configs/prosodyShs.conf'
 VERBOSE=True
@@ -73,13 +75,16 @@ def timedeltaToIndex(t, samplingRate):
     # print("index:",index)
     return index
 
-def dialogueIntervalsToIndices(dIntervals, samplingRate):
+def dialogueIntervalsToIndices(dIntervals, samplingRate, offset=None):
     # print(samplingRate)
     indices = []
     for ii in dIntervals:
         start, end = ii
         start = timedeltaToIndex(start, samplingRate)
         end = timedeltaToIndex(end, samplingRate)
+        if offset is not None:
+            start += offset
+            end += offset
         indices.append((start, end))
     return indices
 
@@ -104,13 +109,17 @@ def readCSVtoStringLst(fileName):
         lst = line[0].split(',')
     return lst
 
-def extractFeatures(captionFile, audioFile, tmpWave, featuresDir, configFile, emotionsLogFile, verbose=False):
+
+def extractFeatures(captionFile, audioFile, tmpWave, featuresDir, configFile, emotionsLogFile, videoOffset,  verbose=False):
     """Extract features using OpenSMILE to folder LOCATION/features/ (`featuresDir`)
     """
     from scipy.io import wavfile
     samplingRate, audio = wavfile.read(audioFile)
+    # print(len(audio))
     # get dialogue intervals
-    indices = dialogueIntervalsToIndices(vttExtractDialogues(captionFile), samplingRate)
+    indexOffset = timedeltaToIndex(videoOffset, samplingRate) # convert timedelta offset to index offset
+    indices = dialogueIntervalsToIndices(vttExtractDialogues(captionFile), samplingRate, offset=indexOffset)
+
     featureFiles = []
     # get emotion
     from speech_to_emotion.emotion_classifier_nn import livePredictions
@@ -121,6 +130,9 @@ def extractFeatures(captionFile, audioFile, tmpWave, featuresDir, configFile, em
     for count, ii in enumerate(indices):
         # split audioFile to tmpName
         start, end = ii
+        if (start > len(audio) or end > len(audio)):
+            print("start or end was greater than len audio! breaking")
+            break
         wavfile.write(tmpWave, samplingRate, audio[start:end, :])
         # extract features
         csvOutFile = os.path.join(featuresDir, str(count)+".csv")
@@ -175,37 +187,112 @@ def getVideoFileDuration(mediaFile):
         print("Couldn't get length of media")
         return -1
 
+
+def similar(a, b):
+    return SequenceMatcher(None, a, b).ratio()
+
+def getVideoOffset(netflixVTT, localSRT):
+    """compare dialogues between and returns time offset
+    returns timedelta object (can be used later)
+    POSITIVE offset -> add offset to subtitle times when extracting dialogues from video
+    NEGATIVE offset -> subtract
+    """
+    netVTT = webvtt.read(netflixVTT)
+    locSRT = webvtt.from_srt(localSRT)
+    ni = 0; # netVTT count
+    li = 0; # locSRT count
+    skipcnt = 0
+    PUNCTUATION = '!"#$%&()*+,-./;<=>?@[\\]^_`{|}~'
+    while (ni < len(netVTT) and li < len(locSRT)):
+        # print(ni, li)
+        lhs = netVTT[ni].text
+        lhs = lhs.strip().lower().translate(str.maketrans(PUNCTUATION, ' '*len(PUNCTUATION)))
+        lhs = " ".join(lhs.split())
+        rhs = locSRT[li].text
+        rhs = rhs.strip().lower().translate(str.maketrans(PUNCTUATION, ' '*len(PUNCTUATION)))
+        rhs = " ".join(rhs.split())
+        if ("♪" in lhs): 
+            ni += 1
+            continue
+        if ("♪" in rhs):
+            li += 1
+            continue
+
+        # print(lhs, " | ", rhs)
+        cmpScore = similar(lhs, rhs)
+        # print("score:", cmpScore)
+        if cmpScore < 0.95:
+            li += 1# skip
+            skipcnt += 1
+            if (skipcnt > 30):
+                skipcnt = 0
+                li -= 30
+                ni += 1
+        else:
+            # print(ni, li)
+            start_ni = netVTT[ni].start
+            # print(netVTT[ni], "start:", start_ni)
+            start_li = locSRT[li].start
+            # print(locSRT[li], "start:", start_li)
+            difference = extractTime(start_li) - extractTime(start_ni)
+            # print("diff:", difference)
+            return difference
+            # print("diffstr:", str(difference))
+            # print("typediff:", type(difference))
+        # _ = input("ENTER to compare next...") 
+
 def getMediaAndCaptionFiles(mediaDirectory):
     """get videoFile and captionFile full path locations
     """
     mediaFile = ''
     captionFile = ''
+    SRTfile = ''
     error = ''
     allfiles = os.listdir(mediaDirectory)
     for file in allfiles:
-        _, ext = os.path.splitext(file)
+        prefix, ext = os.path.splitext(file)
         if ext in ['.mkv', '.mp4', '.avi', '.flv']:
             if mediaFile != '': error += 'multiple video files found\n'
             mediaFile = os.path.join(mediaDirectory, file)
         elif ext == '.vtt':
-            if captionFile !=  '': error += 'multiple caption files found\n'
-            captionFile = os.path.join(mediaDirectory, file)
+            if "labeled_subs" in prefix:
+                if captionFile !=  '': error += 'multiple labeled_subs caption files found\n'
+                captionFile = os.path.join(mediaDirectory, file)
+                netflixWatchID = prefix.replace("labeled_subs_", "")
+        elif ext == '.srt':
+            SRTfile = os.path.join(mediaDirectory, file)
     if error != '':
         print(error)
         exit()
-    return mediaFile, captionFile
+    else:
+        if captionFile != '' and SRTfile != '':
+            videoOffset = getVideoOffset(captionFile, SRTfile)
+    return mediaFile, captionFile, videoOffset, netflixWatchID
 
 if __name__=='__main__':
     parser = argparse.ArgumentParser(
         description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("mediaDirectory", type=str, help="parent folder containing video file (.mkv or .mp4(tested)) and subtitle file (.vtt ; .srt WON'T work)")
-    parser.add_argument("netflixWatchID", type=str, help="watch id from netflix content's URL. REQUIRED argument because all video supported are currently netflix.")
+    # parser.add_argument("netflixWatchID", type=str, help="watch id from netflix content's URL. REQUIRED argument because all video supported are currently netflix.")
     # reason for offset is because netflix subtitles are shifted a bit
     parser.add_argument('--subsOffset', help="add the certain float offset, in milliseconds, to the times read from .vtt subtitle file above. (default) 0", type=float, default=0.0)
     args = parser.parse_args()
 
-    mediaFile, captionFile = getMediaAndCaptionFiles(args.mediaDirectory)
-    dirName = os.path.dirname(mediaFile)
+    mediaFile, captionFile, videoOffset, netflixWatchID = getMediaAndCaptionFiles(args.mediaDirectory)
+
+    # mediaFile = mediaFile.replace("'", "\\'")
+    dirName = args.mediaDirectory
+    if "'" in dirName:
+        print("Apostrophe in dir names is not handled.")
+        exit()
+    # dirName = dirName.replace("'", "\\'")
+    # print(dirName)
+
+    print("mediaFile:", mediaFile)
+    print("captionFile:", captionFile)
+    print("videoOffset:", videoOffset)
+    print("netflixWatchID", netflixWatchID)
+
     tmpFullAudio = os.path.join(dirName, "tmpFullAudio.wav")
     tmpDialogue = os.path.join(dirName, "tmpDialogue.wav")
     featuresDir = os.path.join(dirName, "features")
@@ -213,8 +300,12 @@ if __name__=='__main__':
     # used when converting video to audio
     samplingRate = 44100
     # FIXME: add `netflixSubtitleOffset` from front in a better way
-    netflixSubtitleOffset = args.subsOffset  # netflixSubtitleOffset = -2000
-    netflixWatchID = args.netflixWatchID  # netflixWatchID = "70274032"
+    # netflixSubtitleOffset = args.subsOffset  # netflixSubtitleOffset = -2000
+    netflixSubtitleOffset = 0 # because only using netflix subtitles now (extracted using 'Subtitles for Netflix' chrome extension)
+    # netflixWatchID = args.netflixWatchID  # netflixWatchID = "70274032"
+
+    # cmd = "ffmpeg -y -i " + mediaFile + " -ab 160k -ac 2 -ar "+str(samplingRate)+" -vn " + tmpFullAudio
+    # print("cmd", cmd)
 
     """
     Plan
@@ -239,17 +330,18 @@ if __name__=='__main__':
 
         # convert video to audio
         cmd = "ffmpeg -y -i " + mediaFile + " -ab 160k -ac 2 -ar "+str(samplingRate)+" -vn " + tmpFullAudio
+        # print("cmd", cmd)
         result = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, shell=True)
         out = result.stdout.decode('utf-8')
         assert ("command not found" not in out), "Error: could not convert .webm to .wav because FFMPEG program is not installed"
-        assert ("No such file" not in out), "Error: could not find " + mediaFile + "."
+        assert ("No such file" not in out), "Error: could not find " + mediaFile + ".\n" + "FFMPEG error:" + out
         #   check successful
-        assert ("size=" in out), "Error: unknown error in converting `.webm` file to `.wav`"
+        assert ("size=" in out), "Error: unknown error in converting video mediaFile to `.wav`"+ ".\n" + "FFMPEG error:" + out
         if VERBOSE: print("(ffmpeg) video successfully converted to audio!")
 
         # get dialogue intervals
         # indices = dialogueIntervalsToIndices(vttExtractDialogues(captionFile), samplingRate)
-        featureFiles, emotions = extractFeatures(captionFile, tmpFullAudio, tmpDialogue, featuresDir, configFile, emotionsLogFile, verbose=VERBOSE)
+        featureFiles, emotions = extractFeatures(captionFile, tmpFullAudio, tmpDialogue, featuresDir, configFile, emotionsLogFile, videoOffset, verbose=VERBOSE)
         deleteFiles([tmpFullAudio, tmpDialogue])
     else:
         # get featureFiles array
@@ -282,12 +374,17 @@ if __name__=='__main__':
     if "contentData/movies" in dirName:
         contentdict["title"] = os.path.basename(dirName)
     else:
+        # print(dirName)
         split = dirName.split(sep='/')
+        # print(split)
+        if split[-1] == "": split = split[:-1]
+        # print(split)
         episode = split[-1].split('-')
         contentdict["episodeNumber"] = int(episode[0])
         contentdict["episodeTitle"] = " ".join(episode[1:])
         contentdict["seasonNumber"] = int(split[-2])
         contentdict["title"] = split[-3]
+        # print(contentdict)
 
     # convert to JSON
     import json
@@ -296,11 +393,13 @@ if __name__=='__main__':
     # SEND jSON
     import urllib.request #ref: https://stackoverflow.com/a/26876308/7303112
     contentDB_PORT = str(3002)
-    backURL = "http://localhost:"+contentDB_PORT+"/cont/"
+    # backURL = "http://localhost:"+contentDB_PORT+"/cont/"
+    backURL = "https://impressionist-content-db-api-east-1.crossley.tech/cont/"
     req = urllib.request.Request(backURL, method='POST')
     req.add_header('Content-Type', 'application/json; charset=utf-8')
     jsondataasbytes = contentJSON.encode('utf-8') # convert to bytes
     req.add_header('Content-Length', len(jsondataasbytes))
+    req.add_header('User-Agent', 'Chrome')
     # print("sent jsonbytes:", jsondataasbytes)
     response = urllib.request.urlopen(req, jsondataasbytes)
     resultJSON = response.read().decode('utf-8')

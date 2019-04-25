@@ -1,5 +1,8 @@
 node_modules
 npm-debug.log
 Dockerfile
-initial-tls-certificate-user-database
+initial-tls-certificate
+runServers.sh
+.gitignore
 .dockerignore
+

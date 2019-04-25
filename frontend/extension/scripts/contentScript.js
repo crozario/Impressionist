@@ -5,17 +5,19 @@ Description: Content script to interact with the webpage
 
 */
 
-
 // message passing connection through the shared DOM
 // var port = chrome.runtime.connect();
 
+const userDatabaseRestAPIHost = "https://impressionist-user-db-api-east-1.crossley.tech";
+const contentDatabaseRestAPIHost = "https://impressionist-content-db-api-east-1.crossley.tech";
+
 // socket.io connection
-const applicationServerPort = 3000;
-const applicationServerHost = "http://localhost";
-// const applicationServerHost = "18.223.101.151"
-// const serverHost = "10.202.133.175"
-// const serverHost = "https://impressionist.localtunnel.me"
-const socketAddress = applicationServerHost + ":" + applicationServerPort;
+// const applicationServerPort = 3000;
+const applicationServerHost = "https://impressionist-application-east-1.crossley.tech";
+// const applicationServerHost = "http://localhost"
+// const socketAddress = applicationServerHost + ":" + applicationServerPort;
+
+const socketAddress = applicationServerHost;
 let socket;
 
 const timeDelay = 50;
@@ -130,7 +132,7 @@ let gameInitialization = (username, watchID) => {
             }
         }
 
-        req.open("POST", "http://localhost:3001/user/initializeGame", true);
+        req.open("POST", userDatabaseRestAPIHost + "/user/initializeGame", true);
         req.setRequestHeader("Content-Type", "application/json");
         req.send(stringifedData);
     })
@@ -167,7 +169,7 @@ let ifGameSupported = (watchID) => {
             }
         }
 
-        req.open("POST", "http://localhost:3002/cont/initializeGame", true);
+        req.open("POST", contentDatabaseRestAPIHost + "/cont/initializeGame", true);
         req.setRequestHeader("Content-Type", "application/json");
         req.send(stringifedData);
     })
@@ -193,7 +195,8 @@ window.onload = () => {
             contentInfo.gameID = jsonResult.gameID
 
             const startTime = Date.now();
-            socket = io.connect(socketAddress);
+            socket = io.connect(socketAddress, { secure: true });
+            // socket = io.connect(socketAddress);
             console.log("socket connection : " + getDuration(startTime));
 
 
@@ -556,12 +559,35 @@ let appendResultsToView = (resultJSON) => {
     row6.appendChild(cell11);
     row6.appendChild(cell12);
 
+    // adding row to display emotion
+    let row7 = document.createElement("tr");
+    let cell13 = document.createElement("td");
+    cell13.appendChild(document.createTextNode("Emotion Bonus"));
+
+    let cell14 = document.createElement("td");
+    cell14.appendChild(document.createTextNode(resultJSON.emotionScore));
+
+    row7.appendChild(cell13);
+    row7.appendChild(cell14);
+
+    let row8 = document.createElement("tr");
+    let cell15 = document.createElement("td");
+    cell15.appendChild(document.createTextNode("Emotions"));
+
+    let cell16 = document.createElement("td");
+    cell16.appendChild(document.createTextNode("orig (" + resultJSON.originalEmotion + ")" + ", user (" + resultJSON.userEmotion + ")"));
+
+    row8.appendChild(cell15);
+    row8.appendChild(cell16);
+
     resultTable.appendChild(row1);
     resultTable.appendChild(row2);
     resultTable.appendChild(row3);
     resultTable.appendChild(row4);
     resultTable.appendChild(row5);
     resultTable.appendChild(row6);
+    resultTable.appendChild(row7);
+    resultTable.appendChild(row8);
     
     resultsReceivedContainer.prepend(resultTable);
 }
@@ -643,7 +669,6 @@ let showResultsContainer = () => {
     
     let resultsContainerElement = document.getElementById('results-container');
     resultsContainerElement.style.display = "block";
-    
 }
 
 let hideResultsContainer = () => {

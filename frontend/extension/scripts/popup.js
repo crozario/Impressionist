@@ -68,7 +68,6 @@ let loginButtonPressed = () => {
     // let login_button = document.getElementById('login-button');
     // let sign_up_button = document.getElementById("signup-button");
 
-
     let data = {
         "email" : email,
         "password" : password

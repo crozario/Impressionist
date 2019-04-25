@@ -137,7 +137,8 @@ async function myFunction(word, parent) {
         }
 	//add code to catch exceptions for no definitions
 
-	myelem.innerHTML = mytext;
+	myelem.innerHTML = mytext + '<br>' + '<a href="https://www.merriam-webster.com/dictionary/' + word + '" target="_blank">Source</a>';
+
 	console.log(myvar);
 	parent[0].children[0].classList.toggle("show");
 }
@@ -249,3 +250,4 @@ var idNum = setInterval(updateSubs, 50);
 console.log("Started scriptorino: ", idNum);
 
 //4140497
+//4513753 'powering' not defined
