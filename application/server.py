@@ -45,18 +45,22 @@ socketio = SocketIO(app)
 # load emotion comparison model
 emoPredictor = livePredictions(path='speech_to_emotion/Emotion_Voice_Detection_Model.h5', file='speech-to-text/dummy.wav')
 emoPredictor.load_model()
+_logToFile(["emoPredictor after"])
 
 @socketio.on('connect')
 def test_connect():
+    _logToFile(["a user connected"])
     print('a user connected')
 
 
 @socketio.on('disconnect')
 def test_disconnect():
+    _logToFile(["a user disconnected"])
     print('a user disconnected')
 
 @socketio.on('compareDialogue')
 def handle_compareDialogue(message):
+    _logToFile(["handle_compareDialogue"])
     loglst = []
     loglst.append("Data received (on compareDialogue)")
     loglst.append("gameID:", message['gameID'])
@@ -125,6 +129,7 @@ def initializeUserAudioDir():
         print("created:", os.path.isdir(USER_DIALOGUE_DIR),USER_DIALOGUE_DIR )
 
 if __name__ == '__main__':
+    _logToFile(["Application Server about to run"])
     print("Application Server is listening in port " + str(PORT))
     if SAVE_USER_AUDIO: initializeUserAudioDir()
     app.debug=False
