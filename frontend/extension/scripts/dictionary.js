@@ -79,6 +79,27 @@ async function wordsAPI(word) {
 	  return data.json()
 	})
 	.then(res => {
+	    console.log(res);
+		myres = res;
+	})
+	.then(error => console.log(error))
+
+	return myres;
+}
+
+async function mwAPI(word) {
+	var url = 'https://dictionaryapi.com/api/v3/references/collegiate/json/'+ word + '?key=1b4501d9-d118-40c3-8700-2f8d8b23ec86';
+
+	var params = {
+	method: 'GET'
+	}
+	var myres;
+	await fetch(url, params)
+	.then(data => {
+	  return data.json()
+	})
+	.then(res => {
+	    console.log(res);
 		myres = res;
 	})
 	.then(error => console.log(error))
@@ -95,18 +116,29 @@ async function myFunction(word, parent) {
 	myelem.className = "popuptext";
 	parent[0].appendChild(myelem);
 	var myvar;
+	var mytext;
 	await wordsAPI(word).then(res => {myvar = res});
+	if (myvar.definitions[0] == null){
+		await mwAPI(word).then(res => {
+			console.log(res[0].shortdef);
+			mytext = res[0].shortdef;
+			myvar = res});
+	    console.log('no def found w/ WordsAPI');
+	}
+	else {
+	    mytext = myvar.definitions[0].partOfSpeech + '\n' + myvar.definitions[0].definition;
+          if (myvar.definitions.length > 1){
+            for (i=0; i<myvar.definitions.length; i++){
+              if (mytext.includes(myvar.definitions[i].partOfSpeech)){}
+              else {
+                mytext += '\n' + myvar.definitions[i].partOfSpeech + '\n' + myvar.definitions[i].definition;
+                break;
+              }
+            }
+          }
+        }
 	//add code to catch exceptions for no definitions
-  var mytext = myvar.definitions[0].partOfSpeech + '\n' + myvar.definitions[0].definition;
-  if (myvar.definitions.length > 1){
-    for (i=0; i<myvar.definitions.length; i++){
-      if (mytext.includes(myvar.definitions[i].partOfSpeech)){}
-      else {
-        mytext += '\n' + myvar.definitions[i].partOfSpeech + '\n' + myvar.definitions[i].definition;
-        break;
-      }
-    }
-  }
+
 	myelem.innerText = mytext;
 	console.log(myvar);
 	parent[0].children[0].classList.toggle("show");
