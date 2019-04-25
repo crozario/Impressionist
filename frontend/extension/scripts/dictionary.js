@@ -138,6 +138,7 @@ async function myFunction(word, parent) {
 	//add code to catch exceptions for no definitions
 
 	myelem.innerHTML = mytext + '<br>' + '<a href="https://www.merriam-webster.com/dictionary/' + word + '" target="_blank">Source</a>';
+
 	console.log(myvar);
 	parent[0].children[0].classList.toggle("show");
 }
