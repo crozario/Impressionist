@@ -183,17 +183,26 @@ def getMediaAndCaptionFiles(mediaDirectory):
     error = ''
     allfiles = os.listdir(mediaDirectory)
     for file in allfiles:
-        _, ext = os.path.splitext(file)
+        prefix, ext = os.path.splitext(file)
         if ext in ['.mkv', '.mp4', '.avi', '.flv']:
             if mediaFile != '': error += 'multiple video files found\n'
             mediaFile = os.path.join(mediaDirectory, file)
         elif ext == '.vtt':
-            if captionFile !=  '': error += 'multiple caption files found\n'
+            if captionFile !=  '': error += 'multiple labeled_subs caption files found\n'
+            if "labeled_subs" in prefix:
+                captionFile = os.path.join(mediaDirectory, file)
+                netflixWatchID = prefix.replace("labeled_subs_", "")
+                print(netflixWatchID)
+        elif ext == '.srt':
+            print("blah")
+            exit()
             captionFile = os.path.join(mediaDirectory, file)
     if error != '':
         print(error)
         exit()
-    return mediaFile, captionFile
+    return mediaFile, captionFile, videoOffset, netflixWatchID
+
+# def getNetflixVTTandOrigSRT(mediaDirectory):
 
 if __name__=='__main__':
     parser = argparse.ArgumentParser(
@@ -204,7 +213,11 @@ if __name__=='__main__':
     parser.add_argument('--subsOffset', help="add the certain float offset, in milliseconds, to the times read from .vtt subtitle file above. (default) 0", type=float, default=0.0)
     args = parser.parse_args()
 
-    mediaFile, captionFile = getMediaAndCaptionFiles(args.mediaDirectory)
+    mediaFile, captionFile, videoOffset = getMediaAndCaptionFiles(args.mediaDirectory)
+
+    print(mediaFile, captionFile, videoOffset)
+    exit()
+
     dirName = os.path.dirname(mediaFile)
     tmpFullAudio = os.path.join(dirName, "tmpFullAudio.wav")
     tmpDialogue = os.path.join(dirName, "tmpDialogue.wav")

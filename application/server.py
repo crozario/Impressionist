@@ -59,9 +59,9 @@ def test_disconnect():
 def handle_compareDialogue(message):
     loglst = []
     loglst.append("Data received (on compareDialogue)")
-    loglst.append("gameID:", message['gameID'])
-    loglst.append("netflixWatchID:", message['netflixWatchID'])
-    loglst.append("dialogueID:", message['dialogueID'])
+    loglst.append("gameID:" + message['gameID'])
+    loglst.append("netflixWatchID:" + message['netflixWatchID'])
+    loglst.append("dialogueID:" + str(message['dialogueID']))
     _logToFile(loglst)
     # print(message['audioBlob'])
     stream = message['audioBlob']

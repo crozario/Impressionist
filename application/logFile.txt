@@ -1,0 +1,38 @@
+------------------Logging--------------------
+2019-04-24 20:44:15.568173
+---------------------------------------------
+testing
+------------------Logging--------------------
+2019-04-24 20:46:46.614661
+---------------------------------------------
+testing
+------------------Logging--------------------
+2019-04-24 20:47:38.942784
+---------------------------------------------
+testing
+------------------Logging--------------------
+2019-04-24 20:48:03.823741
+---------------------------------------------
+Data received (on compareDialogue)
+gameID:5ca2969ab472c527126aee94
+netflixWatchID:70274032
+dialogueID:63
+------------------Logging--------------------
+2019-04-24 20:48:09.220799
+---------------------------------------------
+
+resulting JSON after comparison:
+{"gameID": "5ca2969ab472c527126aee94", "dialogueID": 63, "error": "", "success": true, "originalEmotion": "angry", "originalCaption": "We might wanna have a backup plan,\\Nthough, just in case she isn't a cartoon.", "phoneticScore": 41.06453822174051, "emotionScore": 0.0, "userEmotion": "happy", "userTranscript": "we might want to go back up there just in case she's in a cartoon", "lyricalScore": 74.64788732394366, "averageScore": 57.856212772842085}
+------------------Logging--------------------
+2019-04-24 20:48:09.221327
+---------------------------------------------
+Done comparing
+resultJSON from func{"gameID": "5ca2969ab472c527126aee94", "dialogueID": 63, "error": "", "success": true, "originalEmotion": "angry", "originalCaption": "We might wanna have a backup plan,\\Nthough, just in case she isn't a cartoon.", "phoneticScore": 41.06453822174051, "emotionScore": 0.0, "userEmotion": "happy", "userTranscript": "we might want to go back up there just in case she's in a cartoon", "lyricalScore": 74.64788732394366, "averageScore": 57.856212772842085}
+------------------Logging--------------------
+2019-04-24 20:48:09.227257
+---------------------------------------------
+about to use threading to talk to back userDB
+------------------Logging--------------------
+2019-04-24 20:48:09.272730
+---------------------------------------------
+Returning JSON back to front!
