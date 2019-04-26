@@ -120,18 +120,16 @@ async function myFunction(word, parent) {
 	await wordsAPI(word).then(res => {myvar = res});
 	if (myvar.definitions[0] == null){
 		await mwAPI(word).then(res => {
-			console.log(res[0].shortdef);
-			mytext = res[0].shortdef;
+			mytext = res[0].fl + '\n\t' + res[0].shortdef;
 			myvar = res});
-	    console.log('no def found w/ WordsAPI');
 	}
 	else {
-	    mytext = myvar.definitions[0].partOfSpeech + '\n' + myvar.definitions[0].definition;
+	    mytext = myvar.definitions[0].partOfSpeech + '\n\t' + myvar.definitions[0].definition;
           if (myvar.definitions.length > 1){
             for (i=0; i<myvar.definitions.length; i++){
-              if (mytext.includes(myvar.definitions[i].partOfSpeech)){}
+              if (mytext.includes(myvar.definitions[i].partOfSpeech) || myvar.definitions[i].partOfSpeech == null){}
               else {
-                mytext += '\n' + myvar.definitions[i].partOfSpeech + '\n' + myvar.definitions[i].definition;
+                mytext += '<hr>' + myvar.definitions[i].partOfSpeech + '\n\t' + myvar.definitions[i].definition;
                 break;
               }
             }
@@ -139,7 +137,8 @@ async function myFunction(word, parent) {
         }
 	//add code to catch exceptions for no definitions
 
-	myelem.innerText = mytext;
+	myelem.innerHTML = mytext + '<br>' + '<a href="https://www.merriam-webster.com/dictionary/' + word + '" target="_blank">Source</a>';
+
 	console.log(myvar);
 	parent[0].children[0].classList.toggle("show");
 }
@@ -155,19 +154,20 @@ async function myFunction(word, parent) {
 
 /* The actual popup (appears on top) */
 .sub-word .popuptext {
-	font-size: small;
-  visibility: hidden;
-  width: 160px;
-  background-color: #555;
-  color: #fff;
-  text-align: center;
-  border-radius: 6px;
-  padding: 8px 0;
-  position: absolute;
-  z-index: 1;
-  bottom: 125%;
-  left: 50%;
-  margin-left: -80px;
+    font-size: small;
+    visibility: hidden;
+    width: 160px;
+    background-color: #555;
+    color: #fff;
+    text-align: left;
+    border-radius: 6px;
+    padding: 8px 8px;
+    font-weight: initial;
+    position: absolute;
+    z-index: 1;
+    bottom: 125%;
+    left: 50%;
+    margin-left: -80px;
 }
 
 /* Popup arrow */
@@ -250,3 +250,4 @@ var idNum = setInterval(updateSubs, 50);
 console.log("Started scriptorino: ", idNum);
 
 //4140497
+//4513753 'powering' not defined
