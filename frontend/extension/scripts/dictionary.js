@@ -104,6 +104,25 @@
     return myres;
   }
 
+  async function mwlAPI(word) {
+    var url = 'https://dictionaryapi.com/api/v3/references/learners/json/' + word + '?key=89b82d41-650a-4e96-93dc-e980c48a3dda';
+
+    var params = {
+      method: 'GET'
+    }
+    var myres;
+    await fetch(url, params)
+      .then(data => {
+        return data.json()
+      })
+      .then(res => {
+        myres = res;
+      })
+      .then(error => console.log(error))
+
+    return myres;
+  }
+
   async function myFunction(word, parent) {
     var prevPopup = document.getElementsByClassName('popuptext')[0];
     if (prevPopup != null) {
@@ -115,10 +134,16 @@
     var myvar;
     var mytext;
     //switcheraoo m-w with wordsAPI order
-    await mwAPI(word).then(res => {
-      mytext = res[0].fl + '\n\t' + res[0].shortdef;
+    await mwlAPI(word).then(res => {
+      mytext = res[0].fl + '\n\t' + res[0].shortdef[0];
       myvar = res
     });
+    if (myvar[0].shortdef == null) {
+      await mwAPI(word).then(res => {
+        mytext = res[0].fl + '\n\t' + res[0].shortdef[0];
+        myvar = res
+      });
+    }
     if (myvar[0].shortdef == null) {
       await wordsAPI(word).then(res => {
         myvar = res
@@ -133,7 +158,7 @@
         }
       }
     }
-    myelem.innerHTML = mytext + '<br>' + '<a href="https://www.merriam-webster.com/dictionary/' + word + '" target="_blank">more</a>';
+    myelem.innerHTML = mytext + '<br>' + '<a href="http://www.learnersdictionary.com/definition/' + word + '" target="_blank">more</a>';
     parent[0].children[0].classList.toggle("show");
   }
 
