@@ -201,7 +201,7 @@ if (not os.path.isdir(CONTENT_DIR)):
     exit()
 
 if __name__ == "__main__":
-    createContentDirsFriends(season=2, episode=None, extractCharacters=False, saveTranscriptToCSV=False, verbose=True)
+    createContentDirsFriends(season=2, episode=None, extractCharacters=True, saveTranscriptToCSV=False, verbose=True)
     
     
     

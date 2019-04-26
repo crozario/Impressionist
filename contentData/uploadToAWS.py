@@ -27,7 +27,8 @@ remotePath = os.path.join(remotePath, episodeFolder)
 cmd = " ".join(["scp -i", pemFile, "-r", origFeaturesDir, "ubuntu@3.91.111.9:"+remotePath])
 print("running $", cmd)
 result = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, shell=True)
-print("features added to ", remotePath)
-print("Pce ✌")
 print(result)
+
+print("features added to ", remotePath)
+print("----------------- Pce ✌ ------------------")
 

@@ -75,6 +75,7 @@ def getFriendsDialogueDichotomy(linkToEpisode):
 	#         if i>=100: break
 		if (len(tmp) >= 2):
 			tmp[0] = tmp[0].strip().upper()
+			tmp[0] = tmp[0].translate(str.maketrans(PUNCTUATION, ' '*len(PUNCTUATION)))
 			tmp[1] = ":".join(tmp[1:]) # for when len(tmp) > 2
 			# remove punctuations and white spaces
 			# tmp[1] = tmp[1].strip().lower().translate(str.maketrans('', '', PUNCTUATION))
