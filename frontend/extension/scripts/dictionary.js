@@ -6,11 +6,6 @@
     //jQuery.noConflict();
   }
 
-  //do something about this at some point
-  const videoPlayer = netflix.appContext.state.playerApp.getAPI().videoPlayer
-  const playerSessionId = videoPlayer.getAllPlayerSessionIds()[0]
-  const player = videoPlayer.getVideoPlayerBySessionId(playerSessionId)
-
   function getSubs() {
     if (document.getElementsByClassName('player-timedtext')[0].children[0] != null) {
       return document.getElementsByClassName('player-timedtext')[0];
@@ -20,7 +15,7 @@
   //Appends subtitle element with new container/subs elements based on netflix'subs
   function setSubs() {
     //need movieId to find container element to add the new subtitle element to
-    var movieId = player.getMovieId();
+    var movieId = getMovieId();
     var netflixSubs = getSubs();
     //make sure to check if subs exist first
     var subs = netflixSubs.cloneNode(true);
@@ -35,7 +30,7 @@
     //places all the new span tags into the contianer element
     subs.firstChild.innerHTML = mytext; //.replace(/\n/, '<br>');
     //remove second inner timed-text container if present
-    if (subs.children > 2) {
+    if (subs.childElementCount > 1) {
       subs.children[1].remove()
     }
     //append outer subtitle container with modified subs
@@ -53,13 +48,13 @@
         //changes color of font to yellow w/ mouseover
         $(this).css('color', 'yellow');
         //pause videoPlayer
-        player.pause();
+        pauseVideo();
       },
       function() {
         //reverts color after mouseaway
         $(this).css('color', '');
         //resume videoPlayer
-        player.play();
+        playVideo();
       }
     );
   }
@@ -83,7 +78,6 @@
         return data.json()
       })
       .then(res => {
-        console.log(res);
         myres = res;
       })
       .then(error => console.log(error))
@@ -103,7 +97,6 @@
         return data.json()
       })
       .then(res => {
-        console.log(res);
         myres = res;
       })
       .then(error => console.log(error))
@@ -121,15 +114,15 @@
     parent[0].appendChild(myelem);
     var myvar;
     var mytext;
-    await wordsAPI(word).then(res => {
+    //switcheraoo m-w with wordsAPI order
+    await mwAPI(word).then(res => {
+      mytext = res[0].fl + '\n\t' + res[0].shortdef;
       myvar = res
     });
-    if (myvar.definitions[0] == null) {
-      await mwAPI(word).then(res => {
-        mytext = res[0].fl + '\n\t' + res[0].shortdef;
+    if (myvar[0].shortdef == null) {
+      await wordsAPI(word).then(res => {
         myvar = res
       });
-    } else {
       mytext = myvar.definitions[0].partOfSpeech + '\n\t' + myvar.definitions[0].definition;
       if (myvar.definitions.length > 1) {
         for (i = 0; i < myvar.definitions.length; i++) {
@@ -140,16 +133,19 @@
         }
       }
     }
-    //add code to catch exceptions for no definitions
-
-    myelem.innerHTML = mytext + '<br>' + '<a href="https://www.merriam-webster.com/dictionary/' + word + '" target="_blank">Source</a>';
-
-    console.log(myvar);
+    myelem.innerHTML = mytext + '<br>' + '<a href="https://www.merriam-webster.com/dictionary/' + word + '" target="_blank">more</a>';
     parent[0].children[0].classList.toggle("show");
   }
 
   (function() {
     let style = `<style>
+    /* definition link */
+a {
+  text-decoration: underline;
+  cursor: pointer;
+  color: #fff;
+  font-size: x-small;
+}
     /* Popup container */
 .sub-word {
   position: relative;
@@ -210,32 +206,29 @@
     document.head.insertAdjacentHTML("beforeend", style);
   })();
 
-  //add jQuery to page
-  setjQuery();
-
   function updateSubs() {
     var textContainers = document.getElementsByClassName('player-timedtext');
     if (textContainers[0].firstChild != null) {
-      var netflixSubText = textContainers[0].innerText;
       //check if our subs elem is present
       if (textContainers.length > 1) {
+        var netflixSubText = textContainers[0].innerText;
         var mySub = textContainers[1];
         var mySubText = mySub.innerText.replace('\n', '');
         //if subs have changed, remove our sub, then create new sub
-        if (netflixSubText != mySubText && player.isPaused() == false) {
-          player.setTimedTextVisibility(true);
+        if (netflixSubText != mySubText && getPaused() == false) {
+          setTimedTextVisibility(true);
           mySub.remove()
           setSubs();
           //disable netflix subs
-          player.setTimedTextVisibility(false);
+          setTimedTextVisibility(false);
           //add hightlighting with hover
           hoverHighlight();
         } else return; //if subs haven't changed, then don't update any elements
       } else {
-        player.setTimedTextVisibility(true);
+        setTimedTextVisibility(true);
         //if our subs aren't present, create them
         setSubs();
-        player.setTimedTextVisibility(false);
+        setTimedTextVisibility(false);
         hoverHighlight();
       }
     } else {
@@ -243,12 +236,15 @@
       if (textContainers.length > 1) {
         textContainers[1].remove();
         //resume player if paused but no subs,
-        if (player.isPaused()) {
-          player.play();
+        if (getPaused()) {
+          playVideo();
         }
       }
     }
   }
+
+  //add jQuery to page
+  setjQuery();
 
   var idNum = setInterval(updateSubs, 50);
 

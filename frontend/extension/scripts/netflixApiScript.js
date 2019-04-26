@@ -50,9 +50,18 @@ let getPaused = () => {
     }
 }
 
+let setTimedTextVisibility = (bool) => {
+    let videoPlayer = netflix.appContext.state.playerApp.getAPI().videoPlayer.getVideoPlayerBySessionId(netflix.appContext.state.playerApp.getAPI().videoPlayer.getAllPlayerSessionIds()[0]);
+    videoPlayer.setTimedTextVisibility(bool);
+}
+
+let getMovieId = () => {
+    let videoPlayer = netflix.appContext.state.playerApp.getAPI().videoPlayer.getVideoPlayerBySessionId(netflix.appContext.state.playerApp.getAPI().videoPlayer.getAllPlayerSessionIds()[0]);
+    return videoPlayer.getMovieId();
+}
 // setTimeout(function() {
 //     document.dispatchEvent(new CustomEvent('RW759_connectExtension', {
-    
+
 //         detail: getSessionSummary()
 //     }));
 // }, 5000);
@@ -82,4 +91,12 @@ document.addEventListener('playVideo', () => {
 
 document.addEventListener('seek', (event) => {
     seek(event.detail);
+});
+
+document.addEventListener('setTimedTextVisibility', (event) => {
+    setTimedTextVisibility(event.detail);
+});
+
+document.addEventListener('getMovieId', (event) => {
+    getMovieId();
 });
