@@ -33,7 +33,7 @@ mongoose.connect(dbConfig.url, {
 
 // define a simple route
 app.get('/', (req,res) => {
-	res.json({"message": "Welcome to Impressionist!"})
+	res.json({"message": "Welcome to the Impressionist Content Database Rest API!"})
 });
 
 // require Content routes
@@ -41,5 +41,5 @@ require("./app/routes/cont.routes.js")(app);
 
 // listen for requests
 app.listen(PORT, () => {
-	console.log("Content Database Server is listening on port "+PORT);
+	console.log("Content Database Server is listening on port " + PORT);
 });

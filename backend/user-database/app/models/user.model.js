@@ -28,7 +28,8 @@ const HistorySchema = mongoose.Schema({
 	netflixWatchID: String, 
 	completed: Boolean,
 	activity: Array,
-	scores: ScoreSchema
+	scores: ScoreSchema,
+	totalScore: Number
 });
 
 const UserSchema = mongoose.Schema({

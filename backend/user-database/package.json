@@ -1,9 +1,10 @@
 {
-  "name": "user-database",
+  "name": "impressionist-user-database-rest-api",
   "version": "1.0.0",
   "description": "Impressionist | User database will store all user information: first name, last name, credentials (email address, username, encrypted password), game stats, time of last login, and game history.",
   "main": "server.js",
   "scripts": {
+    "start": "node server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [

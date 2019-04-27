@@ -27,6 +27,6 @@ Entrepreneur Team members:
 ./runServers.sh
 ```
 
-## All Dependencies
+# Impresionist Project 
 
-- ffmpeg
+- git clone https://github.com/crozario/Impressionist.git

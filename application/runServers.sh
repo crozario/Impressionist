@@ -13,6 +13,7 @@ if [[ "$OSTYPE" == "linux-gnu" || "$OSTYPE" == "darwin"* ]]; then # Linux and Ma
 
     # run application, user and content servers in background process
     eval "$content_db_server_cmd sleep 100 & $user_db_server_cmd sleep 100 & $application_server_cmd"
+    # eval "$content_db_server_cmd sleep 100 & $user_db_server_cmd" # app server is running on AWS so don't need to run here
     # eval "2>/dev/null 1>&2 $application_server_cmd & 2>/dev/null 1>&2 $user_db_server_cmd & 2>/dev/null 1>&2 $content_db_server_cmd"
     
     # run cleanup function before exiting program

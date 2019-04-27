@@ -5,16 +5,19 @@ Description: Content script to interact with the webpage
 
 */
 
-
 // message passing connection through the shared DOM
 // var port = chrome.runtime.connect();
 
+const userDatabaseRestAPIHost = "https://impressionist-user-db-api-east-1.crossley.tech";
+const contentDatabaseRestAPIHost = "https://impressionist-content-db-api-east-1.crossley.tech";
+
 // socket.io connection
-const applicationServerPort = 3000;
-const applicationServerHost = "http://localhost";
-// const serverHost = "10.202.133.175"
-// const serverHost = "https://impressionist.localtunnel.me"
-const socketAddress = applicationServerHost + ":" + applicationServerPort;
+// const applicationServerPort = 3000;
+const applicationServerHost = "https://impressionist-application-east-1.crossley.tech";
+// const applicationServerHost = "http://localhost"
+// const socketAddress = applicationServerHost + ":" + applicationServerPort;
+
+const socketAddress = applicationServerHost;
 let socket;
 
 const timeDelay = 50;
@@ -26,6 +29,9 @@ let currentTime = 0;
 var audioContext;
 var mediaRecorder;
 var audioChunks = [];
+
+
+var speechRecognition;
 
 let contentSupported = false;
 
@@ -39,9 +45,17 @@ let contentSupported = false;
     states
 */
 
+const speechAndAudioData = {
+    speechAvailable : false,
+    audioAvailable : false,
+    currentAudioBlob : null,
+    currentSpeech : null
+}
+
 const gameStates = {
     inactive : "inactive",
     userSpeakingDialogue : "user speaking dialogue",
+    speechAndAudioAvailable : "speech and audio available",
     sendingUserAudio : "sending user audio",
     waitingForDialogueResult : "waiting for dialogue result",
     skippedDialogue : "skipped Dialogue"
@@ -118,7 +132,7 @@ let gameInitialization = (username, watchID) => {
             }
         }
 
-        req.open("POST", "http://localhost:3001/user/initializeGame", true);
+        req.open("POST", userDatabaseRestAPIHost + "/user/initializeGame", true);
         req.setRequestHeader("Content-Type", "application/json");
         req.send(stringifedData);
     })
@@ -155,7 +169,7 @@ let ifGameSupported = (watchID) => {
             }
         }
 
-        req.open("POST", "http://localhost:3002/cont/initializeGame", true);
+        req.open("POST", contentDatabaseRestAPIHost + "/cont/initializeGame", true);
         req.setRequestHeader("Content-Type", "application/json");
         req.send(stringifedData);
     })
@@ -181,7 +195,8 @@ window.onload = () => {
             contentInfo.gameID = jsonResult.gameID
 
             const startTime = Date.now();
-            socket = io.connect(socketAddress);
+            socket = io.connect(socketAddress, { secure: true });
+            // socket = io.connect(socketAddress);
             console.log("socket connection : " + getDuration(startTime));
 
 
@@ -544,12 +559,35 @@ let appendResultsToView = (resultJSON) => {
     row6.appendChild(cell11);
     row6.appendChild(cell12);
 
+    // adding row to display emotion
+    let row7 = document.createElement("tr");
+    let cell13 = document.createElement("td");
+    cell13.appendChild(document.createTextNode("Emotion Bonus"));
+
+    let cell14 = document.createElement("td");
+    cell14.appendChild(document.createTextNode(resultJSON.emotionScore));
+
+    row7.appendChild(cell13);
+    row7.appendChild(cell14);
+
+    let row8 = document.createElement("tr");
+    let cell15 = document.createElement("td");
+    cell15.appendChild(document.createTextNode("Emotions"));
+
+    let cell16 = document.createElement("td");
+    cell16.appendChild(document.createTextNode("orig (" + resultJSON.originalEmotion + ")" + ", user (" + resultJSON.userEmotion + ")"));
+
+    row8.appendChild(cell15);
+    row8.appendChild(cell16);
+
     resultTable.appendChild(row1);
     resultTable.appendChild(row2);
     resultTable.appendChild(row3);
     resultTable.appendChild(row4);
     resultTable.appendChild(row5);
     resultTable.appendChild(row6);
+    resultTable.appendChild(row7);
+    resultTable.appendChild(row8);
     
     resultsReceivedContainer.prepend(resultTable);
 }
@@ -631,7 +669,6 @@ let showResultsContainer = () => {
     
     let resultsContainerElement = document.getElementById('results-container');
     resultsContainerElement.style.display = "block";
-    
 }
 
 let hideResultsContainer = () => {
@@ -967,16 +1004,18 @@ setupEventListeners = () => {
 // “emotionScore”: 0.0, “lyricalScore”: 12.389380530973451, “score”: 18.17628646446875}
 
 
-let compareDialogue = (currentAudioBlob, callback) => {
+let compareDialogue = (currentAudioBlob, currentSpeech, callback) => {
     console.log("compareDialogue Event");
-
+    console.log(currentSpeech);
+    
     const startTime = Date.now();
 
     socket.emit("compareDialogue", {
         gameID: contentInfo.gameID,
         netflixWatchID: contentInfo.netflixWatchID,
         dialogueID: contentInfo.currentDialogueID,
-        audioBlob: currentAudioBlob
+        audioBlob: currentAudioBlob,
+        userTranscript : currentSpeech
     }, (response) => {
         console.log("compareDialogue took : " + getDuration(startTime));
         const resultJSON = JSON.parse(response);
@@ -987,17 +1026,32 @@ let compareDialogue = (currentAudioBlob, callback) => {
     });
 }
 
+let sendDialogueWhenSpeechAndAudioAvailable = () => {
+    if(speechAndAudioData.speechAvailable && speechAndAudioData.audioAvailable) {
+        compareDialogue(speechAndAudioData.currentAudioBlob, speechAndAudioData.currentSpeech, (result) => {
+            appendResultsToView(result)
+        })
+
+        speechAndAudioData.speechAvailable = false;
+        speechAndAudioData.audioAvailable = false;
+        speechAndAudioData.currentAudioBlob = null;
+        speechAndAudioData.currentSpeech = null;
+    }
+}
+
 // audio
 
 let startRecording = () => {
     console.log("startRecording");
     mediaRecorder.start();
+    speechRecognition.start();
     currentRecorderState = recorderStates.recording;
 }
 
 let stopRecording = () => {
     console.log("stopRecording");
     mediaRecorder.stop();
+    speechRecognition.stop();
     currentRecorderState = recorderStates.stopped;
 }
 
@@ -1023,21 +1077,23 @@ let micInitialization = () => {
             };
 
             mediaRecorder = new MediaRecorder(stream, options);
+
+            speechRecognition = new webkitSpeechRecognition();
+            speechRecognition.lang = "en-US";
+            speechRecognition.continuous = true;
             
             // recording stopped
             mediaRecorder.onstop = (e) => {
-            
+                
                 console.log("audioAvailable");
 
                 if(currentGameState === gameStates.sendingUserAudio) {
-                    const audioBlob = new Blob(audioChunks);
+                    speechAndAudioData.currentAudioBlob = new Blob(audioChunks);
             
                     currentGameState = gameStates.waitingForDialogueResult;
 
-                    compareDialogue(audioBlob, (result) => {
-
-                        appendResultsToView(result)
-                    })
+                    speechAndAudioData.audioAvailable = true;
+                    sendDialogueWhenSpeechAndAudioAvailable();
 
                 } else if(currentGameState === gameStates.skippedDialogue) {
                     // skipped dialogue
@@ -1050,6 +1106,13 @@ let micInitialization = () => {
             mediaRecorder.ondataavailable = (e) =>{
                 console.log("mediaRecorder ondataavailable");
                 audioChunks.push(e.data);
+            }
+
+            speechRecognition.onresult = speechEvent => {
+                speechAndAudioData.currentSpeech = speechEvent.results[0][0].transcript
+                speechAndAudioData.speechAvailable = true;
+                sendDialogueWhenSpeechAndAudioAvailable();
+
             }
 
         })

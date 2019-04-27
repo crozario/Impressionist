@@ -1,3 +1,4 @@
+from speech_to_emotion.emotion_classifier_nn import livePredictions
 """
 Application server (Flask)
 $ python3 server.py
@@ -16,7 +17,7 @@ import json
 import sys
 import threading
 
-SAVE_USER_AUDIO = True
+SAVE_USER_AUDIO = False # FOR NOW
 CWD = os.getcwd()
 CONTENT_DIR = os.path.join(os.path.dirname(CWD), 'contentData')
 FRIENDS_DIR_2_12 = os.path.join(
@@ -27,31 +28,50 @@ sys.path.insert(0, 'signalComparison/')
 sys.path.insert(0, 'speech_to_text/')
 sys.path.insert(0, 'speech_to_emotion/')
 sys.path.insert(0, 'databuilder/')
-from compareAudio import performThreeComparisons, sendScoreToBack
+from compareAudio import performThreeComparisons, sendScoreToBack, _logToFile
+_logToFile(["testing"])
 
 PORT = 3000        # Port to listen on (non-privileged ports are > 1023)
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'secret!'
 
+@app.route("/")
+def home_screen():
+    return "Welcome to the Impressionist Application Server!"
+
 socketio = SocketIO(app)
+
+# load emotion comparison model
+emoPredictor = livePredictions(path='speech_to_emotion/Emotion_Voice_Detection_Model.h5', file='speech-to-text/dummy.wav')
+emoPredictor.load_model()
+_logToFile(["emoPredictor after"])
 
 @socketio.on('connect')
 def test_connect():
+    _logToFile(["a user connected"])
     print('a user connected')
+
 
 @socketio.on('disconnect')
 def test_disconnect():
+    _logToFile(["a user disconnected"])
     print('a user disconnected')
 
 @socketio.on('compareDialogue')
 def handle_compareDialogue(message):
-    print("Data received (on compareDialogue)")
-    print("gameID:", message['gameID'])
-    print("netflixWatchID:", message['netflixWatchID'])
-    print("dialogueID:", message['dialogueID'])
+    _logToFile(["handle_compareDialogue"])
+    loglst = []
+    loglst.append("Data received (on compareDialogue)")
+    loglst.append("gameID:" + message['gameID'])
+    loglst.append("netflixWatchID:" + message['netflixWatchID'])
+    loglst.append("dialogueID:" + str(message['dialogueID']))
+    _logToFile(loglst)
     # print(message['audioBlob'])
     stream = message['audioBlob']
+
+    userTranscript = message['userTranscript']
+    # print(message)
 
     prefix = "diag"+str(message['dialogueID']+1)
     webmname = prefix + ".webm"
@@ -64,19 +84,25 @@ def handle_compareDialogue(message):
     with open(webmFile, 'wb') as aud:
         aud.write(stream)
 
-    resultBYTES, resultJSON = performThreeComparisons(message['netflixWatchID'], message['dialogueID'], webmFile, message['gameID'], profile=True)
+    resultBYTES, resultJSON, errorLst = performThreeComparisons(message['netflixWatchID'], message['dialogueID'], webmFile, message['gameID'], message['userTranscript'], emoPredictor, profile=True, logErrors=True)
+
+    _logToFile(["Done comparing", "resultJSON from func"+resultJSON])
 
     if not SAVE_USER_AUDIO: os.remove(wavFile)
     os.remove(webmFile)
 
+    _logToFile(["about to use threading to talk to back userDB"])
     # print("send to db", resultBYTES)
     # FIXME: don't wanna wait until back responds 
     # SOLUTION: async process
-    # thr = threading.Thread(target=sendScoreToBack, args=(resultBYTES, True))
-    # thr.start()
+    thr = threading.Thread(target=sendScoreToBack, args=(resultBYTES, True))
+    thr.start()
     # response = sendScoreToBack(resultBYTES)
     # print("response:", response)
+
+    
     print(resultJSON)
+    _logToFile(["Returning JSON back to front!"])
 
     return resultJSON
 
@@ -103,7 +129,8 @@ def initializeUserAudioDir():
         print("created:", os.path.isdir(USER_DIALOGUE_DIR),USER_DIALOGUE_DIR )
 
 if __name__ == '__main__':
+    _logToFile(["Application Server about to run"])
     print("Application Server is listening in port " + str(PORT))
     if SAVE_USER_AUDIO: initializeUserAudioDir()
-    socketio.run(app, port=PORT)
-        
+    app.debug=False
+    socketio.run(app, host='0.0.0.0', port=PORT)

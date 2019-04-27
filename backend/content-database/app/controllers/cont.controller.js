@@ -22,9 +22,9 @@ exports.insertIntoContentDB = (req,res) => {
 		.then(result => {
 			if(result) {
 				// delete existing record --> the data from req will be saved in a new document in the db later
-				schema.Cont.updateOne({'title': info.title, 'seasonNumber': info.seasonNumber, 'episodeNumber': info.episodeNumber}, {'episodeTitle': info.episodeTitle, 'length': info.length, 'mediaFileLocation': info.mediaFileLocation, 'captions': info.captions, 'featureFileLocations': info.featureFileLocations, 'emotionsList': info.emotionsList, 'netflixWatchID': info.netflixWatchID, 'netflixSubtitleOffset': info.netflixSubtitleOffset, 'characterNames': info.characterNames, 'characterDialogueIDs': info.characterDialogueIDs}, function(err) {
+				schema.Cont.updateOne({'title': info.title, 'seasonNumber': info.seasonNumber, 'episodeNumber': info.episodeNumber}, {'episodeTitle': info.episodeTitle, 'length': info.length, 'mediaFileLocation': info.mediaFileLocation, 'captions': info.captions, 'featureFileLocations': info.featureFileLocations, 'emotionsList': info.emotionsList, 'netflixWatchID': info.netflixWatchID, 'netflixSubtitleOffset': info.netflixSubtitleOffset, 'characterNames': info.characterNames, 'characterDialogueIDs': info.characterDialogueIDs, 'supported':true}, function(err) {
 					if(err) {
-						return res.status(500).json({
+						return res.json({
 							status: "failure",
 							error: err.message || "error occured when updating tv show document"
 						});
@@ -49,7 +49,8 @@ exports.insertIntoContentDB = (req,res) => {
 					netflixWatchID: info.netflixWatchID,
 					netflixSubtitleOffset: info.netflixSubtitleOffset,
 					characterNames: info.characterNames,
-					characterDialogueIDs: info.characterDialogueIDs
+					characterDialogueIDs: info.characterDialogueIDs,
+					supported: true
 				});
 				// store content information in the database
 				content.save()
@@ -58,7 +59,8 @@ exports.insertIntoContentDB = (req,res) => {
 						status: "success"
 					});
 				}).catch(err => {
-					return res.status(500).json({
+					// return res.status(500).json({
+					return res.json({
 						status: "failure",
 						error: err.message || "error occured while storing information in the database"
 					});
@@ -77,9 +79,9 @@ exports.insertIntoContentDB = (req,res) => {
 		.then(result => {
 			if(result) {
 				// delete existing record --> the data from req will be saved in a new document in the db later
-				schema.Cont.updateOne({'title': info.title}, {'length': info.length, 'mediaFileLocation': info.mediaFileLocation, 'captions': info.captions, 'featureFileLocations': info.featureFileLocations, 'emotionsList': info.emotionsList, 'netflixWatchID': info.netflixWatchID, 'netflixSubtitleOffset': info.netflixSubtitleOffset, 'characterNames': info.characterNames, 'characterDialogueIDs': info.characterDialogueIDs}, function(err) {
+				schema.Cont.updateOne({'title': info.title}, {'length': info.length, 'mediaFileLocation': info.mediaFileLocation, 'captions': info.captions, 'featureFileLocations': info.featureFileLocations, 'emotionsList': info.emotionsList, 'netflixWatchID': info.netflixWatchID, 'netflixSubtitleOffset': info.netflixSubtitleOffset, 'characterNames': info.characterNames, 'characterDialogueIDs': info.characterDialogueIDs, 'supported':true}, function(err) {
 					if(err) {
-						return res.status(500).json({
+						return res.json({
 							status: "failure",
 							error: err.message || "error occured when updating movie document"
 						});
@@ -101,7 +103,8 @@ exports.insertIntoContentDB = (req,res) => {
 					netflixWatchID: info.netflixWatchID,
 					netflixSubtitleOffset: info.netflixSubtitleOffset,
 					characterNames: info.characterNames,
-					characterDialogueIDs: info.characterDialogueIDs
+					characterDialogueIDs: info.characterDialogueIDs,
+					supported:true
 				});
 				content.save()
 				.then(data => {
@@ -109,7 +112,7 @@ exports.insertIntoContentDB = (req,res) => {
 						status: "success"
 					});
 				}).catch(err => {
-					return res.status(500).json({
+					return res.json({
 						status: "failure",
 						error: err.message || "error occured while storing information in the database"
 					});
@@ -182,6 +185,7 @@ exports.retrieveContentData = (req,res) => {
 	});
 };
 
+// retrieve all documents from content database
 exports.retrieveAllContent = (req,res) => {
 	schema.Cont.find({},'mediaType title seasonNumber episodeNumber episodeTitle length characterNames')
 	.then(result => {
@@ -197,6 +201,7 @@ exports.retrieveAllContent = (req,res) => {
 	});
 };
 
+// retrieve data to initialize game
 exports.initializeGame = (req,res) => {
 	const info = req.body;
 	// validate request
@@ -206,19 +211,50 @@ exports.initializeGame = (req,res) => {
 			error: "watchID was not provided"
 		});
 	}
-	schema.Cont.findOne({'netflixWatchID': info.netflixWatchID }, {'characterNames':1, 'captions':1 , 'characterDialogueIDs':1})
+	schema.Cont.findOne({'netflixWatchID': info.netflixWatchID }) //, {'characterNames':1, 'captions':1 , 'characterDialogueIDs':1})
 	.then(data => {
-		if(data) {
-			return res.json({
-				supported : true,
-				characterNames : data.characterNames,
-				characterDialogueIDs : data.characterDialogueIDs,
-				captions : data.captions
+		if(data==null) {
+			// add new document to database that contains netflixWatchID, supported==false, missedCounter=0
+			global.content = new schema.Cont({
+				netflixWatchID: info.netflixWatchID,
+				missedCounter: 0,
+				supported: false
+			});
+			content.save()
+			.then(data => {
+				return res.json({
+					supported: false
+				});
+			}).catch(err => {
+				return res.status(500).json({
+					status: "failure",
+					error: err.message || "error storing data in the database"
+				});
 			});
 		} else {
-			return res.json({
-				supported : false
-			});
+			if(data.supported == true) {
+				// return data for supported content document
+					return res.json({
+						supported: data.supported,
+						characterNames: data.characterNames,
+						characterDialogueIDs: data.characterDialogueIDs,
+						captions: data.captions
+					});
+			} else {
+				// increment missedCounter for the document
+				data.missedCounter = data.missedCounter + 1;
+				data.save()
+				.then(result => {
+					return res.json({
+						supported: false
+					});
+				}).catch(err => {
+					return res.status(500).json({
+						status: "failure",
+						error: err.message || "error updating missedCounter"
+					});
+				});
+			}
 		}
 	}).catch(err => {
 		return res.status(500).json({
@@ -226,3 +262,76 @@ exports.initializeGame = (req,res) => {
 		});
 	})
 };
+
+// retrieve hot content; retrieve content that is not supported, but has been requested by users
+exports.hotContent = (req,res) => {
+	schema.Cont.find({'supported': false}, {'netflixWatchID':1, 'supported':1, 'missedCounter':1})
+	.then(docs => {
+		return res.json({
+			status: "success",
+			data: docs
+		});
+	}).catch(err => {
+		return res.status(500).json({
+			status: "failure",
+			error: err.message || "error retrieving information from the database"
+		});
+	});
+};
+
+// search in db for specific keywords sent from front and return all relevant documents
+exports.keywordSearch = (req,res) => {
+	const info = req.body;
+	schema.Cont.find({$text: {$search: info.keywords}}, {'title':1, 'netflixWatchID':1, 'episodeTitle':1, 'mediaType':1})
+	.then(docs => {
+		return res.json({
+			status: "success",
+			data: docs
+		});
+	}).catch(err => {
+		return res.status(500).json({
+			status: "failure",
+			error: err.message || "error retrieving information from the database"
+		});
+	});
+};
+
+// store and retrieve file from database
+// exports.storeRetrieve = (req,res) => {
+// 	const info = req.body;
+// 	console.log(info.file);
+// 	schema.User.findOne({'credentials.username': info.username})
+// 	.then(doc => {
+// 		if(doc) {
+// 			doc.featureFile = info.file;
+// 			console.log(doc.featureFile);
+// 			doc.save()
+// 			.then(result => {
+// 				schema.User.findOne({'credentials.username': info.username})
+// 				.then(doc2 => {
+// 					if(doc2) {
+// 						return res.json({
+// 							status: "success",
+// 							file: doc2.featureFile
+// 						});
+// 					}
+// 				}).catch(err => {
+// 					return res.status(500).json({
+// 						status: "failure",
+// 						error: err.message || "error retrieving information from the database"
+// 					});
+// 				});
+// 			}).catch(err => {
+// 				return res.status(500).json({
+// 					status: "failure",
+// 					error: err.message || "error storing data into the database"
+// 				});
+// 			});
+// 		}
+// 	}).catch(err => {
+// 		return res.status(500).json({
+// 			status: "failure",
+// 			error: err.message || "error retrieving information from the database"
+// 		});
+// 	});
+// };

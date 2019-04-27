@@ -3,6 +3,7 @@ speech-to-emotion/audio\ files/
 node_modules/
 .vscode/*
 .DS_Store
+dh-param
 test-data/example-audio/*
 
 contentData/tvShows/Friends/02/12-The-One-After-The-Superbowl-Part1/friends_s02e12_720p.mkv
@@ -15,3 +16,6 @@ __pycache__
 smile.log
 contentData/tvShows/Friends/02/12-The-One-After-The-Superbowl-Part1/testAudio/
 contentData/tvShows/Friends/02/12-The-One-After-The-Superbowl-Part1/userAudio/
+application/.vscode/*
+contentData/tvShows/Friends/02/*
+contentData/tvShows/*

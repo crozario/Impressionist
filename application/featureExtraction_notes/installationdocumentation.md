@@ -17,9 +17,22 @@ $ cd opensmile-2.3.0
 ## Successful install
 ### Doing the long way now (section 2.2.2)
 
-- Installed autotools with 
+- Required packages: *You need to have the following packages installed: `autotools` (i.e. automake, autoconf, libtool, and m4), `make`, GNU C and C++ compiler `gcc` and `g++`.*
+- For visualization: `per15` and `gnuplot`
+
+- Installed autotools with (mac)
 ```bash
 brew install autoconf automake libtool
+```
+- Ubuntu / linux 
+```bash
+sudo apt-get install autotools-dev
+sudo apt-get install autoconf
+```
+- Above commands also install `m4` and `libtool`
+- *libtoolize* ran with errors on AWS (ubuntu) so had to run
+```bash
+sudo apt install libtool
 ```
     
 - To check already installed
@@ -173,13 +186,22 @@ config.status: executing libtool commands
 - Ran successfully
 
 - Running `make -j4; make` (manual said to run twice)
-- Ran `make install`
+- Ran `make install` (had to run `sudo make install` on AWS)
 
 **DONE**
 
 - Notes:
     - Installed without PortAudio 
 	    - PortAudio is necessary for online/live processing
+
+- Minor complication on AWS
+- it couldn't find shared library because LD_LIBRARY_PATH didn't exist
+```bash
+# For OpenSMILE
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/lib
+```
+
+
 
 ## Failed attempts
 ### Trying “build instructions for the impatient”
