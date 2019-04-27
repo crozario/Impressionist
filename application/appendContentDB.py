@@ -196,7 +196,7 @@ def getVideoFileDuration(mediaFile):
 def similar(a, b):
     return SequenceMatcher(None, a, b).ratio()
 
-def getVideoOffset(netflixVTT, localSRT):
+def getVideoOffset(netflixVTT, localSRT, manual=True):
     """compare dialogues between and returns time offset
     returns timedelta object (can be used later)
     POSITIVE offset -> add offset to subtitle times when extracting dialogues from video
@@ -204,10 +204,32 @@ def getVideoOffset(netflixVTT, localSRT):
     """
     netVTT = webvtt.read(netflixVTT)
     locSRT = webvtt.from_srt(localSRT)
+    lennet = len(netVTT)
+    lenloc = len(locSRT)
     ni = 0; # netVTT count
     li = 0; # locSRT count
     skipcnt = 0
     PUNCTUATION = '!"#$%&()*+,-./;<=>?@[\\]^_`{|}~'
+
+    if (manual):
+        while (ni < lennet and li < lenloc):
+            for _ in range(5):
+                print(ni)
+                print("LEFT\t", netVTT[ni].text.replace("\n", " "))
+                print("RIGHT\t", locSRT[li].text.replace("\n", " "))
+                ni += 1
+                li += 1
+            leftChoice = input("left choice [0-4], ENTER to skip: ")
+            if leftChoice == "":
+                continue
+            rightChoice = input("right choice [0-4]: ")
+            start_ni = netVTT[int(leftChoice)].start
+            # print(netVTT[ni], "start:", start_ni)
+            start_li = locSRT[int(rightChoice)].start
+            # print(locSRT[li], "start:", start_li)
+            difference = extractTime(start_li) - extractTime(start_ni)
+            # print("diff:", difference)
+            return difference
 
     offsetsLst = []
 
@@ -249,8 +271,6 @@ def getVideoOffset(netflixVTT, localSRT):
             # return difference
             ni += 1
             li += 1
-            # print("diffstr:", str(difference))
-            # print("typediff:", type(difference))
 
     mean = sum(offsetsLst, timedelta(0))/len(offsetsLst)
     if (mean > timedelta(seconds=4) or mean < timedelta(seconds=-4)):
@@ -288,6 +308,9 @@ def getMediaAndCaptionFiles(mediaDirectory):
     else:
         if captionFile != '' and SRTfile != '':
             videoOffset = getVideoOffset(captionFile, SRTfile)
+        else:
+            print("VTT Caption and/or SRT caption file not found")
+            exit()
     return mediaFile, captionFile, videoOffset, netflixWatchID
 
 if __name__=='__main__':
@@ -421,9 +444,9 @@ if __name__=='__main__':
 
     # SEND jSON
     import urllib.request #ref: https://stackoverflow.com/a/26876308/7303112
-    contentDB_PORT = str(3002)
-    backURL = "http://localhost:"+contentDB_PORT+"/cont/"
-    # backURL = "https://impressionist-content-db-api-east-1.crossley.tech/cont/"
+    # contentDB_PORT = str(3002)
+    # backURL = "http://localhost:"+contentDB_PORT+"/cont/"
+    backURL = "https://impressionist-content-db-api-east-1.crossley.tech/cont/"
     req = urllib.request.Request(backURL, method='POST')
     req.add_header('Content-Type', 'application/json; charset=utf-8')
     jsondataasbytes = contentJSON.encode('utf-8') # convert to bytes
