@@ -157,7 +157,7 @@ def isMatch(caption, transcript, thres=0.75, verbose=False):
 	return score, simScore
 
 
-def addCharNames(transcriptPairs, inputVTTFile, outputVTTFile, verbose=False, detailedVerbose=False, interactive=False, interactiveResolve=False):
+def addCharNames(transcriptPairs, inputVTTFile, outputVTTFile, verbose=False, detailedVerbose=False, interactive=False, interactiveResolve=False, specialNotFoundIncrement=None, specialInitialMaxNotMatchedBeforeMovingOn=None):
 	"""add character names to vtt captions (will return modified captions list)
 	`transcriptPairs` : list of tuples of size two 
 		[0] => characterName (ALL CAPS), 
@@ -177,7 +177,7 @@ def addCharNames(transcriptPairs, inputVTTFile, outputVTTFile, verbose=False, de
 	min_score = 0.75
 	cap_i = 0 # counter for captions
 	tra_j = 0 # counter for transcripts pairs
-	maxNotMatchedBeforeMovingOn = 10
+	maxNotMatchedBeforeMovingOn = 10 if specialInitialMaxNotMatchedBeforeMovingOn is None else specialInitialMaxNotMatchedBeforeMovingOn
 	maxNotFound = 20 # 20 consistent dialogues couldn't be matched with transcripts 
 	foundFirst = False
 	notFoundIndices = []
@@ -207,14 +207,14 @@ def addCharNames(transcriptPairs, inputVTTFile, outputVTTFile, verbose=False, de
 		nonlocal didntFindCount
 		nonlocal didntMatchCount
 		nonlocal foundFirst
+		nonlocal maxNotMatchedBeforeMovingOn
 		if interactiveResolve: mostRecentSkippedTranscripts.clear()
         # print("++Matched!++", transcriptPairs[tra_j][0], currCap)
 		# modify actual captions
 		stdVttCaptions[cap_i].text = "<v "+transcriptPairs[tra_j][0]+">"+stdVttCaptions[cap_i].text
 		if verbose: print("Matched : ", stdVttCaptions[cap_i].raw_text)
-		if not foundFirst:
+		if not foundFirst or maxNotMatchedBeforeMovingOn != 3:
 			foundFirst = True
-			nonlocal maxNotMatchedBeforeMovingOn
 			maxNotMatchedBeforeMovingOn = 3 # reduce to minimize errors throughout 
 		cap_i += 1
 		didntFindCount = 0
@@ -230,11 +230,13 @@ def addCharNames(transcriptPairs, inputVTTFile, outputVTTFile, verbose=False, de
 		nonlocal tra_j
 		nonlocal didntMatchCount
 		nonlocal didntFindCount
+		nonlocal maxNotMatchedBeforeMovingOn
 		if interactiveResolve: mostRecentSkippedTranscripts.append(tra_j)
 		tra_j += 1
 		didntMatchCount += 1
 		if didntMatchCount > maxNotMatchedBeforeMovingOn or tra_j >= len(transcriptPairs):
-			
+			# increase for next time
+			maxNotMatchedBeforeMovingOn += 2 if specialNotFoundIncrement is None else specialNotFoundIncrement
 			# manually resolve?
 			if (interactiveResolve):
 				resolveSuccess = interactiveResolveDialogue(cap_i)

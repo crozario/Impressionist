@@ -105,46 +105,61 @@ def _getFilesFrom(folderPath, extension="all", verbose=False):
 def _writeDiagsToCSV(tuplesList, fileName, delim=","):
     print("_writeDiagsToCSV not implemented yet")
 
-def createContentDirsFriends(season=2, episode=None, extractCharacters=False, saveTranscriptToCSV=False, verbose=False):
+def createContentDirsFriends(season=2, episode=None, folderPath=None, transcriptLink=None, extractCharacters=False, saveTranscriptToCSV=False, verbose=False):
     """Create folders inside contentData folder
     TODO: add a loop to do all seasons
     `extractCharacters`
+
+    if `folderPath` and `transcriptLink` contain value
+        - don't need to create seasona and episode folders
+            - they will be created using path
+        - transcript link will be used to get char names
     """
     # Create Friends home directory
     friendsDir = os.path.join(CONTENT_DIR, "tvShows/Friends")
     _checkAndCreateFolder(friendsDir)
 
-    # initialize directories inside Friends
-    episodes, couldntParse = getFriendsTranscriptsLinks(season=season, episode=episode)
-    print("------------Couldn't parse------------")
-    for c in couldntParse: print(c)
-    print("--------------------------------------")
-    assert (len(episodes) is not 0), "no episodes were extracted"
+    if (folderPath is not None and transcriptLink is not None):
+        print(folderPath)
+        print(transcriptLink)
 
-    seasonNum = episodes[0][1]
-    if (seasonNum < 10): seasonNum = "0" + str(seasonNum)
-    seasonDir = os.path.join(friendsDir, seasonNum)
-    # create folder for season 02
-    _checkAndCreateFolder(seasonDir)
+        episodes = [(folderPath, transcriptLink)]
+    else:
+        # initialize directories inside Friends
+        episodes, couldntParse = getFriendsTranscriptsLinks(season=season, episode=episode)
+        print("------------Couldn't parse------------")
+        for c in couldntParse: print(c)
+        print("--------------------------------------")
+        assert (len(episodes) is not 0), "no episodes were extracted"
+
+        seasonNum = episodes[0][1]
+        if (seasonNum < 10): seasonNum = "0" + str(seasonNum)
+        seasonDir = os.path.join(friendsDir, seasonNum)
+        # create folder for season 02
+        _checkAndCreateFolder(seasonDir)
     
     for ep in episodes:
-        num = str(ep[2]) + "-"
-        name = ep[3]
-        name = "-".join(name.split(" "))
-        episodeFolderName = num+name
-        # remove any \' from name
-        episodeFolderName = episodeFolderName.replace("'", "")
-        # FIXME: replace dots in name like "Ross-and-rachel...You-Know"
-        fullEpisodeFolderName = os.path.join(seasonDir, episodeFolderName)
-        if ("'" in fullEpisodeFolderName):
-            print("apostrophe in path. not supported yet. please change names")
-            continue
-        print(fullEpisodeFolderName)
-        # _checkAndCreateFolder(fullEpisodeFolderName)
 
+        if (folderPath is not None and transcriptLink is not None):
+            fullEpisodeFolderName, link = ep
+        else:
+            num = str(ep[2]) + "-"
+            name = ep[3]
+            name = "-".join(name.split(" "))
+            episodeFolderName = num+name
+            # remove any \' from name
+            episodeFolderName = episodeFolderName.replace("'", "")
+            # FIXME: replace dots in name like "Ross-and-rachel...You-Know"
+            fullEpisodeFolderName = os.path.join(seasonDir, episodeFolderName)
+            if ("'" in fullEpisodeFolderName):
+                print("apostrophe in path. not supported yet. please change names")
+                continue
+            print(fullEpisodeFolderName)
+            # _checkAndCreateFolder(fullEpisodeFolderName)
+            link = ep[0]
+            
         if (extractCharacters):
             # get transcript and character name pairs
-            link = ep[0]
             print("----------------------------------------------------------------------------")
             print("**Extracting characters for :", fullEpisodeFolderName)
             print("**FROM: ", link)
@@ -153,8 +168,7 @@ def createContentDirsFriends(season=2, episode=None, extractCharacters=False, sa
             transcriptPairs = getFriendsDialogueDichotomy(link)
             
             if (saveTranscriptToCSV):
-                csvFileName =  "-".join(["transcript", str(seasonNum), str(ep[2])])
-                csvFileName += ".csv"
+                csvFileName =  "transcript.csv"
                 fullcsvFileName = os.path.join(fullEpisodeFolderName, csvFileName)
                 print("Writing transcriptPairs to CSV file:", fullcsvFileName)
                 _writeDiagsToCSV(transcriptPairs, fullcsvFileName, delim=",")
@@ -189,7 +203,8 @@ def createContentDirsFriends(season=2, episode=None, extractCharacters=False, sa
             
             if fullInputSubsPath != "" and fullOutputSubsPath != "":
                 print("getting charNames....")
-                addCharNames(transcriptPairs, fullInputSubsPath, fullOutputSubsPath, verbose=False, detailedVerbose=False, interactive=True, interactiveResolve=False)
+                addCharNames(transcriptPairs, fullInputSubsPath, fullOutputSubsPath, verbose=True, detailedVerbose=False,
+                             interactive=True, interactiveResolve=False, specialInitialMaxNotMatchedBeforeMovingOn=250)
             else:
                 print("netflix_subs_...vtt file not found. Moving on.")
 
@@ -200,8 +215,18 @@ if (not os.path.isdir(CONTENT_DIR)):
     print("Using relative paths. Please run this script from inside application/dialogueExtraction/ OR make sure "+CONTENT_DIR+" exists.")
     exit()
 
+import sys
 if __name__ == "__main__":
-    createContentDirsFriends(season=2, episode=None, extractCharacters=True, saveTranscriptToCSV=False, verbose=True)
+    episodeNum = None
+    folderPath = None
+    transcriptLink = None
+    if (len(sys.argv) == 1): episodeNum = None
+    elif (len(sys.argv) == 2): episodeNum = int(sys.argv[1])
+    elif (len(sys.argv) == 3): # args folder and link
+        episodeNum = None
+        folderPath = sys.argv[1]
+        transcriptLink = sys.argv[2]
+    createContentDirsFriends(season=2, episode=episodeNum, folderPath=folderPath, transcriptLink=transcriptLink,  extractCharacters=True, saveTranscriptToCSV=False, verbose=True)
     
     
     
