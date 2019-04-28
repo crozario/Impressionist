@@ -30,7 +30,6 @@ var audioContext;
 var mediaRecorder;
 var audioChunks = [];
 
-
 var speechRecognition;
 
 let contentSupported = false;

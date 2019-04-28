@@ -1,178 +1,68 @@
-# Impressionist Chrome Extension 
+This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
-## Chrome Extension Architecture
+## Available Scripts
 
-![Flow diagram for Chrome Extension](https://developer.chrome.com/static/images/overview/messagingarc.png)
+In the project directory, you can run:
 
-### Resources
+### `npm start`
 
-https://developer.chrome.com/extensions/overview
+Runs the app in the development mode.<br>
+Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
 
-https://developer.chrome.com/extensions/content_scripts
+The page will reload if you make edits.<br>
+You will also see any lint errors in the console.
 
-https://stackoverflow.com/questions/36371072/chrome-extension-messaging-architecture
+### `npm test`
 
-https://stackoverflow.com/questions/17246133/contexts-and-methods-for-communication-between-the-browser-action-background-sc/17276475#17276475
+Launches the test runner in the interactive watch mode.<br>
+See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
 
-https://stackoverflow.com/questions/9515704/insert-code-into-the-page-context-using-a-content-script/9517879#9517879
+### `npm run build`
 
-https://stackoverflow.com/questions/4532236/how-to-access-the-webpage-dom-rather-than-the-extension-page-dom
+Builds the app for production to the `build` folder.<br>
+It correctly bundles React in production mode and optimizes the build for the best performance.
 
-https://stackoverflow.com/questions/32807720/how-to-invoke-javascript-function-on-web-page-from-chrome-extension
+The build is minified and the filenames include the hashes.<br>
+Your app is ready to be deployed!
 
-https://stackoverflow.com/questions/10526995/can-a-site-invoke-a-browser-extension/10527809#10527809
+See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
 
-**Message Passing**
+### `npm run eject`
 
-https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/runtime/connect
+**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
 
+If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
 
-### Netflix Integration
+Instead, it will copy all the configuration files and the transitive dependencies (Webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
 
-https://stackoverflow.com/questions/42105028/netflix-video-player-in-chrome-how-to-seek
+You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
 
+## Learn More
 
-**Notes**
+You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
 
-Encrypt message passing between content script and injected script using asymmetric cryptography?
+To learn React, check out the [React documentation](https://reactjs.org/).
 
-Record audio from netflix video player
-- Virtual Pulsewave device
-- get audio from DOM?
-- get audio file location/stream from webpage
+### Code Splitting
 
+This section has moved here: https://facebook.github.io/create-react-app/docs/code-splitting
 
+### Analyzing the Bundle Size
 
-- Web Worker 
+This section has moved here: https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size
 
-- Current Time 
-- Play/Pause
+### Making a Progressive Web App
 
-**TODO**
+This section has moved here: https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app
 
+### Advanced Configuration
 
-check if subtitles are on
-setup state variable for isplaying, isPaused, 
+This section has moved here: https://facebook.github.io/create-react-app/docs/advanced-configuration
 
+### Deployment
 
-videoPlayer.setVolume() : volume between 0 and 1
-videoPlayer.setPlaybackRate : 
+This section has moved here: https://facebook.github.io/create-react-app/docs/deployment
 
+### `npm run build` fails to minify
 
-#### Netflix API
-
-**Dom Elements**
-
-- class="player-timedtext-text-container" (subtitles div container)
-- class="sizing-wrapper" (netflix div for sizing player)
-- class="nf-kb-nav-wrapper" (wraps around "sizing-wrapper")
-- class="VideoContainer" (video container)
-
-- id="{Content Watch ID}" (video player container)
-
-- ef (subtitile)
-
-**Implemented Netflix Video Player Functions**
-
-GetCurrentTime()
-pauseVideo()
-playVideo()
-seek(toTime)
-------
-
-**TODO**
-
-getElement()
-getDuration()
-getEnded() ->
-getLoaded()
-getMovieId()
-getMuted()
-getPaused()
-getPlaying()
-getSegmentTime()
-getVideoSize() ()
-getVolume() -->
-getXid() 
-close() 
-
-------
-
-
-netflix.appContext.state.playerApp.getAPI().videoPlayer
-
-- get video player => netflix.appContext.state.playerApp.getAPI().videoPlayer.getVideoPlayerBySessionId(netflix.appContext.state.playerApp.getAPI().videoPlayer.getAllPlayerSessionIds()[0])
-
-- get session id => netflix.appContext.state.playerApp.getAPI().videoPlayer.getAllPlayerSessionIds()[0]
-
-
-netflix.appContext.state.playerApp.getAPI().videoPlayer.getVideoPlayerBySessionId(netflix.appContext.state.playerApp.getAPI().videoPlayer.getAllPlayerSessionIds()[0])
-
-
-netflix.appContext.state.playerApp.getAPI().videoPlayer.getCurrentTextTrackBySessionId(netflix.appContext.state.playerApp.getAPI().videoPlayer.getAllPlayerSessionIds()[0])
-
-
-netflix.appContext.getPlayerApp().getAPI().videoPlayer.showTimedTextBySessionId(netflix.appContext.state.playerApp.getAPI().videoPlayer.getAllPlayerSessionIds()[0])
-
-**VideoPlayer Functions List**
-
-addEpisode: ƒ y(a)
-addEventListener: ƒ (b,c,d)
-close: ƒ (e) --> video player closes
-diagnostics: {addEventListener: ƒ, removeEventListener: ƒ, getModel: ƒ, getTime: ƒ, getGroups: ƒ}
-engage: ƒ ()
-getAdditionalLogInfo: ƒ ()
-getAudioTrack: ƒ ()
-getAudioTrackList: ƒ ()
-getBufferedTime: ƒ ()
-getBusy: ƒ ()
-getCongestionInfo: ƒ (a)
-getCropAspectRatio: ƒ ()
-getCurrentTime: ƒ ()
-getDuration: ƒ ()
-getElement: ƒ ()
-getEnded: ƒ ()
-getError: ƒ ()
-getLoaded: ƒ ()
-getMovieId: ƒ ()
-getMuted: ƒ ()
-getPaused: ƒ ()
-getPlayback: ƒ ()
-getPlaying: ƒ ()
-getReady: ƒ ()
-getSegmentTime: ƒ ()
-getSessionSummary: ƒ ()
-getTimedTextTrack: ƒ ()
-getTimedTextTrackList: ƒ ()
-getTimedTextVisibility: ƒ ()
-getTrickPlayFrame: ƒ (a)
-getVideoSize: ƒ ()
-getVolume: ƒ ()
-getXid: ƒ ()
-hasLoggedClose: false
-induceError: ƒ (a)
-isLoading: ƒ ()
-load: ƒ ()
-loadCustomTimedTextTrack: ƒ (a,b,c)
-loaded: true
-loading: false
-observables: {loaded: e, loadedTracks: e, loadedMetadata: e}
-pause: ƒ ()
-play: ƒ ()
-playNextEpisode: ƒ (a)
-playSegment: ƒ (a)
-prepare: ƒ ()
-queueSegment: ƒ (a)
-removeEventListener: ƒ (b,c)
-seek: ƒ (a)
-setAudioTrack: ƒ (a)
-setMuted: ƒ (a)
-setPlaybackRate: ƒ (a)
-setTimedTextBounds: ƒ (a)
-setTimedTextMargins: ƒ (a)
-setTimedTextSize: ƒ (a)
-setTimedTextTrack: ƒ (a)
-setTimedTextVisibility: ƒ (a)
-setVolume: ƒ (a)
-tryRecoverFromStall: ƒ ()
-updateNextSegmentWeights: ƒ (a,b)
+This section has moved here: https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify
