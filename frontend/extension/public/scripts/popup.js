@@ -5,9 +5,12 @@ Description: Popup window for chrome extension
 
 */
 
+let userToken = null;
+
+
 onload = () => {
     console.log("on popup script");
-    setup();
+    setup()
 
     // let searchTab = document.getElementById('search-tab');
     // searchTab.onclick = tabOnClick("search-tab");
@@ -16,24 +19,38 @@ onload = () => {
         // user page
         console.log("Logged In");
 
+        loadUserPage()
     } else {
         // login page
         console.log("Not Logged In");
+        loadLoginPage();
     }
+}
 
+let isLoggedIn = () => { return false; }
 
+let loadUserPage = () => {
 
 }
 
 let setup = () => {
     let loginButton = document.getElementById('login-button');
+}
+
+
+let loadLoginPage = () => {
+    let contentsContainer = document.getElementById("contents-container");
+
+    let loginButton = document.createElement('button');
+    loginButton.type = "submit";
+    loginButton.id = "login-button";
+    loginButton.innerHTML = "Log in with email";
     loginButton.onclick = loginButtonPressed;
 
-    // let signupButton = document.getElementById('signup-button');
-    // signupButton.onclick = signupButtonPressed;
+    console.log(contentsContainer)
+
+    contentsContainer.appendChild(loginButton);
 }
-  
-let isLoggedIn = () => { return false; }
 
 
 
@@ -42,8 +59,26 @@ let loginButtonPressed = () => {
     let login_button = document.getElementById('login-button');
 
     chrome.identity.getAuthToken({interactive: true}, function(token) {
+        userToken = token
         console.log(token);
+
+        if(chrome.runtime.lastError) {
+            console.log(chrome.runtime.lastError.message);
+            return;
+        }
+
+        let xhr = new XMLHttpRequest();
+        
+        xhr.onload = function() {
+            alert(xhr.response);
+        };
+
+        xhr.open('GET', 'https://www.googleapis.com/oauth2/v2/userinfo?alt=json&access_token=' + token);
+        xhr.send();
     });
+
+
+
 
 
     // let email = document.getElementById('login-input-email').value;
@@ -81,3 +116,11 @@ let loginButtonPressed = () => {
 
 }
 
+
+let logoutButtonPressed = () => {
+    if(userToken != null) {
+        chrome.identity.removeCachedAuthToken(token, function(callback) {
+            console.log("logout Pressed : " + callback);
+        })
+    }
+}

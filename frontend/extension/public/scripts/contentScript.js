@@ -955,30 +955,6 @@ let checkAllDialogues = () => {
     }
 }
 
-
-// Netflix API
-
-// document.addEventListener('RW759_connectExtension', function(e) {
-//     alert(e.detail);
-// });
-
-// let getCurrentTime = () => {
-//     document.dispatchEvent(new CustomEvent('getCurrentTime',  (res) => {
-//         return res;
-//     }));
-// }
-
-// window.addEventListener("message", function(event) {
-//     if (event.source != window)
-//       return;
-
-//     if (event.data.type && (event.data.type == "FROM_PAGE")) {
-//       console.log("Content script received: " + event.data.text);
-//       port.postMessage(event.data.text);
-//     }
-//   }, false);
-
-
 let pauseVideo = () => {
     document.dispatchEvent(new CustomEvent('pauseVideo', {}));
     currentVideoState = videoStates.paused;
