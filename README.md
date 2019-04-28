@@ -21,6 +21,16 @@ Entrepreneur Team members:
 - Alfurqan Khan
 - Raj Patel
 
+## Webpages
+
+**Home**
+* https://impressionist.crossley.tech
+
+**Privacy Policy** 
+* https://impressionist.crossley.tech/privacypolicy
+
+**Terms of Service**
+* https://impressionist.crossley.tech/termsofservice
 ## Run development servers
 
 ```bash
