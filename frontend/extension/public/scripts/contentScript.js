@@ -8,17 +8,27 @@ Description: Content script to interact with the webpage
 // message passing connection through the shared DOM
 // var port = chrome.runtime.connect();
 
-const userDatabaseRestAPIHost = "https://impressionist-user-db-api-east-1.crossley.tech";
-const contentDatabaseRestAPIHost = "https://impressionist-content-db-api-east-1.crossley.tech";
+const production = true;
 
-// socket.io connection
-// const applicationServerPort = 3000;
-const applicationServerHost = "https://impressionist-application-east-1.crossley.tech";
-// const applicationServerHost = "http://localhost"
-// const socketAddress = applicationServerHost + ":" + applicationServerPort;
+const userDatabaseRestAPIHost = null;
+const contentDatabaseRestAPIHost = null;
+const applicationServerHost = null;
+const socketAddress = null;
+let socket = null;
 
-const socketAddress = applicationServerHost;
-let socket;
+if (production == true) {
+    userDatabaseRestAPIHost = "https://impressionist-user-db-api-east-1.crossley.tech";
+    contentDatabaseRestAPIHost = "https://impressionist-content-db-api-east-1.crossley.tech";
+    applicationServerHost = "https://impressionist-application-east-1.crossley.tech";
+    socketAddress = applicationServerHost;
+} else {
+    userDatabaseRestAPIHost = "https://impressionist-user-db-api-east-1.crossley.tech";
+    contentDatabaseRestAPIHost = "https://impressionist-content-db-api-east-1.crossley.tech";
+
+    const applicationServerPort = 3000;
+    applicationServerHost = "http://localhost"
+    socketAddress = applicationServerHost + ":" + applicationServerPort;
+}
 
 const timeDelay = 50;
 
@@ -195,10 +205,13 @@ window.onload = () => {
             contentInfo.gameID = jsonResult.gameID
 
             const startTime = Date.now();
-            socket = io.connect(socketAddress, { secure: true });
-            // socket = io.connect(socketAddress);
-            console.log("socket connection : " + getDuration(startTime));
+            if(production == true) {
+                socket = io.connect(socketAddress, { secure: true });
+            } else {
+                socket = io.connect(socketAddress);
+            }
 
+            console.log("socket connection : " + getDuration(startTime));
 
             setupContentScript();
             setupEventListeners()
