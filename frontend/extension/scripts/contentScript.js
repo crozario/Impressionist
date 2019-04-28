@@ -41,7 +41,7 @@ let contentSupported = false;
 //     currentRecorderState : inactive,
 // }
 
-/* 
+/*
     states
 */
 
@@ -93,7 +93,7 @@ let comparisonData = [
 
 let contentInfo = {
     captions: null, // format => [[startTime, endTime], ...]
-    gameID: null, // associated with the specific user and watchID 
+    gameID: null, // associated with the specific user and watchID
     previousDialogueID: null, // index of previous dialogue in the dialogue array
     currentDialogueID: null, // index of the current dialogue in the dialogue array
     nextDialogueID: null, // index of the next dialogue in the dialogue array
@@ -178,10 +178,11 @@ let ifGameSupported = (watchID) => {
 
 window.onload = () => {
     console.log("on contentScript script");
+    contentInfo.netflixWatchID = window.location.href.match(/^.*\/([0-9]+)\??.*/)[1]
 
     const watchID = getWatchID();
     const username = getUsername();
-
+    console.log(watchID)
     ifGameSupported(watchID).then((jsonResult) => {
         // content supported and received content info from content db
         contentSupported = true;
@@ -222,6 +223,7 @@ window.onload = () => {
 
 let setupContentScript = () => {
     injectNetflixScript();
+    injectDictionaryScript();
     injectSideBar();
 }
 
@@ -238,14 +240,26 @@ let injectNetflixScript = () => {
     console.log("injected netflixApiScript");
 }
 
+let injectDictionaryScript = () => {
+    let script = document.createElement('script');
+    script.src = chrome.extension.getURL('scripts/dictionary.js');
+    (document.head || document.documentElement).appendChild(script);
+
+    script.onload = function () {
+        script.remove();
+    };
+
+    console.log("injected dictionary");
+}
+
 let injectSideBar = () => {
     console.log("inside injectSideBar");
     let pageContainer = document.getElementsByClassName('nf-kb-nav-wrapper');
     let videoContainer = document.getElementsByClassName('sizing-wrapper')[0];
 
 
-    /* 
-        Add to netflix webpage 
+    /*
+        Add to netflix webpage
     */
 
     let sideBarContainerDivElement = document.createElement('div');
@@ -281,7 +295,7 @@ let injectSideBar = () => {
     currentDialogueElement.style.textAlign = "center";
     currentDialogueElement.style.margin = "20px 0";
 
-    
+
     let userFeedbackContainer = document.createElement('div');
     userFeedbackContainer.style.height = "150px";
     userFeedbackContainer.style.margin = "0";
@@ -292,7 +306,7 @@ let injectSideBar = () => {
     characterPickerElement.style.background = "linear-gradient(to right, #0BBFD6 0%, #5ACCC1 100%)";
     characterPickerElement.id = "character-picker";
     addCharacterNamesToPicker(characterPickerElement);
-    
+
     userFeedbackContainer.append(characterPickerElement);
 
     /*
@@ -314,7 +328,7 @@ let injectSideBar = () => {
     skipButton.addEventListener("click", skipButtonOnClick);
 
     userSpeakContainer.style.display = "none";
-    
+
     /*
         shows loader and results from compareDialogue
     */
@@ -337,7 +351,7 @@ let injectSideBar = () => {
     // resultsReceivedContainer.style.border = "1px solid gray";
     // resultsReceivedContainer.className = "animate-bottom";
     // resultsReceivedContainer.style.display = "none";
-    
+
     // resultsReceivedTemplate(resultsReceivedContainer);
 
     // resultsContainer.style.display = "none";
@@ -346,11 +360,11 @@ let injectSideBar = () => {
 
     userFeedbackContainer.appendChild(userSpeakContainer);
     userFeedbackContainer.appendChild(resultsContainer);
-   
+
 
     /*
         interaction with dialogues
-        go to Previous or Next dialogue 
+        go to Previous or Next dialogue
     */
     let dialogueContainerElement = document.createElement('div');
     dialogueContainerElement.style.width = "100%";
@@ -381,7 +395,7 @@ let injectSideBar = () => {
     sideBarContainerDivElement.appendChild(dialogueContainerElement)
     pageContainer[0].appendChild(sideBarContainerDivElement);
 
-    /* 
+    /*
         Manipulate to netflix webpage
     */
     videoContainer.style.right = "300px"; // need to add this to a class inside ('size-wrapper') to show and hide side bar
@@ -427,8 +441,8 @@ let addCharacterNamesToPicker = (pickerElement) => {
             contentInfo.characterPicked = null;
             contentInfo.characterPickedIDs = null;
         } else if (selectedIndex == 1) {
-            
-            // check if allCharacterID's exist 
+
+            // check if allCharacterID's exist
 
             if(contentInfo.allCharacterIDs !== null) {
                 contentInfo.characterPicked = "All";
@@ -436,7 +450,7 @@ let addCharacterNamesToPicker = (pickerElement) => {
             } else {
                 pickerElement.selectedIndex = 0;
             }
-            
+
         } else {
             contentInfo.characterPicked = contentInfo.characterNames[selectedIndex - 2];
             contentInfo.characterPickedIDs = contentInfo.characterDialogueIDs[contentInfo.characterPicked];
@@ -462,22 +476,22 @@ let doneButtonOnClick = () => {
     if(isUserSpeakContainerDisplayed() === true) {
         hideUserSpeakContainer();
     }
-    
+
     currentGameState = gameStates.sendingUserAudio;
-    
+
     stopRecording();
     playVideo();
     // showResultsContainer();
 }
 
 let skipButtonOnClick = () => {
-    
+
     currentGameState = gameStates.skippedDialogue;
 
     if(isUserSpeakContainerDisplayed() === true) {
         hideUserSpeakContainer();
     }
-    
+
     stopRecording();
     playVideo();
 }
@@ -507,7 +521,7 @@ let appendResultsToView = (resultJSON) => {
     let cell3 = document.createElement("td");
     cell3.appendChild(document.createTextNode(resultJSON.dialogueID));
     cell3.style.fontWeight = 'bold';
-    
+
     let cell4 = document.createElement("td");
     cell4.appendChild(document.createTextNode(resultJSON.averageScore));
     cell4.style.fontWeight = 'bold';
@@ -515,44 +529,44 @@ let appendResultsToView = (resultJSON) => {
     row2.appendChild(cell3);
     row2.appendChild(cell4);
 
-    // original caption row 
+    // original caption row
     let row3 = document.createElement("tr");
     let cell5 = document.createElement("td");
     cell5.appendChild(document.createTextNode("Original Caption"));
- 
+
     let cell6 = document.createElement("td");
     cell6.appendChild(document.createTextNode(resultJSON.originalCaption));
 
     row3.appendChild(cell5);
     row3.appendChild(cell6);
 
-    // user transcript row  
+    // user transcript row
     let row4 = document.createElement("tr");
     let cell7 = document.createElement("td");
     cell7.appendChild(document.createTextNode("User Transcript"));
- 
+
     let cell8 = document.createElement("td");
     cell8.appendChild(document.createTextNode(resultJSON.userTranscript));
 
     row4.appendChild(cell7);
     row4.appendChild(cell8);
 
-    // phonetic score row 
+    // phonetic score row
     let row5 = document.createElement("tr");
     let cell9 = document.createElement("td");
     cell9.appendChild(document.createTextNode("Phonetic Score"));
- 
+
     let cell10 = document.createElement("td");
     cell10.appendChild(document.createTextNode(resultJSON.phoneticScore));
 
     row5.appendChild(cell9);
     row5.appendChild(cell10);
 
-    // lyrical score row 
+    // lyrical score row
     let row6 = document.createElement("tr");
     let cell11 = document.createElement("td");
     cell11.appendChild(document.createTextNode("Lyrical Score"));
- 
+
     let cell12 = document.createElement("td");
     cell12.appendChild(document.createTextNode(resultJSON.lyricalScore));
 
@@ -588,7 +602,7 @@ let appendResultsToView = (resultJSON) => {
     resultTable.appendChild(row6);
     resultTable.appendChild(row7);
     resultTable.appendChild(row8);
-    
+
     resultsReceivedContainer.prepend(resultTable);
 }
 
@@ -655,7 +669,7 @@ let isLoaderDisplayed = () => {
     }
 }
 
-let showResultsContainer = () => { 
+let showResultsContainer = () => {
 
     // if(currentGameState === gameStates.waitingForDialogueResult || currentGameState === gameStates.sendingUserAudio) {
     //     if(isLoaderDisplayed() === false) {
@@ -666,7 +680,7 @@ let showResultsContainer = () => {
     //         hideLoader();
     //     }
     // }
-    
+
     let resultsContainerElement = document.getElementById('results-container');
     resultsContainerElement.style.display = "block";
 }
@@ -758,7 +772,7 @@ let nextButtonOnClick = () => {
 
 // update content info
 
-// NOTE: update with checking if its paused 
+// NOTE: update with checking if its paused
 
 let updateDialogueID = () => {
     let currentDialogueID = contentInfo.currentDialogueID;
@@ -772,7 +786,7 @@ let updateDialogueID = () => {
             if(doesDialogueExist(currentDialogueID - 1, contentInfo.captions)) {
                 contentInfo.previousDialogueID = contentInfo.currentDialogueID - 1;
             }
-            
+
             return;
         }
 
@@ -882,7 +896,7 @@ let checkDialogueIsCharacterPicked = () => {
                     showUserSpeakContainer();
                 }
             }
-            
+
             // not on dialogue user picked
         } else {
             contentInfo.currentSpeakingDialogue = null;
@@ -986,28 +1000,33 @@ setupEventListeners = () => {
 
     document.addEventListener('getPaused', (response) => {
         const videoPaused = response.detail;
-        
+
         if(videoPaused === true) {
             currentVideoState = videoStates.paused;
         } else {
             currentVideoState = videoStates.playing;
         }
-        
+
+    });
+
+    document.addEventListener('getWatchId', (response) => {
+        const watchId = response.detail;
+        contentInfo.netflixWatchID = watchId;
     });
 }
 
 
 // socket.io events
 
-// {“gameID”: “5c9e7faee8175c4566425568", “dialogueID”: 140, “originalEmotion”: “angry”, 
-// “originalCaption”: “La-la-la-la, la-la-la-la\\\\NLa-la-la-la, la-la-la-la-la-la”, “phoneticScore”: 42.1394788624328,  
+// {“gameID”: “5c9e7faee8175c4566425568", “dialogueID”: 140, “originalEmotion”: “angry”,
+// “originalCaption”: “La-la-la-la, la-la-la-la\\\\NLa-la-la-la, la-la-la-la-la-la”, “phoneticScore”: 42.1394788624328,
 // “emotionScore”: 0.0, “lyricalScore”: 12.389380530973451, “score”: 18.17628646446875}
 
 
 let compareDialogue = (currentAudioBlob, currentSpeech, callback) => {
     console.log("compareDialogue Event");
     console.log(currentSpeech);
-    
+
     const startTime = Date.now();
 
     socket.emit("compareDialogue", {
@@ -1057,7 +1076,7 @@ let stopRecording = () => {
 
 let micInitialization = () => {
     // monkeypatch for AudioContext, getUserMedia and URL
-    
+
     // window.AudioContext = window.AudioContext || window.webkitAudioContext;
     // navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia;
     // window.URL = window.URL || window.webkitURL;
@@ -1081,15 +1100,15 @@ let micInitialization = () => {
             speechRecognition = new webkitSpeechRecognition();
             speechRecognition.lang = "en-US";
             speechRecognition.continuous = true;
-            
+
             // recording stopped
             mediaRecorder.onstop = (e) => {
-                
+
                 console.log("audioAvailable");
 
                 if(currentGameState === gameStates.sendingUserAudio) {
                     speechAndAudioData.currentAudioBlob = new Blob(audioChunks);
-            
+
                     currentGameState = gameStates.waitingForDialogueResult;
 
                     speechAndAudioData.audioAvailable = true;
@@ -1101,7 +1120,7 @@ let micInitialization = () => {
 
                 audioChunks = [];
             }
-            
+
             // recording data available
             mediaRecorder.ondataavailable = (e) =>{
                 console.log("mediaRecorder ondataavailable");
@@ -1121,7 +1140,7 @@ let micInitialization = () => {
             console.log(error);
         })
     }
-} 
+}
 
 
 
@@ -1134,7 +1153,6 @@ let getUsername = () => {
 }
 
 let getWatchID = () => {
-    contentInfo.netflixWatchID = "70274032";
     return contentInfo.netflixWatchID;
 }
 
