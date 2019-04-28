@@ -30,8 +30,15 @@
     //places all the new span tags into the contianer element
     subs.firstChild.innerHTML = mytext; //.replace(/\n/, '<br>');
     //remove other inner timed-text container if present
+<<<<<<< HEAD
     while (subs.childElementCount > 1){
       subs.children[1].remove()
+=======
+    if (subs.childElementCount > 1) {
+      for (i=1; i< subs.childElementCount; i++){
+        subs.children[i].remove()
+      }
+>>>>>>> 644105eb0318d5f8a06de187bf8ad3b0ac8ff8e7
     }
     //append outer subtitle container with modified subs
     document.getElementById(movieId).insertAdjacentHTML('beforeend', subs.outerHTML);
