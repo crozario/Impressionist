@@ -10,10 +10,10 @@ Description: Content script to interact with the webpage
 
 const production = true;
 
-const userDatabaseRestAPIHost = null;
-const contentDatabaseRestAPIHost = null;
-const applicationServerHost = null;
-const socketAddress = null;
+let userDatabaseRestAPIHost = null;
+let contentDatabaseRestAPIHost = null;
+let applicationServerHost = null;
+let socketAddress = null;
 let socket = null;
 
 if (production == true) {

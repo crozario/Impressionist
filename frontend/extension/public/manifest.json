@@ -23,7 +23,7 @@
         "js": ["scripts/socket.io.slim.js", "scripts/contentScript.js"]
       }
     ],
-    "web_accessible_resources": ["scripts/netflixApiScript.js"],
+    "web_accessible_resources": ["scripts/netflixApiScript.js", "scripts/dictionary.js"],
     "page_action": {
       "default_popup": "popup.html",
       "default_icon": {
