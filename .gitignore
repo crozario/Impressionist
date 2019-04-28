@@ -6,7 +6,6 @@ node_modules/
 dh-param
 test-data/example-audio/*
 
-contentData/tvShows/Friends/02/12-The-One-After-The-Superbowl-Part1/friends_s02e12_720p.mkv
 # contentData/tvShows/Friends/02/12-The-One-After-The-Superbowl-Part1/features/
 application/speech_to_text/__pycache__/transcribe_return_only_one_line.cpython-36.pyc
 application/speech_to_emotion/__pycache__/emotion_classifier_nn.cpython-36.pyc
@@ -17,6 +16,5 @@ smile.log
 contentData/tvShows/Friends/02/12-The-One-After-The-Superbowl-Part1/testAudio/
 contentData/tvShows/Friends/02/12-The-One-After-The-Superbowl-Part1/userAudio/
 application/.vscode/*
-contentData/tvShows/Friends/02/*
-contentData/tvShows/*
+contentData/*
 application/dialogueExtraction/.ipynb_checkpoints/*

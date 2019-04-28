@@ -10,7 +10,7 @@ import bs4
 from bs4 import BeautifulSoup
 from difflib import SequenceMatcher
 
-PUNCTUATION = '!"#$%&()\'*+,-./;<=>?@[\\]^_`{|}~'
+PUNCTUATION = '!"#$%&()*+,-./;<=>?@[\\]^_`{|}~'
 
 def printItrNicely(thing):
 	for t in thing:
