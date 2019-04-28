@@ -6,8 +6,11 @@ Description: Background script for chrome extension
 */
 
 "use strict";
+const logging = true;
 
-console.log("on background script");
+if(logging) {
+  console.log("ON BACKGROUND SCRIPT");
+}
 
 // works only with URLs from www.netflix.com/watch/
 chrome.runtime.onInstalled.addListener(function() {

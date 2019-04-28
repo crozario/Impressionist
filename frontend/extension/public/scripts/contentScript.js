@@ -9,6 +9,11 @@ Description: Content script to interact with the webpage
 // var port = chrome.runtime.connect();
 
 const production = true;
+const logging = true;
+
+if(logging) {
+    console.log("ON CONTENTSCRIPT");
+}
 
 let userDatabaseRestAPIHost = null;
 let contentDatabaseRestAPIHost = null;
@@ -87,13 +92,6 @@ let currentGameState = gameStates.inactive
 let currentVideoState = videoStates.inactive
 let currentRecorderState = recorderStates.inactive
 
-/*
-    {
-
-    }
-
-*/
-
 let comparisonData = [
 
 ]
@@ -132,7 +130,10 @@ let gameInitialization = (username, watchID) => {
         req.onreadystatechange = function () {
             if (req.readyState == 4) {
                 if (req.status == 200) {
-                    console.log("initializeGame : " + getDuration(startTime));
+                    if(logging) {
+                        console.log("GAME INITIALIZATION REQUEST TOOK : " + getDuration(startTime));
+                    }
+                    
                     let jsonObj = JSON.parse(req.responseText);
                     resolve(jsonObj);
                 } else {
@@ -164,9 +165,12 @@ let ifGameSupported = (watchID) => {
         req.onreadystatechange = function () {
             if (req.readyState == 4) {
                 if (req.status == 200) {
-                    console.log("isGameSupported : " + getDuration(startTime));
+                    if(logging) {
+                        console.log("ISGAMESUPPORTED TOOK : " + getDuration(startTime));
+                    }
+
                     let jsonObj = JSON.parse(req.responseText);
-                    console.log(jsonObj);
+
                     if (jsonObj.supported == true) {
                         resolve(jsonObj);
                     } else {
@@ -186,12 +190,16 @@ let ifGameSupported = (watchID) => {
 
 
 window.onload = () => {
-    console.log("on contentScript script");
     contentInfo.netflixWatchID = window.location.href.match(/^.*\/([0-9]+)\??.*/)[1]
 
     const watchID = getWatchID();
     const username = getUsername();
-    console.log(watchID)
+
+    if(logging) {
+        console.log("WATCH ID : " + watchID);
+    }
+    
+
     ifGameSupported(watchID).then((jsonResult) => {
         // content supported and received content info from content db
         contentSupported = true;
@@ -211,24 +219,23 @@ window.onload = () => {
                 socket = io.connect(socketAddress);
             }
 
-            console.log("socket connection : " + getDuration(startTime));
-
+            if(logging) {
+                console.log("SOCKET CONNECTION TOOK : " + getDuration(startTime));
+            }
+            
             setupContentScript();
             setupEventListeners()
             micInitialization();
 
 
         }).catch((error) => {
-            console.log("error on initializeGame");
-            console.log(error);
+            console.log("ERROR OF GAME INITIALIZATION : " + error);
         })
 
     }).catch((error) => {
 
         // content not supported
-        console.log("error on initializeContent");
-        console.log(error);
-
+        console.log("ERROR ONF IFGAMESUPPORTED : " + error);
     })
 
 }
@@ -248,8 +255,9 @@ let injectNetflixScript = () => {
     script.onload = function () {
         script.remove();
     };
-
-    console.log("injected netflixApiScript");
+    if(logging) {
+        console.log("INJECTED NETFLIXSCRIPT");
+    } 
 }
 
 let injectDictionaryScript = () => {
@@ -261,14 +269,14 @@ let injectDictionaryScript = () => {
         script.remove();
     };
 
-    console.log("injected dictionary");
+    if(logging) {
+        console.log("INJECTED DICTIONARY");
+    } 
 }
 
 let injectSideBar = () => {
-    console.log("inside injectSideBar");
     let pageContainer = document.getElementsByClassName('nf-kb-nav-wrapper');
     let videoContainer = document.getElementsByClassName('sizing-wrapper')[0];
-
 
     /*
         Add to netflix webpage
@@ -414,8 +422,6 @@ let injectSideBar = () => {
 }
 
 let addCharacterNamesToPicker = (pickerElement) => {
-    console.log(contentInfo.characterPicked);
-    console.log(contentInfo.characterPickedIDs);
     const noCharacterSelected = "No Character Selected";
 
     let option = noCharacterSelected;
@@ -446,8 +452,6 @@ let addCharacterNamesToPicker = (pickerElement) => {
     pickerElement.addEventListener("change", () => {
         let picker = document.getElementById("character-picker");
         let selectedIndex = picker.selectedIndex;
-        console.log(contentInfo);
-
         // no character selected
         if (selectedIndex == 0) {
             contentInfo.characterPicked = null;
@@ -493,7 +497,6 @@ let doneButtonOnClick = () => {
 
     stopRecording();
     playVideo();
-    // showResultsContainer();
 }
 
 let skipButtonOnClick = () => {
@@ -509,8 +512,6 @@ let skipButtonOnClick = () => {
 }
 
 let appendResultsToView = (resultJSON) => {
-    console.log("appendResultsToView");
-    console.log(resultJSON);
 
     let resultsReceivedContainer = document.getElementById("results-received-container");
 
@@ -753,7 +754,10 @@ let previousButtonOnClick = () => {
         }, 1000);
 
         const previousStartDialogue = contentInfo.captions[contentInfo.previousDialogueID][0];
-        console.log("PREV BUTTON: " + "prev: " + contentInfo.previousDialogueID + " current : " + contentInfo.currentDialogueID + " next: " + contentInfo.nextDialogueID);
+        if(logging) {
+            console.log("PREV BUTTON: " + "prev: " + contentInfo.previousDialogueID + " current : " + contentInfo.currentDialogueID + " next: " + contentInfo.nextDialogueID);
+        }
+        
         pauseVideo();
         seek(previousStartDialogue);
         playVideo();
@@ -773,7 +777,10 @@ let nextButtonOnClick = () => {
         }, 1000);
 
         const nextStartDialogue = contentInfo.captions[contentInfo.nextDialogueID][0];
-        console.log("NEXT BUTTON: " + "prev: " + contentInfo.previousDialogueID + " current : " + contentInfo.currentDialogueID + " next: " + contentInfo.nextDialogueID);
+        if(logging) {
+            console.log("NEXT BUTTON: " + "prev: " + contentInfo.previousDialogueID + " current : " + contentInfo.currentDialogueID + " next: " + contentInfo.nextDialogueID);
+        }
+        
         pauseVideo();
         seek(nextStartDialogue);
         playVideo();
@@ -1036,8 +1043,12 @@ setupEventListeners = () => {
 
 
 let compareDialogue = (currentAudioBlob, currentSpeech, callback) => {
-    console.log("compareDialogue Event");
-    console.log(currentSpeech);
+    if(logging) {
+        console.log("COMPAREDIALOGUE" 
+        + "\nGAME ID: " + contentInfo.gameID 
+        + "\nWATCH ID : " + contentInfo.netflixWatchID 
+        + "\nUSER TRANSCRIPT : " + currentSpeech);
+    }
 
     const startTime = Date.now();
 
@@ -1048,7 +1059,10 @@ let compareDialogue = (currentAudioBlob, currentSpeech, callback) => {
         audioBlob: currentAudioBlob,
         userTranscript : currentSpeech
     }, (response) => {
-        console.log("compareDialogue took : " + getDuration(startTime));
+        if(logging) {
+            console.log("COMPAREDIALOGUE TOOK : " + getDuration(startTime));
+        } 
+        
         const resultJSON = JSON.parse(response);
 
         if (typeof(callback) == "function") {
@@ -1073,17 +1087,23 @@ let sendDialogueWhenSpeechAndAudioAvailable = () => {
 // audio
 
 let startRecording = () => {
-    console.log("startRecording");
+    if(logging) {
+        console.log("STARTED RECORDING");
+    }
+    
     mediaRecorder.start();
     speechRecognition.start();
     currentRecorderState = recorderStates.recording;
 }
 
 let stopRecording = () => {
-    console.log("stopRecording");
     mediaRecorder.stop();
     speechRecognition.stop();
     currentRecorderState = recorderStates.stopped;
+
+    if(logging) {
+        console.log("STOPPED RECORDING");
+    }
 }
 
 let micInitialization = () => {
@@ -1094,8 +1114,10 @@ let micInitialization = () => {
     // window.URL = window.URL || window.webkitURL;
 
     if (navigator.mediaDevices) {
-        console.log('getUserMedia supported.');
-
+        if(logging){
+            console.log('GETUSERMEDIA SUPPORTED.');
+        }
+    
         var constraints = { audio: true }
 
         // Get mic audio
@@ -1115,9 +1137,6 @@ let micInitialization = () => {
 
             // recording stopped
             mediaRecorder.onstop = (e) => {
-
-                console.log("audioAvailable");
-
                 if(currentGameState === gameStates.sendingUserAudio) {
                     speechAndAudioData.currentAudioBlob = new Blob(audioChunks);
 
@@ -1135,7 +1154,10 @@ let micInitialization = () => {
 
             // recording data available
             mediaRecorder.ondataavailable = (e) =>{
-                console.log("mediaRecorder ondataavailable");
+                if(logging) {
+                    console.log("AUDIO AVAILABLE");
+                }
+                
                 audioChunks.push(e.data);
             }
 
@@ -1148,8 +1170,7 @@ let micInitialization = () => {
 
         })
         .catch(function(error) {
-            console.log("getUserMedia Error");
-            console.log(error);
+            console.log("ERROR ON GETUSERMEDIA : " + error);
         })
     }
 }

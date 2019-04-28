@@ -5,7 +5,7 @@ Description: Injected Netflix Api Script
 
 */
 
-console.log("on netflixApi script");
+console.log("ON NETFLIXAPISCRIPT");
 
 
 // Encapsulation of Netflix API from webpage
@@ -16,19 +16,16 @@ let getSessionSummary = () => {
 
 let pauseVideo = () => {
     let videoPlayer = netflix.appContext.state.playerApp.getAPI().videoPlayer.getVideoPlayerBySessionId(netflix.appContext.state.playerApp.getAPI().videoPlayer.getAllPlayerSessionIds()[0]);
-    console.log("pause video");
     videoPlayer.pause();
 }
 
 let playVideo = () => {
     let videoPlayer = netflix.appContext.state.playerApp.getAPI().videoPlayer.getVideoPlayerBySessionId(netflix.appContext.state.playerApp.getAPI().videoPlayer.getAllPlayerSessionIds()[0]);
-    console.log("play video");
     videoPlayer.play();
 }
 
 let seek = (time) => {
     let videoPlayer = netflix.appContext.state.playerApp.getAPI().videoPlayer.getVideoPlayerBySessionId(netflix.appContext.state.playerApp.getAPI().videoPlayer.getAllPlayerSessionIds()[0]);
-    console.log("seek video");
     videoPlayer.seek(time);
 }
 
