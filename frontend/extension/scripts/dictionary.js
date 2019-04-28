@@ -29,9 +29,11 @@
     subs.firstChild.style.cssText += netflixSubs.firstChild.firstChild.style.cssText;
     //places all the new span tags into the contianer element
     subs.firstChild.innerHTML = mytext; //.replace(/\n/, '<br>');
-    //remove second inner timed-text container if present
+    //remove other inner timed-text container if present
     if (subs.childElementCount > 1) {
-      subs.children[1].remove()
+      for (i=1; i< subs.childElementCount; i++){
+        subs.children[i].remove()
+      }
     }
     //append outer subtitle container with modified subs
     document.getElementById(movieId).insertAdjacentHTML('beforeend', subs.outerHTML);
