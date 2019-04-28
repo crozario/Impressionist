@@ -22,9 +22,9 @@ exports.insertIntoContentDB = (req,res) => {
 		.then(result => {
 			if(result) {
 				// delete existing record --> the data from req will be saved in a new document in the db later
-				schema.Cont.updateOne({'title': info.title, 'seasonNumber': info.seasonNumber, 'episodeNumber': info.episodeNumber}, {'episodeTitle': info.episodeTitle, 'length': info.length, 'mediaFileLocation': info.mediaFileLocation, 'captions': info.captions, 'featureFileLocations': info.featureFileLocations, 'emotionsList': info.emotionsList, 'netflixWatchID': info.netflixWatchID, 'netflixSubtitleOffset': info.netflixSubtitleOffset, 'characterNames': info.characterNames, 'characterDialogueIDs': info.characterDialogueIDs}, function(err) {
+				schema.Cont.updateOne({'title': info.title, 'seasonNumber': info.seasonNumber, 'episodeNumber': info.episodeNumber}, {'episodeTitle': info.episodeTitle, 'length': info.length, 'mediaFileLocation': info.mediaFileLocation, 'captions': info.captions, 'featureFileLocations': info.featureFileLocations, 'emotionsList': info.emotionsList, 'netflixWatchID': info.netflixWatchID, 'netflixSubtitleOffset': info.netflixSubtitleOffset, 'characterNames': info.characterNames, 'characterDialogueIDs': info.characterDialogueIDs, 'supported':true}, function(err) {
 					if(err) {
-						return res.status(500).json({
+						return res.json({
 							status: "failure",
 							error: err.message || "error occured when updating tv show document"
 						});
@@ -49,7 +49,8 @@ exports.insertIntoContentDB = (req,res) => {
 					netflixWatchID: info.netflixWatchID,
 					netflixSubtitleOffset: info.netflixSubtitleOffset,
 					characterNames: info.characterNames,
-					characterDialogueIDs: info.characterDialogueIDs
+					characterDialogueIDs: info.characterDialogueIDs,
+					supported: true
 				});
 				// store content information in the database
 				content.save()
@@ -58,7 +59,8 @@ exports.insertIntoContentDB = (req,res) => {
 						status: "success"
 					});
 				}).catch(err => {
-					return res.status(500).json({
+					// return res.status(500).json({
+					return res.json({
 						status: "failure",
 						error: err.message || "error occured while storing information in the database"
 					});
@@ -77,9 +79,9 @@ exports.insertIntoContentDB = (req,res) => {
 		.then(result => {
 			if(result) {
 				// delete existing record --> the data from req will be saved in a new document in the db later
-				schema.Cont.updateOne({'title': info.title}, {'length': info.length, 'mediaFileLocation': info.mediaFileLocation, 'captions': info.captions, 'featureFileLocations': info.featureFileLocations, 'emotionsList': info.emotionsList, 'netflixWatchID': info.netflixWatchID, 'netflixSubtitleOffset': info.netflixSubtitleOffset, 'characterNames': info.characterNames, 'characterDialogueIDs': info.characterDialogueIDs}, function(err) {
+				schema.Cont.updateOne({'title': info.title}, {'length': info.length, 'mediaFileLocation': info.mediaFileLocation, 'captions': info.captions, 'featureFileLocations': info.featureFileLocations, 'emotionsList': info.emotionsList, 'netflixWatchID': info.netflixWatchID, 'netflixSubtitleOffset': info.netflixSubtitleOffset, 'characterNames': info.characterNames, 'characterDialogueIDs': info.characterDialogueIDs, 'supported':true}, function(err) {
 					if(err) {
-						return res.status(500).json({
+						return res.json({
 							status: "failure",
 							error: err.message || "error occured when updating movie document"
 						});
@@ -101,7 +103,8 @@ exports.insertIntoContentDB = (req,res) => {
 					netflixWatchID: info.netflixWatchID,
 					netflixSubtitleOffset: info.netflixSubtitleOffset,
 					characterNames: info.characterNames,
-					characterDialogueIDs: info.characterDialogueIDs
+					characterDialogueIDs: info.characterDialogueIDs,
+					supported:true
 				});
 				content.save()
 				.then(data => {
@@ -109,7 +112,7 @@ exports.insertIntoContentDB = (req,res) => {
 						status: "success"
 					});
 				}).catch(err => {
-					return res.status(500).json({
+					return res.json({
 						status: "failure",
 						error: err.message || "error occured while storing information in the database"
 					});

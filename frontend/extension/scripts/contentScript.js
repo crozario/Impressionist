@@ -178,10 +178,11 @@ let ifGameSupported = (watchID) => {
 
 window.onload = () => {
     console.log("on contentScript script");
+    contentInfo.netflixWatchID = window.location.href.match(/^.*\/([0-9]+)\??.*/)[1]
 
     const watchID = getWatchID();
     const username = getUsername();
-
+    console.log(watchID)
     ifGameSupported(watchID).then((jsonResult) => {
         // content supported and received content info from content db
         contentSupported = true;
@@ -1007,6 +1008,11 @@ setupEventListeners = () => {
         }
 
     });
+
+    document.addEventListener('getWatchId', (response) => {
+        const watchId = response.detail;
+        contentInfo.netflixWatchID = watchId;
+    });
 }
 
 
@@ -1147,7 +1153,6 @@ let getUsername = () => {
 }
 
 let getWatchID = () => {
-    contentInfo.netflixWatchID = "70274032";
     return contentInfo.netflixWatchID;
 }
 

@@ -1,4 +1,3 @@
-from difflib import SequenceMatcher
 """Adds content to mongoDB contentDB
     $ python3 appendContentDB.py <parentFolder>
 NOTE: arg `parentFolder` is NOT individual file
@@ -18,6 +17,9 @@ import os
 import subprocess
 from datetime import timedelta
 import webvtt
+import shutil
+from difflib import SequenceMatcher
+import sys
 
 configFile = 'databuilder/configs/prosodyShs.conf'
 VERBOSE=True
@@ -127,6 +129,8 @@ def extractFeatures(captionFile, audioFile, tmpWave, featuresDir, configFile, em
     emoPredictor.load_model()
 
     emotionsLst = []
+    totalDialogues = len(indices)
+    print("Extracting features and emotions... (total "+str(totalDialogues)+")")
     for count, ii in enumerate(indices):
         # split audioFile to tmpName
         start, end = ii
@@ -140,7 +144,7 @@ def extractFeatures(captionFile, audioFile, tmpWave, featuresDir, configFile, em
         result = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, shell=True)
         # print(result.stdout)
         if "Processing finished!" in result.stdout.decode('utf-8'):
-            if verbose: print("Success! extracted features in:", csvOutFile)
+            # if verbose: print("Success! extracted features in:", csvOutFile)
             featureFiles.append(csvOutFile)
         else:
             error = "Feature extraction unsuccessful.\nstdout: "+result.stdout.decode('utf-8')
@@ -150,6 +154,7 @@ def extractFeatures(captionFile, audioFile, tmpWave, featuresDir, configFile, em
         # extract emotion
         emoPredictor.file = tmpWave
         emotionsLst.append(emoPredictor.makepredictions())
+        print("Extraction progress: ", count+1, sep='', end="\r", flush=True)
     # log the emotions
     emotionsLogFile
     writeStringLstToCSV(emotionsLst, emotionsLogFile)
@@ -191,7 +196,7 @@ def getVideoFileDuration(mediaFile):
 def similar(a, b):
     return SequenceMatcher(None, a, b).ratio()
 
-def getVideoOffset(netflixVTT, localSRT):
+def getVideoOffset(netflixVTT, localSRT, manual=True):
     """compare dialogues between and returns time offset
     returns timedelta object (can be used later)
     POSITIVE offset -> add offset to subtitle times when extracting dialogues from video
@@ -199,10 +204,35 @@ def getVideoOffset(netflixVTT, localSRT):
     """
     netVTT = webvtt.read(netflixVTT)
     locSRT = webvtt.from_srt(localSRT)
+    lennet = len(netVTT)
+    lenloc = len(locSRT)
     ni = 0; # netVTT count
     li = 0; # locSRT count
     skipcnt = 0
     PUNCTUATION = '!"#$%&()*+,-./;<=>?@[\\]^_`{|}~'
+
+    if (manual):
+        while (ni < lennet and li < lenloc):
+            for _ in range(5):
+                print(ni)
+                print("LEFT\t", netVTT[ni].text.replace("\n", " "))
+                print("RIGHT\t", locSRT[li].text.replace("\n", " "))
+                ni += 1
+                li += 1
+            leftChoice = input("left choice [0-4], ENTER to skip: ")
+            if leftChoice == "":
+                continue
+            rightChoice = input("right choice [0-4]: ")
+            start_ni = netVTT[int(leftChoice)].start
+            # print(netVTT[ni], "start:", start_ni)
+            start_li = locSRT[int(rightChoice)].start
+            # print(locSRT[li], "start:", start_li)
+            difference = extractTime(start_li) - extractTime(start_ni)
+            # print("diff:", difference)
+            return difference
+
+    offsetsLst = []
+
     while (ni < len(netVTT) and li < len(locSRT)):
         # print(ni, li)
         lhs = netVTT[ni].text
@@ -222,12 +252,13 @@ def getVideoOffset(netflixVTT, localSRT):
         cmpScore = similar(lhs, rhs)
         # print("score:", cmpScore)
         if cmpScore < 0.95:
+            # print(ni, li)
             li += 1# skip
             skipcnt += 1
-            if (skipcnt > 30):
-                skipcnt = 0
-                li -= 30
+            if (skipcnt > 3):
+                li -= skipcnt
                 ni += 1
+                skipcnt = 0
         else:
             # print(ni, li)
             start_ni = netVTT[ni].start
@@ -236,10 +267,20 @@ def getVideoOffset(netflixVTT, localSRT):
             # print(locSRT[li], "start:", start_li)
             difference = extractTime(start_li) - extractTime(start_ni)
             # print("diff:", difference)
-            return difference
-            # print("diffstr:", str(difference))
-            # print("typediff:", type(difference))
-        # _ = input("ENTER to compare next...") 
+            offsetsLst.append(difference)
+            # return difference
+            ni += 1
+            li += 1
+
+    mean = sum(offsetsLst, timedelta(0))/len(offsetsLst)
+    if (mean > timedelta(seconds=4) or mean < timedelta(seconds=-4)):
+        print("mean offset is", str(mean))
+        res = input("still continue? (yes|no): ")
+        if res == "no":
+            print("list of offsets:", [str(o) for o in offsetsLst])
+            exit()
+
+    return mean
 
 def getMediaAndCaptionFiles(mediaDirectory):
     """get videoFile and captionFile full path locations
@@ -267,6 +308,9 @@ def getMediaAndCaptionFiles(mediaDirectory):
     else:
         if captionFile != '' and SRTfile != '':
             videoOffset = getVideoOffset(captionFile, SRTfile)
+        else:
+            print("VTT Caption and/or SRT caption file not found")
+            exit()
     return mediaFile, captionFile, videoOffset, netflixWatchID
 
 if __name__=='__main__':
@@ -275,6 +319,7 @@ if __name__=='__main__':
     parser.add_argument("mediaDirectory", type=str, help="parent folder containing video file (.mkv or .mp4(tested)) and subtitle file (.vtt ; .srt WON'T work)")
     # parser.add_argument("netflixWatchID", type=str, help="watch id from netflix content's URL. REQUIRED argument because all video supported are currently netflix.")
     # reason for offset is because netflix subtitles are shifted a bit
+    parser.add_argument('--force', help="this will replace previous features/ folder with new features", action='store_true', default=False)
     parser.add_argument('--subsOffset', help="add the certain float offset, in milliseconds, to the times read from .vtt subtitle file above. (default) 0", type=float, default=0.0)
     args = parser.parse_args()
 
@@ -325,7 +370,9 @@ if __name__=='__main__':
     """
 
     # first make sure feature folder doesn't exist
-    if (not os.path.isdir(featuresDir)):
+    if (not os.path.isdir(featuresDir) or args.force):
+        if os.path.isdir(featuresDir):
+            shutil.rmtree(featuresDir)
         os.makedirs(featuresDir)
 
         # convert video to audio
@@ -358,6 +405,8 @@ if __name__=='__main__':
     uniqueCharacterNames = getUniqueCharacter(captionFile)
     dialogues2Darray = getDialogueIntervalsWithCaptions(captionFile, offset=netflixSubtitleOffset)
     characterDialogueIDsDict = getCharacterDialogueIdsDict(captionFile)
+    # print(characterDialogueIDsDict)
+    # exit()
     contentdict = {
         "reqType" : "appendContentDB",
         "mediaFileLocation" : mediaFile,
@@ -389,10 +438,13 @@ if __name__=='__main__':
     # convert to JSON
     import json
     contentJSON = json.dumps(contentdict)
+    # print("---------_sending_-----------")
+    # print(contentJSON)
+    # print("-----------_end_-------------")
 
     # SEND jSON
     import urllib.request #ref: https://stackoverflow.com/a/26876308/7303112
-    contentDB_PORT = str(3002)
+    # contentDB_PORT = str(3002)
     # backURL = "http://localhost:"+contentDB_PORT+"/cont/"
     backURL = "https://impressionist-content-db-api-east-1.crossley.tech/cont/"
     req = urllib.request.Request(backURL, method='POST')
