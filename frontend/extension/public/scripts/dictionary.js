@@ -273,7 +273,10 @@ a {
 
   var idNum = setInterval(updateSubs, 50);
 
-  console.log("Started scriptorino: ", idNum);
+  
+
+console.log("STARTED SCRIPTORINO : ", idNum);
+
 
   //4140497
   //4513753 'powering' not defined
