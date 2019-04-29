@@ -36,3 +36,727 @@ about to use threading to talk to back userDB
 2019-04-24 20:48:09.272730
 ---------------------------------------------
 Returning JSON back to front!
+------------------Logging--------------------
+2019-04-28 14:38:49.533794
+---------------------------------------------
+testing
+------------------Logging--------------------
+2019-04-28 14:38:50.516978
+---------------------------------------------
+emoPredictor after
+------------------Logging--------------------
+2019-04-28 14:38:50.517265
+---------------------------------------------
+Application Server about to run
+------------------Logging--------------------
+2019-04-28 14:39:27.988960
+---------------------------------------------
+a user connected
+------------------Logging--------------------
+2019-04-28 14:39:58.751526
+---------------------------------------------
+a user disconnected
+------------------Logging--------------------
+2019-04-28 14:39:59.974682
+---------------------------------------------
+a user connected
+------------------Logging--------------------
+2019-04-28 14:40:36.284328
+---------------------------------------------
+handle_compareDialogue
+------------------Logging--------------------
+2019-04-28 14:40:36.284895
+---------------------------------------------
+Data received (on compareDialogue)
+gameID:5ca2969ab472c527126aee94
+netflixWatchID:70274032
+dialogueID:169
+------------------Logging--------------------
+2019-04-28 14:40:39.264924
+---------------------------------------------
+
+resulting JSON after comparison:
+{"gameID": "5ca2969ab472c527126aee94", "dialogueID": 169, "error": "", "success": true, "originalEmotion": "angry", "originalCaption": "But, um, zoo dollars?", "phoneticScore": 48.9929345384323, "emotionScore": 0.0, "userEmotion": "sad", "userTranscript": "$2", "lyricalScore": 0.0, "averageScore": 24.49646726921615}
+------------------Logging--------------------
+2019-04-28 14:40:39.265433
+---------------------------------------------
+Done comparing
+resultJSON from func{"gameID": "5ca2969ab472c527126aee94", "dialogueID": 169, "error": "", "success": true, "originalEmotion": "angry", "originalCaption": "But, um, zoo dollars?", "phoneticScore": 48.9929345384323, "emotionScore": 0.0, "userEmotion": "sad", "userTranscript": "$2", "lyricalScore": 0.0, "averageScore": 24.49646726921615}
+------------------Logging--------------------
+2019-04-28 14:40:39.266333
+---------------------------------------------
+about to use threading to talk to back userDB
+------------------Logging--------------------
+2019-04-28 14:40:39.282822
+---------------------------------------------
+Returning JSON back to front!
+------------------Logging--------------------
+2019-04-28 14:41:33.743267
+---------------------------------------------
+handle_compareDialogue
+------------------Logging--------------------
+2019-04-28 14:41:33.743841
+---------------------------------------------
+Data received (on compareDialogue)
+gameID:5ca2969ab472c527126aee94
+netflixWatchID:70274032
+dialogueID:174
+------------------Logging--------------------
+2019-04-28 14:41:35.032343
+---------------------------------------------
+
+resulting JSON after comparison:
+{"gameID": "5ca2969ab472c527126aee94", "dialogueID": 174, "error": "", "success": true, "originalEmotion": "angry", "originalCaption": "...and that was clearly a case of, uh, uh...", "phoneticScore": 48.041978999771096, "emotionScore": 0.0, "userEmotion": "happy", "userTranscript": "that was clearly the case of food or choking", "lyricalScore": 63.63636363636363, "averageScore": 55.839171318067365}
+------------------Logging--------------------
+2019-04-28 14:41:35.032795
+---------------------------------------------
+Done comparing
+resultJSON from func{"gameID": "5ca2969ab472c527126aee94", "dialogueID": 174, "error": "", "success": true, "originalEmotion": "angry", "originalCaption": "...and that was clearly a case of, uh, uh...", "phoneticScore": 48.041978999771096, "emotionScore": 0.0, "userEmotion": "happy", "userTranscript": "that was clearly the case of food or choking", "lyricalScore": 63.63636363636363, "averageScore": 55.839171318067365}
+------------------Logging--------------------
+2019-04-28 14:41:35.033493
+---------------------------------------------
+about to use threading to talk to back userDB
+------------------Logging--------------------
+2019-04-28 14:41:35.057232
+---------------------------------------------
+Returning JSON back to front!
+------------------Logging--------------------
+2019-04-28 14:41:47.207636
+---------------------------------------------
+handle_compareDialogue
+------------------Logging--------------------
+2019-04-28 14:41:47.208274
+---------------------------------------------
+Data received (on compareDialogue)
+gameID:5ca2969ab472c527126aee94
+netflixWatchID:70274032
+dialogueID:176
+------------------Logging--------------------
+2019-04-28 14:41:48.351789
+---------------------------------------------
+
+resulting JSON after comparison:
+{"gameID": "5ca2969ab472c527126aee94", "dialogueID": 176, "error": "", "success": true, "originalEmotion": "angry", "originalCaption": "You know.", "phoneticScore": 80.44017600636215, "emotionScore": 0.0, "userEmotion": "surprised", "userTranscript": "listen I got to talk to you", "lyricalScore": 11.11111111111111, "averageScore": 45.77564355873663}
+------------------Logging--------------------
+2019-04-28 14:41:48.352308
+---------------------------------------------
+Done comparing
+resultJSON from func{"gameID": "5ca2969ab472c527126aee94", "dialogueID": 176, "error": "", "success": true, "originalEmotion": "angry", "originalCaption": "You know.", "phoneticScore": 80.44017600636215, "emotionScore": 0.0, "userEmotion": "surprised", "userTranscript": "listen I got to talk to you", "lyricalScore": 11.11111111111111, "averageScore": 45.77564355873663}
+------------------Logging--------------------
+2019-04-28 14:41:48.353019
+---------------------------------------------
+about to use threading to talk to back userDB
+------------------Logging--------------------
+2019-04-28 14:41:48.373753
+---------------------------------------------
+Returning JSON back to front!
+------------------Logging--------------------
+2019-04-28 14:42:12.023464
+---------------------------------------------
+handle_compareDialogue
+------------------Logging--------------------
+2019-04-28 14:42:12.024018
+---------------------------------------------
+Data received (on compareDialogue)
+gameID:5ca2969ab472c527126aee94
+netflixWatchID:70274032
+dialogueID:179
+------------------Logging--------------------
+2019-04-28 14:42:13.333833
+---------------------------------------------
+
+resulting JSON after comparison:
+{"gameID": "5ca2969ab472c527126aee94", "dialogueID": 179, "error": "", "success": true, "originalEmotion": "angry", "originalCaption": "You don't have\\Nto explain yourself to me. Oh!", "phoneticScore": 57.084078006258466, "emotionScore": 0.0, "userEmotion": "happy", "userTranscript": "who am I to question the great Doctor Ramon", "lyricalScore": 26.96629213483146, "averageScore": 42.025185070544964}
+------------------Logging--------------------
+2019-04-28 14:42:13.334170
+---------------------------------------------
+Done comparing
+resultJSON from func{"gameID": "5ca2969ab472c527126aee94", "dialogueID": 179, "error": "", "success": true, "originalEmotion": "angry", "originalCaption": "You don't have\\Nto explain yourself to me. Oh!", "phoneticScore": 57.084078006258466, "emotionScore": 0.0, "userEmotion": "happy", "userTranscript": "who am I to question the great Doctor Ramon", "lyricalScore": 26.96629213483146, "averageScore": 42.025185070544964}
+------------------Logging--------------------
+2019-04-28 14:42:13.335320
+---------------------------------------------
+about to use threading to talk to back userDB
+------------------Logging--------------------
+2019-04-28 14:42:13.356019
+---------------------------------------------
+Returning JSON back to front!
+------------------Logging--------------------
+2019-04-28 14:42:21.558502
+---------------------------------------------
+handle_compareDialogue
+------------------Logging--------------------
+2019-04-28 14:42:21.558886
+---------------------------------------------
+Data received (on compareDialogue)
+gameID:5ca2969ab472c527126aee94
+netflixWatchID:70274032
+dialogueID:180
+------------------Logging--------------------
+2019-04-28 14:42:22.592281
+---------------------------------------------
+
+resulting JSON after comparison:
+{"gameID": "5ca2969ab472c527126aee94", "dialogueID": 180, "error": "", "success": true, "originalEmotion": "angry", "originalCaption": "Who am I to question\\Nthe great Dr. Drake Ramoray?", "phoneticScore": 47.90085645941364, "emotionScore": 0.0, "userEmotion": "happy", "userTranscript": "who am I to question the great Doctor Ramon", "lyricalScore": 77.41935483870968, "averageScore": 62.66010564906166}
+------------------Logging--------------------
+2019-04-28 14:42:22.592610
+---------------------------------------------
+Done comparing
+resultJSON from func{"gameID": "5ca2969ab472c527126aee94", "dialogueID": 180, "error": "", "success": true, "originalEmotion": "angry", "originalCaption": "Who am I to question\\Nthe great Dr. Drake Ramoray?", "phoneticScore": 47.90085645941364, "emotionScore": 0.0, "userEmotion": "happy", "userTranscript": "who am I to question the great Doctor Ramon", "lyricalScore": 77.41935483870968, "averageScore": 62.66010564906166}
+------------------Logging--------------------
+2019-04-28 14:42:22.593233
+---------------------------------------------
+about to use threading to talk to back userDB
+------------------Logging--------------------
+2019-04-28 14:42:22.612258
+---------------------------------------------
+Returning JSON back to front!
+------------------Logging--------------------
+2019-04-28 14:42:41.680172
+---------------------------------------------
+handle_compareDialogue
+------------------Logging--------------------
+2019-04-28 14:42:41.680650
+---------------------------------------------
+Data received (on compareDialogue)
+gameID:5ca2969ab472c527126aee94
+netflixWatchID:70274032
+dialogueID:184
+------------------Logging--------------------
+2019-04-28 14:42:42.505377
+---------------------------------------------
+
+resulting JSON after comparison:
+{"gameID": "5ca2969ab472c527126aee94", "dialogueID": 184, "error": "", "success": true, "originalEmotion": "angry", "originalCaption": "That's it. Just hey!", "phoneticScore": 51.92385545431141, "emotionScore": 0.0, "userEmotion": "neutral", "userTranscript": "who am I to question the great doctor amore", "lyricalScore": 28.57142857142857, "averageScore": 40.24764201286999}
+------------------Logging--------------------
+2019-04-28 14:42:42.505848
+---------------------------------------------
+Done comparing
+resultJSON from func{"gameID": "5ca2969ab472c527126aee94", "dialogueID": 184, "error": "", "success": true, "originalEmotion": "angry", "originalCaption": "That's it. Just hey!", "phoneticScore": 51.92385545431141, "emotionScore": 0.0, "userEmotion": "neutral", "userTranscript": "who am I to question the great doctor amore", "lyricalScore": 28.57142857142857, "averageScore": 40.24764201286999}
+------------------Logging--------------------
+2019-04-28 14:42:42.506607
+---------------------------------------------
+about to use threading to talk to back userDB
+------------------Logging--------------------
+2019-04-28 14:42:42.530739
+---------------------------------------------
+Returning JSON back to front!
+------------------Logging--------------------
+2019-04-28 14:42:57.635534
+---------------------------------------------
+handle_compareDialogue
+------------------Logging--------------------
+2019-04-28 14:42:57.635897
+---------------------------------------------
+Data received (on compareDialogue)
+gameID:5ca2969ab472c527126aee94
+netflixWatchID:70274032
+dialogueID:186
+------------------Logging--------------------
+2019-04-28 14:42:58.493616
+---------------------------------------------
+
+resulting JSON after comparison:
+{"gameID": "5ca2969ab472c527126aee94", "dialogueID": 186, "error": "", "success": true, "originalEmotion": "angry", "originalCaption": "Hey. Ha-ha-ha.", "phoneticScore": 59.32679854644315, "emotionScore": 0.0, "userEmotion": "happy", "userTranscript": "just hey", "lyricalScore": 18.181818181818183, "averageScore": 38.754308364130665}
+------------------Logging--------------------
+2019-04-28 14:42:58.493995
+---------------------------------------------
+Done comparing
+resultJSON from func{"gameID": "5ca2969ab472c527126aee94", "dialogueID": 186, "error": "", "success": true, "originalEmotion": "angry", "originalCaption": "Hey. Ha-ha-ha.", "phoneticScore": 59.32679854644315, "emotionScore": 0.0, "userEmotion": "happy", "userTranscript": "just hey", "lyricalScore": 18.181818181818183, "averageScore": 38.754308364130665}
+------------------Logging--------------------
+2019-04-28 14:42:58.494641
+---------------------------------------------
+about to use threading to talk to back userDB
+------------------Logging--------------------
+2019-04-28 14:42:58.495552
+---------------------------------------------
+Returning JSON back to front!
+------------------Logging--------------------
+2019-04-28 14:43:31.565883
+---------------------------------------------
+handle_compareDialogue
+------------------Logging--------------------
+2019-04-28 14:43:31.566197
+---------------------------------------------
+Data received (on compareDialogue)
+gameID:5ca2969ab472c527126aee94
+netflixWatchID:70274032
+dialogueID:194
+------------------Logging--------------------
+2019-04-28 14:43:32.930569
+---------------------------------------------
+
+resulting JSON after comparison:
+{"gameID": "5ca2969ab472c527126aee94", "dialogueID": 194, "error": "", "success": true, "originalEmotion": "angry", "originalCaption": "That's another thing\\NThat you don't wanna do", "phoneticScore": 37.88291646022196, "emotionScore": 0.0, "userEmotion": "happy", "userTranscript": "will you repeat that", "lyricalScore": 27.692307692307693, "averageScore": 32.78761207626483}
+------------------Logging--------------------
+2019-04-28 14:43:32.931126
+---------------------------------------------
+Done comparing
+resultJSON from func{"gameID": "5ca2969ab472c527126aee94", "dialogueID": 194, "error": "", "success": true, "originalEmotion": "angry", "originalCaption": "That's another thing\\NThat you don't wanna do", "phoneticScore": 37.88291646022196, "emotionScore": 0.0, "userEmotion": "happy", "userTranscript": "will you repeat that", "lyricalScore": 27.692307692307693, "averageScore": 32.78761207626483}
+------------------Logging--------------------
+2019-04-28 14:43:32.931939
+---------------------------------------------
+about to use threading to talk to back userDB
+------------------Logging--------------------
+2019-04-28 14:43:32.952352
+---------------------------------------------
+Returning JSON back to front!
+------------------Logging--------------------
+2019-04-28 14:44:03.464531
+---------------------------------------------
+handle_compareDialogue
+------------------Logging--------------------
+2019-04-28 14:44:03.464826
+---------------------------------------------
+Data received (on compareDialogue)
+gameID:5ca2969ab472c527126aee94
+netflixWatchID:70274032
+dialogueID:196
+------------------Logging--------------------
+2019-04-28 14:44:04.418952
+---------------------------------------------
+
+resulting JSON after comparison:
+{"gameID": "5ca2969ab472c527126aee94", "dialogueID": 196, "error": "", "success": true, "originalEmotion": "angry", "originalCaption": "Not at all inappropriate!", "phoneticScore": 55.16839045850861, "emotionScore": 0.0, "userEmotion": "happy", "userTranscript": "that's another thing that you want to do", "lyricalScore": 27.692307692307693, "averageScore": 41.43034907540815}
+------------------Logging--------------------
+2019-04-28 14:44:04.419874
+---------------------------------------------
+Done comparing
+resultJSON from func{"gameID": "5ca2969ab472c527126aee94", "dialogueID": 196, "error": "", "success": true, "originalEmotion": "angry", "originalCaption": "Not at all inappropriate!", "phoneticScore": 55.16839045850861, "emotionScore": 0.0, "userEmotion": "happy", "userTranscript": "that's another thing that you want to do", "lyricalScore": 27.692307692307693, "averageScore": 41.43034907540815}
+------------------Logging--------------------
+2019-04-28 14:44:04.420672
+---------------------------------------------
+about to use threading to talk to back userDB
+------------------Logging--------------------
+2019-04-28 14:44:04.446393
+---------------------------------------------
+Returning JSON back to front!
+------------------Logging--------------------
+2019-04-28 14:45:09.983966
+---------------------------------------------
+handle_compareDialogue
+------------------Logging--------------------
+2019-04-28 14:45:09.984551
+---------------------------------------------
+Data received (on compareDialogue)
+gameID:5ca2969ab472c527126aee94
+netflixWatchID:70274032
+dialogueID:196
+------------------Logging--------------------
+2019-04-28 14:45:12.242397
+---------------------------------------------
+
+resulting JSON after comparison:
+{"gameID": "5ca2969ab472c527126aee94", "dialogueID": 196, "error": "", "success": true, "originalEmotion": "angry", "originalCaption": "Not at all inappropriate!", "phoneticScore": 59.807792367422785, "emotionScore": 0.0, "userEmotion": "happy", "userTranscript": "not at all inappropriate", "lyricalScore": 93.87755102040816, "averageScore": 76.84267169391548}
+------------------Logging--------------------
+2019-04-28 14:45:12.245697
+---------------------------------------------
+Done comparing
+resultJSON from func{"gameID": "5ca2969ab472c527126aee94", "dialogueID": 196, "error": "", "success": true, "originalEmotion": "angry", "originalCaption": "Not at all inappropriate!", "phoneticScore": 59.807792367422785, "emotionScore": 0.0, "userEmotion": "happy", "userTranscript": "not at all inappropriate", "lyricalScore": 93.87755102040816, "averageScore": 76.84267169391548}
+------------------Logging--------------------
+2019-04-28 14:45:12.246891
+---------------------------------------------
+about to use threading to talk to back userDB
+------------------Logging--------------------
+2019-04-28 14:45:12.277062
+---------------------------------------------
+Returning JSON back to front!
+------------------Logging--------------------
+2019-04-28 14:45:29.031614
+---------------------------------------------
+handle_compareDialogue
+------------------Logging--------------------
+2019-04-28 14:45:29.032224
+---------------------------------------------
+Data received (on compareDialogue)
+gameID:5ca2969ab472c527126aee94
+netflixWatchID:70274032
+dialogueID:197
+------------------Logging--------------------
+2019-04-28 14:45:32.030875
+---------------------------------------------
+
+resulting JSON after comparison:
+{"gameID": "5ca2969ab472c527126aee94", "dialogueID": 197, "error": "", "success": true, "originalEmotion": "angry", "originalCaption": "Thank you for coming, everybody.\\NThere are cookies in the back.", "phoneticScore": 55.30295972453567, "emotionScore": 0.0, "userEmotion": "happy", "userTranscript": "not at all inappropriate", "lyricalScore": 20.454545454545457, "averageScore": 37.87875258954056}
+------------------Logging--------------------
+2019-04-28 14:45:32.031904
+---------------------------------------------
+Done comparing
+resultJSON from func{"gameID": "5ca2969ab472c527126aee94", "dialogueID": 197, "error": "", "success": true, "originalEmotion": "angry", "originalCaption": "Thank you for coming, everybody.\\NThere are cookies in the back.", "phoneticScore": 55.30295972453567, "emotionScore": 0.0, "userEmotion": "happy", "userTranscript": "not at all inappropriate", "lyricalScore": 20.454545454545457, "averageScore": 37.87875258954056}
+------------------Logging--------------------
+2019-04-28 14:45:32.033049
+---------------------------------------------
+about to use threading to talk to back userDB
+------------------Logging--------------------
+2019-04-28 14:45:32.080187
+---------------------------------------------
+Returning JSON back to front!
+------------------Logging--------------------
+2019-04-28 14:46:06.205401
+---------------------------------------------
+handle_compareDialogue
+------------------Logging--------------------
+2019-04-28 14:46:06.209936
+---------------------------------------------
+Data received (on compareDialogue)
+gameID:5ca2969ab472c527126aee94
+netflixWatchID:70274032
+dialogueID:200
+------------------Logging--------------------
+2019-04-28 14:46:08.773177
+---------------------------------------------
+
+resulting JSON after comparison:
+{"gameID": "5ca2969ab472c527126aee94", "dialogueID": 200, "error": "", "success": true, "originalEmotion": "angry", "originalCaption": "Yay! I rock!", "phoneticScore": 59.27015823783734, "emotionScore": 0.0, "userEmotion": "sad", "userTranscript": "is cookies in the back", "lyricalScore": 23.52941176470588, "averageScore": 41.39978500127161}
+------------------Logging--------------------
+2019-04-28 14:46:08.773620
+---------------------------------------------
+Done comparing
+resultJSON from func{"gameID": "5ca2969ab472c527126aee94", "dialogueID": 200, "error": "", "success": true, "originalEmotion": "angry", "originalCaption": "Yay! I rock!", "phoneticScore": 59.27015823783734, "emotionScore": 0.0, "userEmotion": "sad", "userTranscript": "is cookies in the back", "lyricalScore": 23.52941176470588, "averageScore": 41.39978500127161}
+------------------Logging--------------------
+2019-04-28 14:46:08.774253
+---------------------------------------------
+about to use threading to talk to back userDB
+------------------Logging--------------------
+2019-04-28 14:46:08.808666
+---------------------------------------------
+Returning JSON back to front!
+------------------Logging--------------------
+2019-04-28 14:46:26.082746
+---------------------------------------------
+handle_compareDialogue
+------------------Logging--------------------
+2019-04-28 14:46:26.083718
+---------------------------------------------
+Data received (on compareDialogue)
+gameID:5ca2969ab472c527126aee94
+netflixWatchID:70274032
+dialogueID:204
+------------------Logging--------------------
+2019-04-28 14:46:27.922057
+---------------------------------------------
+
+resulting JSON after comparison:
+{"gameID": "5ca2969ab472c527126aee94", "dialogueID": 204, "error": "", "success": true, "originalEmotion": "angry", "originalCaption": "Ha, ha. But?", "phoneticScore": 71.3019642904821, "emotionScore": 0.0, "userEmotion": "disgust", "userTranscript": "yay", "lyricalScore": 13.333333333333334, "averageScore": 42.317648811907716}
+------------------Logging--------------------
+2019-04-28 14:46:27.922741
+---------------------------------------------
+Done comparing
+resultJSON from func{"gameID": "5ca2969ab472c527126aee94", "dialogueID": 204, "error": "", "success": true, "originalEmotion": "angry", "originalCaption": "Ha, ha. But?", "phoneticScore": 71.3019642904821, "emotionScore": 0.0, "userEmotion": "disgust", "userTranscript": "yay", "lyricalScore": 13.333333333333334, "averageScore": 42.317648811907716}
+------------------Logging--------------------
+2019-04-28 14:46:27.925135
+---------------------------------------------
+about to use threading to talk to back userDB
+------------------Logging--------------------
+2019-04-28 14:46:27.964160
+---------------------------------------------
+Returning JSON back to front!
+------------------Logging--------------------
+2019-04-28 14:48:17.707833
+---------------------------------------------
+a user disconnected
+------------------Logging--------------------
+2019-04-28 14:48:20.278825
+---------------------------------------------
+a user connected
+------------------Logging--------------------
+2019-04-28 14:48:34.371286
+---------------------------------------------
+a user disconnected
+------------------Logging--------------------
+2019-04-28 15:04:49.120797
+---------------------------------------------
+testing
+------------------Logging--------------------
+2019-04-28 15:04:51.322330
+---------------------------------------------
+emoPredictor after
+------------------Logging--------------------
+2019-04-28 15:04:51.323068
+---------------------------------------------
+Application Server about to run
+------------------Logging--------------------
+2019-04-28 15:04:53.976585
+---------------------------------------------
+a user connected
+------------------Logging--------------------
+2019-04-28 15:05:02.889532
+---------------------------------------------
+a user disconnected
+------------------Logging--------------------
+2019-04-28 15:05:06.284551
+---------------------------------------------
+a user connected
+------------------Logging--------------------
+2019-04-28 15:05:36.834596
+---------------------------------------------
+handle_compareDialogue
+------------------Logging--------------------
+2019-04-28 15:05:36.835095
+---------------------------------------------
+Data received (on compareDialogue)
+gameID:5cc5f8fbe034c7001162f73d
+netflixWatchID:70274021
+dialogueID:18
+------------------Logging--------------------
+2019-04-28 15:05:45.928961
+---------------------------------------------
+
+resulting JSON after comparison:
+{"gameID": "5cc5f8fbe034c7001162f73d", "dialogueID": 18, "error": "", "success": true, "originalEmotion": "angry", "originalCaption": "rach", "phoneticScore": 55.69214584302327, "emotionScore": 0.0, "userEmotion": "surprised", "userTranscript": "rich", "lyricalScore": 75.0, "averageScore": 65.34607292151163}
+------------------Logging--------------------
+2019-04-28 15:05:45.929551
+---------------------------------------------
+Done comparing
+resultJSON from func{"gameID": "5cc5f8fbe034c7001162f73d", "dialogueID": 18, "error": "", "success": true, "originalEmotion": "angry", "originalCaption": "rach", "phoneticScore": 55.69214584302327, "emotionScore": 0.0, "userEmotion": "surprised", "userTranscript": "rich", "lyricalScore": 75.0, "averageScore": 65.34607292151163}
+------------------Logging--------------------
+2019-04-28 15:05:45.932982
+---------------------------------------------
+about to use threading to talk to back userDB
+------------------Logging--------------------
+2019-04-28 15:05:45.969062
+---------------------------------------------
+Returning JSON back to front!
+------------------Logging--------------------
+2019-04-28 15:06:20.099395
+---------------------------------------------
+handle_compareDialogue
+------------------Logging--------------------
+2019-04-28 15:06:20.124092
+---------------------------------------------
+Data received (on compareDialogue)
+gameID:5cc5f8fbe034c7001162f73d
+netflixWatchID:70274021
+dialogueID:24
+------------------Logging--------------------
+2019-04-28 15:06:23.216019
+---------------------------------------------
+
+resulting JSON after comparison:
+{"gameID": "5cc5f8fbe034c7001162f73d", "dialogueID": 24, "error": "", "success": true, "originalEmotion": "angry", "originalCaption": "it was it was great", "phoneticScore": 58.84708520037951, "emotionScore": 0.0, "userEmotion": "surprised", "userTranscript": "it was it was great", "lyricalScore": 100.0, "averageScore": 79.42354260018976}
+------------------Logging--------------------
+2019-04-28 15:06:23.216636
+---------------------------------------------
+Done comparing
+resultJSON from func{"gameID": "5cc5f8fbe034c7001162f73d", "dialogueID": 24, "error": "", "success": true, "originalEmotion": "angry", "originalCaption": "it was it was great", "phoneticScore": 58.84708520037951, "emotionScore": 0.0, "userEmotion": "surprised", "userTranscript": "it was it was great", "lyricalScore": 100.0, "averageScore": 79.42354260018976}
+------------------Logging--------------------
+2019-04-28 15:06:23.217288
+---------------------------------------------
+about to use threading to talk to back userDB
+------------------Logging--------------------
+2019-04-28 15:06:23.245944
+---------------------------------------------
+Returning JSON back to front!
+------------------Logging--------------------
+2019-04-28 15:06:58.978938
+---------------------------------------------
+handle_compareDialogue
+------------------Logging--------------------
+2019-04-28 15:06:58.979693
+---------------------------------------------
+Data received (on compareDialogue)
+gameID:5cc5f8fbe034c7001162f73d
+netflixWatchID:70274021
+dialogueID:33
+------------------Logging--------------------
+2019-04-28 15:07:01.075151
+---------------------------------------------
+
+resulting JSON after comparison:
+{"gameID": "5cc5f8fbe034c7001162f73d", "dialogueID": 33, "error": "", "success": true, "originalEmotion": "angry", "originalCaption": "well uh where do i start", "phoneticScore": 54.80774296955264, "emotionScore": 0.0, "userEmotion": "disgust", "userTranscript": "well where do I start", "lyricalScore": 88.88888888888889, "averageScore": 71.84831592922076}
+------------------Logging--------------------
+2019-04-28 15:07:01.075996
+---------------------------------------------
+Done comparing
+resultJSON from func{"gameID": "5cc5f8fbe034c7001162f73d", "dialogueID": 33, "error": "", "success": true, "originalEmotion": "angry", "originalCaption": "well uh where do i start", "phoneticScore": 54.80774296955264, "emotionScore": 0.0, "userEmotion": "disgust", "userTranscript": "well where do I start", "lyricalScore": 88.88888888888889, "averageScore": 71.84831592922076}
+------------------Logging--------------------
+2019-04-28 15:07:01.076710
+---------------------------------------------
+about to use threading to talk to back userDB
+------------------Logging--------------------
+2019-04-28 15:07:01.108415
+---------------------------------------------
+Returning JSON back to front!
+------------------Logging--------------------
+2019-04-28 15:07:05.304540
+---------------------------------------------
+handle_compareDialogue
+------------------Logging--------------------
+2019-04-28 15:07:05.304971
+---------------------------------------------
+Data received (on compareDialogue)
+gameID:5cc5f8fbe034c7001162f73d
+netflixWatchID:70274021
+dialogueID:34
+------------------Logging--------------------
+2019-04-28 15:07:07.967470
+---------------------------------------------
+
+resulting JSON after comparison:
+{"gameID": "5cc5f8fbe034c7001162f73d", "dialogueID": 34, "error": "", "success": true, "originalEmotion": "disgust", "originalCaption": "um well this is julie", "phoneticScore": 59.78924146264607, "emotionScore": 0.0, "userEmotion": "surprised", "userTranscript": "this is Julie", "lyricalScore": 70.58823529411765, "averageScore": 65.18873837838186}
+------------------Logging--------------------
+2019-04-28 15:07:07.968069
+---------------------------------------------
+Done comparing
+resultJSON from func{"gameID": "5cc5f8fbe034c7001162f73d", "dialogueID": 34, "error": "", "success": true, "originalEmotion": "disgust", "originalCaption": "um well this is julie", "phoneticScore": 59.78924146264607, "emotionScore": 0.0, "userEmotion": "surprised", "userTranscript": "this is Julie", "lyricalScore": 70.58823529411765, "averageScore": 65.18873837838186}
+------------------Logging--------------------
+2019-04-28 15:07:07.968760
+---------------------------------------------
+about to use threading to talk to back userDB
+------------------Logging--------------------
+2019-04-28 15:07:07.995073
+---------------------------------------------
+Returning JSON back to front!
+------------------Logging--------------------
+2019-04-28 15:07:38.266970
+---------------------------------------------
+handle_compareDialogue
+------------------Logging--------------------
+2019-04-28 15:07:38.267326
+---------------------------------------------
+Data received (on compareDialogue)
+gameID:5cc5f8fbe034c7001162f73d
+netflixWatchID:70274021
+dialogueID:39
+------------------Logging--------------------
+2019-04-28 15:07:41.244490
+---------------------------------------------
+
+resulting JSON after comparison:
+{"gameID": "5cc5f8fbe034c7001162f73d", "dialogueID": 39, "error": "", "success": true, "originalEmotion": "fearful", "originalCaption": "these are", "phoneticScore": 57.51173019183524, "emotionScore": 0.0, "userEmotion": "surprised", "userTranscript": "weren't for you either for you", "lyricalScore": 20.51282051282051, "averageScore": 39.012275352327876}
+------------------Logging--------------------
+2019-04-28 15:07:41.245178
+---------------------------------------------
+Done comparing
+resultJSON from func{"gameID": "5cc5f8fbe034c7001162f73d", "dialogueID": 39, "error": "", "success": true, "originalEmotion": "fearful", "originalCaption": "these are", "phoneticScore": 57.51173019183524, "emotionScore": 0.0, "userEmotion": "surprised", "userTranscript": "weren't for you either for you", "lyricalScore": 20.51282051282051, "averageScore": 39.012275352327876}
+------------------Logging--------------------
+2019-04-28 15:07:41.245812
+---------------------------------------------
+about to use threading to talk to back userDB
+------------------Logging--------------------
+2019-04-28 15:07:41.246781
+---------------------------------------------
+Returning JSON back to front!
+------------------Logging--------------------
+2019-04-28 15:07:41.863104
+---------------------------------------------
+handle_compareDialogue
+------------------Logging--------------------
+2019-04-28 15:07:41.863436
+---------------------------------------------
+Data received (on compareDialogue)
+gameID:5cc5f8fbe034c7001162f73d
+netflixWatchID:70274021
+dialogueID:40
+------------------Logging--------------------
+2019-04-28 15:07:43.467444
+---------------------------------------------
+
+resulting JSON after comparison:
+{"gameID": "5cc5f8fbe034c7001162f73d", "dialogueID": 40, "error": "", "success": true, "originalEmotion": "fearful", "originalCaption": "aren't for you", "phoneticScore": 62.27791397017385, "emotionScore": 0.0, "userEmotion": "sad", "userTranscript": "aren't for you", "lyricalScore": 100.0, "averageScore": 81.13895698508692}
+------------------Logging--------------------
+2019-04-28 15:07:43.467982
+---------------------------------------------
+Done comparing
+resultJSON from func{"gameID": "5cc5f8fbe034c7001162f73d", "dialogueID": 40, "error": "", "success": true, "originalEmotion": "fearful", "originalCaption": "aren't for you", "phoneticScore": 62.27791397017385, "emotionScore": 0.0, "userEmotion": "sad", "userTranscript": "aren't for you", "lyricalScore": 100.0, "averageScore": 81.13895698508692}
+------------------Logging--------------------
+2019-04-28 15:07:43.471487
+---------------------------------------------
+about to use threading to talk to back userDB
+------------------Logging--------------------
+2019-04-28 15:07:43.503177
+---------------------------------------------
+Returning JSON back to front!
+------------------Logging--------------------
+2019-04-28 15:07:47.289574
+---------------------------------------------
+handle_compareDialogue
+------------------Logging--------------------
+2019-04-28 15:07:47.292330
+---------------------------------------------
+Data received (on compareDialogue)
+gameID:5cc5f8fbe034c7001162f73d
+netflixWatchID:70274021
+dialogueID:41
+------------------Logging--------------------
+2019-04-28 15:07:49.675274
+---------------------------------------------
+
+resulting JSON after comparison:
+{"gameID": "5cc5f8fbe034c7001162f73d", "dialogueID": 41, "error": "", "success": true, "originalEmotion": "angry", "originalCaption": "uh these are for you", "phoneticScore": 58.05604656325837, "emotionScore": 0.0, "userEmotion": "surprised", "userTranscript": "these are for you", "lyricalScore": 91.8918918918919, "averageScore": 74.97396922757514}
+------------------Logging--------------------
+2019-04-28 15:07:49.675702
+---------------------------------------------
+Done comparing
+resultJSON from func{"gameID": "5cc5f8fbe034c7001162f73d", "dialogueID": 41, "error": "", "success": true, "originalEmotion": "angry", "originalCaption": "uh these are for you", "phoneticScore": 58.05604656325837, "emotionScore": 0.0, "userEmotion": "surprised", "userTranscript": "these are for you", "lyricalScore": 91.8918918918919, "averageScore": 74.97396922757514}
+------------------Logging--------------------
+2019-04-28 15:07:49.676348
+---------------------------------------------
+about to use threading to talk to back userDB
+------------------Logging--------------------
+2019-04-28 15:07:49.711476
+---------------------------------------------
+Returning JSON back to front!
+------------------Logging--------------------
+2019-04-28 15:07:54.344188
+---------------------------------------------
+handle_compareDialogue
+------------------Logging--------------------
+2019-04-28 15:07:54.347941
+---------------------------------------------
+Data received (on compareDialogue)
+gameID:5cc5f8fbe034c7001162f73d
+netflixWatchID:70274021
+dialogueID:42
+------------------Logging--------------------
+2019-04-28 15:07:56.792400
+---------------------------------------------
+
+resulting JSON after comparison:
+{"gameID": "5cc5f8fbe034c7001162f73d", "dialogueID": 42, "error": "", "success": true, "originalEmotion": "angry", "originalCaption": "welcome to our country", "phoneticScore": 52.391302028005114, "emotionScore": 0.0, "userEmotion": "calm", "userTranscript": "Welcome to our country", "lyricalScore": 95.45454545454545, "averageScore": 73.92292374127528}
+------------------Logging--------------------
+2019-04-28 15:07:56.792797
+---------------------------------------------
+Done comparing
+resultJSON from func{"gameID": "5cc5f8fbe034c7001162f73d", "dialogueID": 42, "error": "", "success": true, "originalEmotion": "angry", "originalCaption": "welcome to our country", "phoneticScore": 52.391302028005114, "emotionScore": 0.0, "userEmotion": "calm", "userTranscript": "Welcome to our country", "lyricalScore": 95.45454545454545, "averageScore": 73.92292374127528}
+------------------Logging--------------------
+2019-04-28 15:07:56.793474
+---------------------------------------------
+about to use threading to talk to back userDB
+------------------Logging--------------------
+2019-04-28 15:07:56.837873
+---------------------------------------------
+Returning JSON back to front!
+------------------Logging--------------------
+2019-04-28 15:08:09.500609
+---------------------------------------------
+handle_compareDialogue
+------------------Logging--------------------
+2019-04-28 15:08:09.501082
+---------------------------------------------
+Data received (on compareDialogue)
+gameID:5cc5f8fbe034c7001162f73d
+netflixWatchID:70274021
+dialogueID:44
+------------------Logging--------------------
+2019-04-28 15:08:11.992853
+---------------------------------------------
+
+resulting JSON after comparison:
+{"gameID": "5cc5f8fbe034c7001162f73d", "dialogueID": 44, "error": "", "success": true, "originalEmotion": "angry", "originalCaption": "i'm from new york", "phoneticScore": 62.532008351260416, "emotionScore": 20.0, "userEmotion": "angry", "userTranscript": "I'm from New York", "lyricalScore": 82.35294117647058, "averageScore": 92.4424747638655}
+------------------Logging--------------------
+2019-04-28 15:08:11.996835
+---------------------------------------------
+Done comparing
+resultJSON from func{"gameID": "5cc5f8fbe034c7001162f73d", "dialogueID": 44, "error": "", "success": true, "originalEmotion": "angry", "originalCaption": "i'm from new york", "phoneticScore": 62.532008351260416, "emotionScore": 20.0, "userEmotion": "angry", "userTranscript": "I'm from New York", "lyricalScore": 82.35294117647058, "averageScore": 92.4424747638655}
+------------------Logging--------------------
+2019-04-28 15:08:11.997917
+---------------------------------------------
+about to use threading to talk to back userDB
+------------------Logging--------------------
+2019-04-28 15:08:12.026197
+---------------------------------------------
+Returning JSON back to front!
+------------------Logging--------------------
+2019-04-28 15:10:07.383237
+---------------------------------------------
+a user disconnected

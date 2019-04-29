@@ -308,8 +308,13 @@ def getMediaAndCaptionFiles(mediaDirectory):
     else:
         if captionFile != '' and SRTfile != '':
             videoOffset = getVideoOffset(captionFile, SRTfile)
+        elif SRTfile == '':
+            print("SRT file not found to sync subtitles. Try manually.")
+            offset_seconds = input("Captions offset seconds: ")
+            offset_ms = input("captions offset ms: ")
+            videoOffset = timedelta(seconds=int(offset_seconds), microseconds=int(offset_ms)*1000)
         else:
-            print("VTT Caption and/or SRT caption file not found")
+            print("VTT labeled_subs... Caption file not found")
             exit()
     return mediaFile, captionFile, videoOffset, netflixWatchID
 
