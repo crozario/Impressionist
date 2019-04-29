@@ -233,7 +233,8 @@ a {
 
   function updateSubs() {
     var textContainers = document.getElementsByClassName('player-timedtext');
-    if (textContainers[0].firstChild != null) {
+    //if () return;
+    if (textContainers[0] != null && textContainers[0].firstChild != null) {
       //check if our subs elem is present
       if (textContainers.length > 1) {
         var netflixSubText = textContainers[0].innerText;
