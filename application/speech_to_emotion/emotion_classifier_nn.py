@@ -84,7 +84,9 @@ class livePredictions:
 # Below, I have used a neutral file: the prediction made is neutral.
 
 if __name__ == "__main__":
-    pred = livePredictions(path='Emotion_Voice_Detection_Model.h5',
+    modelFile = os.path.join(os.path.dirname(
+        os.path.realpath(__file__)), 'Emotion_Voice_Detection_Model.h5')
+    pred = livePredictions(path= modelFile,
                         file='pretending-to-be-happy.wav')
     pred.load_model()
     pred.makepredictions()
