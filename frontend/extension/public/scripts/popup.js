@@ -6,6 +6,9 @@ Description: Popup window for chrome extension
 */
 
 let userToken = null;
+let userEmail = null;
+let userProfileLink = null;
+
 
 
 onload = () => {
@@ -27,29 +30,80 @@ onload = () => {
     }
 }
 
-let isLoggedIn = () => { return false; }
+let isLoggedIn = () => { 
+    // chrome.identity.getAuthToken({interactive: false}, function(token) {
+    //     userToken = token
+    //     console.log(token);
 
-let loadUserPage = () => {
+    //     if(chrome.runtime.lastError) {
+    //         console.log(chrome.runtime.lastError.message);
+    //         return false;
+    //     } 
 
+    //     return true;
+
+    //     let xhr = new XMLHttpRequest();
+        
+    //     xhr.onload = function() {
+    //         console.log(xhr.response);
+    //         return true
+
+    //     };
+
+    //     xhr.open('GET', 'https://www.googleapis.com/oauth2/v2/userinfo?alt=json&access_token=' + token);
+    //     xhr.send();
+
+    // });
+    return false;
 }
 
 let setup = () => {
     let loginButton = document.getElementById('login-button');
+    loginButton.onclick = loginButtonPressed;
 }
 
+let loadUserPage = (jsonData) => {
+    load("user");
+
+
+    let user_id = jsonData.id;
+    let email = jsonData.email;
+    let emailVerified = jsonData.verified_email // true | false
+    let fullName = jsonData.full_name
+    let firstName = jsonData.given_name
+    let lastName = jsonData.family_name
+    let profilePicURL = jsonData.picture
+    let locale = jsonData.locale
+
+    let firstNameElement = document.getElementById('first-name');
+    firstNameElement.innerHTML = "First Name : " + firstName;
+
+    let lastNameElement = document.getElementById('last-name');
+    lastNameElement.innerHTML = "Last Name : " + lastName;
+
+    let emailElement = document.getElementById('email');
+    emailElement.innerHTML = "Email : " + email;
+
+    let profilePicElement = document.getElementById('profile-pic');
+    profilePicElement.src = profilePicURL;
+}
 
 let loadLoginPage = () => {
-    let contentsContainer = document.getElementById("contents-container");
+    load("login");
+}
 
-    let loginButton = document.createElement('button');
-    loginButton.type = "submit";
-    loginButton.id = "login-button";
-    loginButton.innerHTML = "Log in with email";
-    loginButton.onclick = loginButtonPressed;
+let load = (page) => {
+    let loginContainer = document.getElementById('login-container');
+    let userContainer = document.getElementById('user-container');
 
-    console.log(contentsContainer)
+    if(page == "login") {
+        loginContainer.style.display = "block";
+        userContainer.style.display = "none";
 
-    contentsContainer.appendChild(loginButton);
+    } else if(page == "user") {
+        loginContainer.style.display = "none";
+        userContainer.style.display = "block";
+    }
 }
 
 
@@ -70,16 +124,14 @@ let loginButtonPressed = () => {
         let xhr = new XMLHttpRequest();
         
         xhr.onload = function() {
-            alert(xhr.response);
+            let jsonData = JSON.parse(xhr.responseText)
+            loadUserPage(jsonData);
         };
 
         xhr.open('GET', 'https://www.googleapis.com/oauth2/v2/userinfo?alt=json&access_token=' + token);
         xhr.send();
+
     });
-
-
-
-
 
     // let email = document.getElementById('login-input-email').value;
     // let password = document.getElementById('login-input-password').value;

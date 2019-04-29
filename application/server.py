@@ -97,6 +97,10 @@ def handle_compareDialogue(message):
     # SOLUTION: async process
     thr = threading.Thread(target=sendScoreToBack, args=(resultBYTES, True))
     thr.start()
+
+    # thr = socketio.start_background_task(sendScoreToBack, resultBYTES, True)
+    # print(thr)
+
     # response = sendScoreToBack(resultBYTES)
     # print("response:", response)
 

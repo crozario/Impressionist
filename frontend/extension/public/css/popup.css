@@ -133,3 +133,11 @@ input {
     color: white;
     border-radius: 5px;
 }
+
+#contents-container {
+    text-align: center;
+}
+
+#user-container {
+    text-align: center;
+}
