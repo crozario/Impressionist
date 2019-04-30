@@ -7,7 +7,7 @@
   }
 
   function getSubs() {
-    if (document.getElementsByClassName('player-timedtext')[0].children[0] != null) {
+    if (document.getElementsByClassName('player-timedtext')[0].children[0]) {
       return document.getElementsByClassName('player-timedtext')[0];
     }
   }
@@ -19,19 +19,26 @@
     var netflixSubs = getSubs();
     //make sure to check if subs exist first
     var subs = netflixSubs.cloneNode(true);
+    //remove other inner timed-text container if present
+    while (subs.childElementCount > 1){
+      subs.children[1].remove()
+    }
     //modify subs to style z-index=2 so that the appear in the foreground of the player and allow for hover capability, stolen from eJOY
-    subs.children[0].style.zIndex = 2;
+    subs.firstChild.style.zIndex = 2;
     //display the subs
     subs.style.display = 'block';
     //split up subs into spans for each word
     var mytext = netflixSubs.innerText.replace(/\b(\w+\W?\s?)\b/g, "<span class=\"sub-word\">$1</span>");
     //carry over the style from netflix's subs
-    subs.firstChild.style.cssText += netflixSubs.firstChild.firstChild.style.cssText;
+    //create new span elem to store only the style info
+    var myelem = document.createElement('span');
+    myelem.style = netflixSubs.firstChild.firstChild.style.cssText;
     //places all the new span tags into the contianer element
-    subs.firstChild.innerHTML = mytext; //.replace(/\n/, '<br>');
-    //remove other inner timed-text container if present
-    while (subs.childElementCount > 1){
-      subs.children[1].remove()
+    myelem.innerHTML = mytext; //.replace(/\n/, '<br>');
+    //appends sub-words span to the inner timed-text container
+    subs.firstChild.insertAdjacentHTML('beforeend', myelem.outerHTML);
+    while (subs.firstChild.childElementCount > 1){
+      subs.firstChild.children[0].remove()
     }
     //append outer subtitle container with modified subs
     document.getElementById(movieId).insertAdjacentHTML('beforeend', subs.outerHTML);
@@ -80,7 +87,7 @@
       .then(res => {
         myres = res;
       })
-      .then(error => console.log(error))
+      .catch(error => console.log(error))
 
     return myres;
   }
@@ -99,7 +106,7 @@
       .then(res => {
         myres = res;
       })
-      .then(error => console.log(error))
+      .catch(error => console.log(error))
 
     return myres;
   }
@@ -118,14 +125,14 @@
       .then(res => {
         myres = res;
       })
-      .then(error => console.log(error))
+      .catch(error => console.error(error))
 
     return myres;
   }
 
   async function myFunction(word, parent) {
     var prevPopup = document.getElementsByClassName('popuptext')[0];
-    if (prevPopup != null) {
+    if (prevPopup) {
       prevPopup.remove()
     }
     var myelem = document.createElement('span');
@@ -133,27 +140,35 @@
     parent[0].appendChild(myelem);
     var myvar;
     var mytext;
-    //switcheraoo m-w with wordsAPI order
+    //check m-w learners dict for def.
     await mwlAPI(word).then(res => {
-      mytext = res[0].fl + '\n\t' + res[0].shortdef[0];
-      myvar = res
-    });
-    if (myvar[0].shortdef == null) {
-      await mwAPI(word).then(res => {
+      if (res[0].hasOwnProperty('shortdef')){
         mytext = res[0].fl + '\n\t' + res[0].shortdef[0];
         myvar = res
-      });
+      }
+    }).catch(error => console.error(error));
+    //check m-w collegiate dict for def.
+    if (myvar == null) {
+      await mwAPI(word).then(res => {
+        if (res[0].hasOwnProperty('shortdef')){
+        mytext = res[0].fl + '\n\t' + res[0].shortdef[0];
+        myvar = res;
+      }
+      }).catch(error => console.error(error));
     }
-    if (myvar[0].shortdef == null) {
+    //check WordsAPI for def.
+    if (myvar == null) {
       await wordsAPI(word).then(res => {
         myvar = res
-      });
-      mytext = myvar.definitions[0].partOfSpeech + '\n\t' + myvar.definitions[0].definition;
-      if (myvar.definitions.length > 1) {
-        for (i = 0; i < myvar.definitions.length; i++) {
-          if (mytext.includes(myvar.definitions[i].partOfSpeech) || myvar.definitions[i].partOfSpeech == null) {} else {
-            mytext += '<hr>' + myvar.definitions[i].partOfSpeech + '\n\t' + myvar.definitions[i].definition;
-            break;
+      }).catch(error => console.error(error));
+      if (myvar.definitions[0]){
+        mytext = myvar.definitions[0].partOfSpeech + '\n\t' + myvar.definitions[0].definition;
+        if (myvar.definitions.length > 1) {
+          for (i = 0; i < myvar.definitions.length; i++) {
+            if (mytext.includes(myvar.definitions[i].partOfSpeech) || myvar.definitions[i].partOfSpeech == null) {} else {
+              mytext += '<hr>' + myvar.definitions[i].partOfSpeech + '\n\t' + myvar.definitions[i].definition;
+              break;
+            }
           }
         }
       }
@@ -234,11 +249,12 @@ a {
   function updateSubs() {
     var textContainers = document.getElementsByClassName('player-timedtext');
     //if () return;
-    if (textContainers[0] != null && textContainers[0].firstChild != null) {
+    if (textContainers[0] && textContainers[0].firstChild) {
+      var mySub = textContainers[1];
+      var netflixSub = textContainers[0];
       //check if our subs elem is present
       if (textContainers.length > 1) {
-        var netflixSubText = textContainers[0].innerText;
-        var mySub = textContainers[1];
+        var netflixSubText = netflixSub.innerText;
         var mySubText = mySub.innerText.replace('\n', '');
         //if subs have changed, remove our sub, then create new sub
         if (netflixSubText != mySubText && getPaused() == false) {
@@ -249,7 +265,10 @@ a {
           setTimedTextVisibility(false);
           //add hightlighting with hover
           hoverHighlight();
-        } else return; //if subs haven't changed, then don't update any elements
+        } else if (mySub.firstChild.style.top != netflixSub.firstChild.style.top){
+          mySub.firstChild.style.top = netflixSub.firstChild.style.top;
+        }
+        else return; //if subs haven't changed, then don't update any elements
       } else {
         setTimedTextVisibility(true);
         //if our subs aren't present, create them
@@ -274,7 +293,7 @@ a {
 
   var idNum = setInterval(updateSubs, 50);
 
-  
+
 
 console.log("STARTED SCRIPTORINO : ", idNum);
 
