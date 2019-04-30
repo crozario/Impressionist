@@ -102,7 +102,7 @@ exports.signIn = (req,res) => {
 		});
 	}
 	// build query based on whether the user signed-in with email or username
-	if((info.user).includes("@")) {
+	if((info.user).indexOf("@") != -1) {
 		// res.setHeader('type', 'emailAddress');
 		var query = schema.User.findOne({'credentials.emailAddress': info.user});
 	} else {
