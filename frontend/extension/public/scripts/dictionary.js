@@ -266,9 +266,6 @@ a {
           //add hightlighting with hover
           hoverHighlight();
         } else if (mySub.firstChild.style.top != netflixSub.firstChild.style.top){
-          console.log('distance from top not same, YEET');
-          console.log('netflix distance: ', netflixSub.firstChild.style.top);
-          console.log('mysub distance: ', mySub.firstChild.style.top);
           mySub.firstChild.style.top = netflixSub.firstChild.style.top;
         }
         else return; //if subs haven't changed, then don't update any elements
