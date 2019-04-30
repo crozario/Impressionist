@@ -41,7 +41,7 @@
     },
     "oauth2": {
       "client_id": "27736832294-lglt2rri6n1vaohla22rb2bvlpkechf6.apps.googleusercontent.com",
-      "scopes": ["https://www.googleapis.com/auth/userinfo.email"]
+      "scopes": ["https://www.googleapis.com/auth/userinfo.email", "https://www.googleapis.com/auth/userinfo.profile"]
     },
     "manifest_version": 2,
     "key" : "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAzeBSUtlWb8Takg3+epu/88wnRz1xooNgdwW+JFct3/wyEQ/VwOJEEtJ0PYNtN2ZhSQmsr1UaImEvdj2xSLzLcd//lcCzz7p7rlYBqZBK64ATWGecnzKBvewycgJlwuo+39r5PEllW+qpTYtEf6X6wmwJtxx5gFwXBE9UkQEDpeHioJuaMUvRXGU5E0wre6nsZRkcecgUMdu/r2Ka/ZdxvEO37ECzhVEr1Csm2dVFarCEjRsxPplud4EjhjxN3DTZT2C0O9PaGtvTTbAeIaa1PWXEf6BaFKeqnm016kvUHe+MQq2XrUrZuQ9/SlMfEaOrkrhQKaHYOHOJ0ZwlC3tYwwIDAQAB"

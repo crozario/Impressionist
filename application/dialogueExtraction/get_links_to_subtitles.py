@@ -105,6 +105,8 @@ def _getFilesFrom(folderPath, extension="all", verbose=False):
 def _writeDiagsToCSV(tuplesList, fileName, delim=","):
     print("_writeDiagsToCSV not implemented yet")
 
+
+
 def createContentDirsFriends(season=2, episode=None, folderPath=None, transcriptLink=None, extractCharacters=False, saveTranscriptToCSV=False, verbose=False):
     """Create folders inside contentData folder
     TODO: add a loop to do all seasons
@@ -220,8 +222,7 @@ if __name__ == "__main__":
     episodeNum = None
     folderPath = None
     transcriptLink = None
-    if (len(sys.argv) == 1): episodeNum = None
-    elif (len(sys.argv) == 2): episodeNum = int(sys.argv[1])
+    if (len(sys.argv) == 2): episodeNum = int(sys.argv[1])
     elif (len(sys.argv) == 3): # args folder and link
         episodeNum = None
         folderPath = sys.argv[1]
