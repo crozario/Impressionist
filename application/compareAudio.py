@@ -208,7 +208,7 @@ def performThreeComparisons(netflixWatchID, dialogueID, audioFile, gameID, userT
     phoneticSimilarity, error = comparePhoneticSimilarity(audioFile, featureFileURL, verbose=False, profile=profile)
     if error is not "":
         errorsLst.append(error)  # Log error
-    resultDICT["phoneticScore"] = phoneticSimilarity
+    resultDICT["phoneticScore"] = round(phoneticSimilarity, 2)
     if verbose: print("Phonetic similarity:", resultDICT["phoneticScore"])
     overallscore += resultDICT["phoneticScore"]
     # 4. Compare Emotion
@@ -223,7 +223,7 @@ def performThreeComparisons(netflixWatchID, dialogueID, audioFile, gameID, userT
     if error is not "":
         errorsLst.append(error)  # Log error
     resultDICT["userTranscript"] = userTranscript
-    resultDICT["lyricalScore"] = lyricalSimilarity*100
+    resultDICT["lyricalScore"] = round(lyricalSimilarity*100 , 2)
     if verbose: print("Lyrical Similarity:", resultDICT["lyricalScore"])
     overallscore += resultDICT["lyricalScore"]
     overallscore /= totalScores
