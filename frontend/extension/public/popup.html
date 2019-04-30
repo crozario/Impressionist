@@ -18,14 +18,36 @@
 
           <div id="contents-container">
             <div id = "login-container">
-              <button id="login-button">Login with Google</button>
+              <form id="login-form" >
+                <input id="login-input-email" type="text" placeholder="Enter Email" name="email" required>        
+                <input id="login-input-password" type="password" placeholder="Enter Password" name="password" required>   
+                <button id="login-button" type="submit" >Login</button>
+                <div id="status" style="display: none;"><strong>Incorrect email or password<strong></div>      
+              </form>
+            </div>
+
+            <div id = "signup-container">
+              <form id="signup-form">
+                <input id="signup-input-firstname" type="text" placeholder="Enter First Name" name="lastname" required>
+                <input id="signup-input-lastname" type="text" placeholder="Enter Last Name" name="lastname" required>
+                <input id="signup-input-email" type="text" placeholder="Enter Email" name="email" required>
+                <input id="signup-input-username" type="text" placeholder="Enter Username" name="username" required>
+                <input id="signup-input-password" type="password" placeholder="Enter Password" name="password" required>
+                <input id="signup-input-password-confirm" type="password" placeholder="Enter Password Again" name="password" required>
+                <button id="signup-button" type="submit">Sign up</button>
+              </form>
             </div>
 
             <div id = "user-container">
-              <img id="profile-pic" alt="profile pic" width="75" height="75">
+              <h2>User Info</h2>
               <span id="first-name"></span>
               <span id="last-name"></span>
               <span id="email"></span>
+              <button id="logout-button" type="submit">Logout</button>
+            </div>
+
+            <div id = "search-container">
+              
             </div>
           </div>
 
@@ -40,17 +62,16 @@
                   
                   
                 </div>  
-        
-        
+      
                 <div id="status" style="display: none;"><strong>Incorrect email or password<strong></div>   
                     
               </form>
             </div> -->
       
-          <div class="tab-container">
-            <button class="search-tab" ></button>
-            <button class="user-tab" ></button>
-          </div>
+        <div id="tab-container">
+          <button id="left-tab"><img src="images/search_icon.png"></button>
+          <button id="right-tab"><img src="images/search_icon.png"></button>
+        </div>
     </div>
   </body>
 </html>
