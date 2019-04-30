@@ -219,6 +219,7 @@ def performThreeComparisons(netflixWatchID, dialogueID, audioFile, gameID, userT
     resultDICT["userEmotion"] = userEmotion
     if verbose: print("Similar emotion:", resultDICT["emotionScore"])
     # 5. Compare Lyrics
+    userTranscript = userTranscript.lower()
     lyricalSimilarity, error = compareLyricalSimilarity(userTranscript, originalCaption, verbose=False, profile=profile)
     if error is not "":
         errorsLst.append(error)  # Log error
