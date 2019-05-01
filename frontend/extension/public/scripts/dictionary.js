@@ -20,7 +20,7 @@
     //make sure to check if subs exist first
     var subs = netflixSubs.cloneNode(true);
     //remove other inner timed-text container if present
-    while (subs.childElementCount > 1){
+    while (subs.childElementCount > 1) {
       subs.children[1].remove()
     }
     //modify subs to style z-index=2 so that the appear in the foreground of the player and allow for hover capability, stolen from eJOY
@@ -35,11 +35,14 @@
     myelem.style = netflixSubs.firstChild.firstChild.style.cssText;
     //places all the new span tags into the contianer element
     myelem.innerHTML = mytext; //.replace(/\n/, '<br>');
+    myelem.className = 'sub-words';
     //appends sub-words span to the inner timed-text container
     subs.firstChild.insertAdjacentHTML('beforeend', myelem.outerHTML);
-    while (subs.firstChild.childElementCount > 1){
+    while (subs.firstChild.childElementCount > 1) {
       subs.firstChild.children[0].remove()
     }
+    //set spacing from netflix controls
+    setStyle(netflixSubs, subs);
     //append outer subtitle container with modified subs
     document.getElementById(movieId).insertAdjacentHTML('beforeend', subs.outerHTML);
   }
@@ -142,7 +145,7 @@
     var mytext;
     //check m-w learners dict for def.
     await mwlAPI(word).then(res => {
-      if (res[0].hasOwnProperty('shortdef')){
+      if (res[0].hasOwnProperty('shortdef')) {
         mytext = res[0].fl + '\n\t' + res[0].shortdef[0];
         myvar = res
       }
@@ -150,10 +153,10 @@
     //check m-w collegiate dict for def.
     if (myvar == null) {
       await mwAPI(word).then(res => {
-        if (res[0].hasOwnProperty('shortdef')){
-        mytext = res[0].fl + '\n\t' + res[0].shortdef[0];
-        myvar = res;
-      }
+        if (res[0].hasOwnProperty('shortdef')) {
+          mytext = res[0].fl + '\n\t' + res[0].shortdef[0];
+          myvar = res;
+        }
       }).catch(error => console.error(error));
     }
     //check WordsAPI for def.
@@ -161,7 +164,7 @@
       await wordsAPI(word).then(res => {
         myvar = res
       }).catch(error => console.error(error));
-      if (myvar.definitions[0]){
+      if (myvar.definitions[0]) {
         mytext = myvar.definitions[0].partOfSpeech + '\n\t' + myvar.definitions[0].definition;
         if (myvar.definitions.length > 1) {
           for (i = 0; i < myvar.definitions.length; i++) {
@@ -179,6 +182,9 @@
 
   (function() {
     let style = `<style>
+.sub-words {
+  white-space: pre-wrap;
+}
     /* definition link */
 a {
   text-decoration: underline;
@@ -246,9 +252,25 @@ a {
     document.head.insertAdjacentHTML("beforeend", style);
   })();
 
+  function setStyle(netflixSub, mySub) {
+    if (document.getElementsByClassName('active').length) {
+      if (netflixSub.childElementCount == 1 && mySub.firstChild.style.top != '79%')
+        mySub.firstChild.style.top = '79.4%';
+      else if (netflixSub.childElementCount == 2 && mySub.firstChild.style.top != '72%')
+        mySub.firstChild.style.top = '72.5%';
+      else if (netflixSub.childElementCount == 3 && mySub.firstChild.style.top != '67%')
+        mySub.firstChild.style.top = '67%';
+    }
+  }
+
+  function resetStyle(netflixSub, mySub) {
+    if (!document.getElementsByClassName('active').length) {
+      mySub.firstChild.style.top = netflixSub.firstChild.style.top;
+    }
+  }
+
   function updateSubs() {
     var textContainers = document.getElementsByClassName('player-timedtext');
-    //if () return;
     if (textContainers[0] && textContainers[0].firstChild) {
       var mySub = textContainers[1];
       var netflixSub = textContainers[0];
@@ -257,7 +279,7 @@ a {
         var netflixSubText = netflixSub.innerText;
         var mySubText = mySub.innerText.replace('\n', '');
         //if subs have changed, remove our sub, then create new sub
-        if (netflixSubText != mySubText && getPaused() == false) {
+        if (netflixSubText != mySubText && !getPaused()) {
           setTimedTextVisibility(true);
           mySub.remove()
           setSubs();
@@ -265,10 +287,12 @@ a {
           setTimedTextVisibility(false);
           //add hightlighting with hover
           hoverHighlight();
-        } else if (mySub.firstChild.style.top != netflixSub.firstChild.style.top){
-          mySub.firstChild.style.top = netflixSub.firstChild.style.top;
-        }
-        else return; //if subs haven't changed, then don't update any elements
+        } else if (document.getElementsByClassName('active').length) {
+          setStyle(netflixSub, mySub);
+        } else {
+          resetStyle(netflixSub, mySub);
+          return;
+        } //if subs haven't changed, then don't update any elements
       } else {
         setTimedTextVisibility(true);
         //if our subs aren't present, create them
@@ -291,11 +315,11 @@ a {
   //add jQuery to page
   setjQuery();
 
-  var idNum = setInterval(updateSubs, 50);
+  var idNum = setInterval(updateSubs, 10);
 
 
 
-console.log("STARTED SCRIPTORINO : ", idNum);
+  console.log("STARTED SCRIPTORINO : ", idNum);
 
 
   //4140497
