@@ -360,14 +360,17 @@ let injectSideBar = () => {
     resultsContainer.style.borderBottom = "1px solid gray";
     resultsContainer.style.margin = "10px 2px";
     resultsContainer.style.padding = "2px 0";
+    resultsContainer.style.height = "auto"
+    
 
-    let loaderContainer = document.createElement('div');
-    loaderContainer.id = "loader";
-    loaderContainer.style.display = "none";
+    // let loaderContainer = document.createElement('div');
+    // loaderContainer.id = "loader";
+    // loaderContainer.style.display = "none";
 
     let resultsReceivedContainer = document.createElement('div');
     resultsReceivedContainer.id = "results-received-container";
-    resultsReceivedContainer.style.height = "300px";
+    // resultsReceivedContainer.style.minHeight = "300px";
+    resultsReceivedContainer.style.height = "auto"
     // resultsReceivedContainer.style.border = "1px solid gray";
     // resultsReceivedContainer.className = "animate-bottom";
     // resultsReceivedContainer.style.display = "none";
@@ -375,7 +378,7 @@ let injectSideBar = () => {
     // resultsReceivedTemplate(resultsReceivedContainer);
 
     // resultsContainer.style.display = "none";
-    resultsContainer.appendChild(loaderContainer);
+    // resultsContainer.appendChild(loaderContainer);
     resultsContainer.appendChild(resultsReceivedContainer)
 
     userFeedbackContainer.appendChild(userSpeakContainer);
