@@ -231,7 +231,7 @@ def performThreeComparisons(netflixWatchID, dialogueID, audioFile, gameID, userT
     overallscore += resultDICT["emotionScore"] # add emotion bonus
 
     # add average score
-    resultDICT["averageScore"] = overallscore
+    resultDICT["averageScore"] = round(overallscore, 2)
 
     # convert to JSON
     resultJSON = json.dumps(resultDICT)
