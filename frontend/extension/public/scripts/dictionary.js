@@ -143,10 +143,12 @@
     parent[0].appendChild(myelem);
     var myvar;
     var mytext;
+    //add word on top center
+    mytext =  "<p class=\"sub-word-top\">" + word + "</p>";
     //check m-w learners dict for def.
     await mwlAPI(word).then(res => {
       if (res[0].hasOwnProperty('shortdef')) {
-        mytext = res[0].fl + '\n\t' + res[0].shortdef[0];
+        mytext += "<b>" + res[0].fl + "</b>"+ '\n' + res[0].shortdef[0];
         myvar = res
       }
     }).catch(error => console.error(error));
@@ -154,7 +156,7 @@
     if (myvar == null) {
       await mwAPI(word).then(res => {
         if (res[0].hasOwnProperty('shortdef')) {
-          mytext = res[0].fl + '\n\t' + res[0].shortdef[0];
+          mytext += "<b>" + res[0].fl + "</b>" + '\n' + res[0].shortdef[0];
           myvar = res;
         }
       }).catch(error => console.error(error));
@@ -165,11 +167,11 @@
         myvar = res
       }).catch(error => console.error(error));
       if (myvar.definitions[0]) {
-        mytext = myvar.definitions[0].partOfSpeech + '\n\t' + myvar.definitions[0].definition;
+        mytext += myvar.definitions[0].partOfSpeech + '\n' + myvar.definitions[0].definition;
         if (myvar.definitions.length > 1) {
           for (i = 0; i < myvar.definitions.length; i++) {
             if (mytext.includes(myvar.definitions[i].partOfSpeech) || myvar.definitions[i].partOfSpeech == null) {} else {
-              mytext += '<hr>' + myvar.definitions[i].partOfSpeech + '\n\t' + myvar.definitions[i].definition;
+              mytext += '<hr>' + myvar.definitions[i].partOfSpeech + '\n' + myvar.definitions[i].definition;
               break;
             }
           }
@@ -182,6 +184,11 @@
 
   (function() {
     let style = `<style>
+.sub-word-top {
+  font-weight: bold;
+  text-align: center;
+  margin: auto;
+}
 .sub-words {
   white-space: pre-wrap;
 }
