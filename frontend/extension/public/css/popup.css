@@ -115,10 +115,10 @@ input {
 }
 
 
-#status { 
+#status {
     display: block;
     padding: 10px;
-    background-color: #ff5959;
+    background-color: #812020;
     color: white;
     border-radius: 5px;
 }
@@ -160,4 +160,8 @@ input {
     margin: 0;
     display: table-cell;
     border-radius: 0px;
+}
+
+#search-container {
+    text-align: center;
 }
