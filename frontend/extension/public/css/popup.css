@@ -79,13 +79,10 @@ input {
 } 
 
 
-/* .authentication-container {
-    margin-top: 40px;
-    padding: 5px 16px;
-    border-radius: 2px;
-    
+.page-container {
+    text-align: center;
     display: block;
-} */
+}
 
 #login-form {
     margin: auto;

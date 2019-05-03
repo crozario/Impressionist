@@ -229,7 +229,6 @@ docker-compose logs -f -t
 docker logs -t -f <container-name>
 ``` 
 
-
 **Resources**
 
 - https://www.humankode.com/ssl/how-to-set-up-free-ssl-certificates-from-lets-encrypt-using-docker-and-nginx (docker server setup with HTTPS)
@@ -265,13 +264,11 @@ https://letsencrypt.readthedocs.io/en/latest/using.html#running-with-docker
 - seige (load testing web servers -> https://www.linode.com/docs/tools-reference/tools/load-testing-with-siege/) 
 
 
-**research later**
+**Research later**
 https://success.docker.com/article/networking
 https://www.digitalocean.com/community/tutorials/understanding-nginx-server-and-location-block-selection-algorithms
 
 ## Flask
-
-
 
 **Resources**
 https://docs.nginx.com/nginx/admin-guide/web-server/app-gateway-uwsgi-django/
