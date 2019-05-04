@@ -9,7 +9,7 @@ Description: Content script to interact with the webpage
 // var port = chrome.runtime.connect();
 
 const production = true;
-const logging = false;
+const logging = true;
 
 if(logging) {
     console.log("ON CONTENTSCRIPT");
