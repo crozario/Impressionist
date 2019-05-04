@@ -295,8 +295,13 @@ def getMediaAndCaptionFiles(mediaDirectory):
         if ext in ['.mkv', '.mp4', '.avi', '.flv']:
             if mediaFile != '': error += 'multiple video files found\n'
             mediaFile = os.path.join(mediaDirectory, file)
+            if ext == '.mkv': videotype = '.mkv'
+            elif ext == '.mp4': videotype = '.mp4'
+            elif ext == '.avi': videotype = '.avi'
+            else: videotype = '.flv'
         elif ext == '.vtt':
             if "labeled_subs" in prefix:
+                print("found labeled_subs")
                 if captionFile !=  '': error += 'multiple labeled_subs caption files found\n'
                 captionFile = os.path.join(mediaDirectory, file)
                 netflixWatchID = prefix.replace("labeled_subs_", "")
@@ -316,7 +321,7 @@ def getMediaAndCaptionFiles(mediaDirectory):
         else:
             print("VTT labeled_subs... Caption file not found")
             exit()
-    return mediaFile, captionFile, videoOffset, netflixWatchID
+    return mediaFile, captionFile, videoOffset, netflixWatchID, videotype
 
 if __name__=='__main__':
     parser = argparse.ArgumentParser(
@@ -328,7 +333,7 @@ if __name__=='__main__':
     parser.add_argument('--subsOffset', help="add the certain float offset, in milliseconds, to the times read from .vtt subtitle file above. (default) 0", type=float, default=0.0)
     args = parser.parse_args()
 
-    mediaFile, captionFile, videoOffset, netflixWatchID = getMediaAndCaptionFiles(args.mediaDirectory)
+    mediaFile, captionFile, videoOffset, netflixWatchID, videotype = getMediaAndCaptionFiles(args.mediaDirectory)
 
     # mediaFile = mediaFile.replace("'", "\\'")
     dirName = args.mediaDirectory
@@ -381,7 +386,11 @@ if __name__=='__main__':
         os.makedirs(featuresDir)
 
         # convert video to audio
-        cmd = "ffmpeg -y -i " + mediaFile + " -ab 160k -ac 2 -ar "+str(samplingRate)+" -vn " + tmpFullAudio
+        if videotype == '.mp4':
+            cmd = " ".join(['ffmpeg -i', mediaFile, '-ac 2 -f wav', tmpFullAudio])
+        else:
+            cmd = "ffmpeg -y -i " + mediaFile + " -ab 160k -ac 2 -ar "+str(samplingRate)+" -vn " + tmpFullAudio
+
         # print("cmd", cmd)
         result = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, shell=True)
         out = result.stdout.decode('utf-8')

@@ -218,16 +218,45 @@ if (not os.path.isdir(CONTENT_DIR)):
     exit()
 
 import sys
+
+def getOfficeTranscriptPairsFromDir(directory, delim=';'):
+    """Get tuples of transcripts (CHARNAME, dialogue)
+    """
+    transcript = "csvTranscript.csv"
+    # check existence of transcript
+    metaFile = os.path.join(directory, transcript)
+    if not os.path.exists(metaFile): 
+        print(transcript, " not found")
+        return []
+    
+    pairs = []
+    with open(metaFile, 'r') as file:
+        for line in file:
+            line = line.strip()
+            pairs.append(tuple(line.split(delim)))
+
+    return pairs
+
 if __name__ == "__main__":
-    episodeNum = None
-    folderPath = None
-    transcriptLink = None
-    if (len(sys.argv) == 2): episodeNum = int(sys.argv[1])
-    elif (len(sys.argv) == 3): # args folder and link
-        episodeNum = None
-        folderPath = sys.argv[1]
-        transcriptLink = sys.argv[2]
-    createContentDirsFriends(season=2, episode=episodeNum, folderPath=folderPath, transcriptLink=transcriptLink,  extractCharacters=True, saveTranscriptToCSV=False, verbose=True)
+    # support office
+    directory = sys.argv[1]
+    pairs = getOfficeTranscriptPairsFromDir(directory)
+    # print(pairs[:5])
+
+    fullInputSubs = sys.argv[2]
+    fullOutputSubs = sys.argv[3]
+    addCharNames(pairs, fullInputSubs, fullOutputSubs, verbose=True, detailedVerbose=False, interactive=True, interactiveResolve=True)
+
+    # episodeNum = None
+    # folderPath = None
+    # transcriptLink = None
+    # if (len(sys.argv) == 2): episodeNum = int(sys.argv[1])
+    # elif (len(sys.argv) == 3): # args folder and link
+    #     episodeNum = None
+    #     folderPath = sys.argv[1]
+    #     transcriptLink = sys.argv[2]
+    # createContentDirsFriends(season=2, episode=episodeNum, folderPath=folderPath, transcriptLink=transcriptLink,  extractCharacters=True, saveTranscriptToCSV=False, verbose=True)
+
     
     
     
