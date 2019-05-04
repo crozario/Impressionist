@@ -91,6 +91,7 @@ def _checkAndCreateFolder(folderPath, verbose=False):
 
 def _getFilesFrom(folderPath, extension="all", verbose=False):
     """returns list of files from `folderPath` 
+    example: _getFileFrom(/folder/name, extension='.csv')
     """
     files = os.listdir(folderPath)
     # files = [os.path.join(folderPath, f) for f in files] # don't return full paths
@@ -237,14 +238,32 @@ def getOfficeTranscriptPairsFromDir(directory, delim=';'):
 
     return pairs
 
+def getNetflixSubsVTT(directory):
+    files = _getFilesFrom(directory, extension='.vtt')
+    netflix_sub = ''
+    for file in files:
+        if "netflix_subs_" in file:
+            netflix_sub = file
+            return os.path.join(directory, netflix_sub)
+    return ''
+
 if __name__ == "__main__":
     # support office
+
+    if (len(sys.argv) != 1):
+        print("Usage: python ", sys.argv[0], "<directory with episode>")
     directory = sys.argv[1]
     pairs = getOfficeTranscriptPairsFromDir(directory)
     # print(pairs[:5])
 
-    fullInputSubs = sys.argv[2]
-    fullOutputSubs = sys.argv[3]
+    fullInputSubs = getNetflixSubsVTT(directory)
+    if fullInputSubs == '':
+        print("error getting netflix_subs_ file")
+        exit()
+    fullOutputSubs = fullInputSubs.replace('netflix_subs_', 'labeled_subs_')
+    print(fullInputSubs)
+    print(fullOutputSubs)
+    exit()
     addCharNames(pairs, fullInputSubs, fullOutputSubs, verbose=True, detailedVerbose=False, interactive=True, interactiveResolve=True)
 
     # episodeNum = None

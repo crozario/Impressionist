@@ -119,7 +119,8 @@ def extractFeatures(captionFile, audioFile, tmpWave, featuresDir, configFile, em
     samplingRate, audio = wavfile.read(audioFile)
     # print(len(audio))
     # get dialogue intervals
-    indexOffset = timedeltaToIndex(videoOffset, samplingRate) # convert timedelta offset to index offset
+    indexOffset = timedeltaToIndex(videoOffset[0], samplingRate) # convert timedelta offset to index offset
+    if videoOffset[1]: indexOffset = -indexOffset
     indices = dialogueIntervalsToIndices(vttExtractDialogues(captionFile), samplingRate, offset=indexOffset)
 
     featureFiles = []
@@ -284,6 +285,7 @@ def getVideoOffset(netflixVTT, localSRT, manual=True):
 
 def getMediaAndCaptionFiles(mediaDirectory):
     """get videoFile and captionFile full path locations
+    videoOffset is tuple (timedelta offset, boolean negate?)
     """
     mediaFile = ''
     captionFile = ''
@@ -315,9 +317,12 @@ def getMediaAndCaptionFiles(mediaDirectory):
             videoOffset = getVideoOffset(captionFile, SRTfile)
         elif SRTfile == '':
             print("SRT file not found to sync subtitles. Try manually.")
-            offset_seconds = input("Captions offset seconds: ")
-            offset_ms = input("captions offset ms: ")
+            offset_seconds = int(input("Captions offset seconds: "))
+            offset_ms = int(input("captions offset ms: "))
+            negate = input("add or subtract the offset? enter (a|s): ")
+            negate = True if negate == 's' else False
             videoOffset = timedelta(seconds=int(offset_seconds), microseconds=int(offset_ms)*1000)
+            videoOffset = (videoOffset, negate)
         else:
             print("VTT labeled_subs... Caption file not found")
             exit()
