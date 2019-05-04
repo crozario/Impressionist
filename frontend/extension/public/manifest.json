@@ -1,6 +1,6 @@
 {
     "name": "Impressionist",
-    "version": "1.0",
+    "version": "1.01",
     "description": "An extension to do impressions of actors in your favorite flix.",
     "options_page": "options.html",
     "permissions": [
