@@ -12,6 +12,7 @@ const production = true;
 const logging = true;
 
 if(logging) {
+    console.log("Logging Turned On");
     console.log("ON CONTENTSCRIPT");
 }
 
