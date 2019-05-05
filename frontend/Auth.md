@@ -19,3 +19,10 @@ https://developers.google.com/api-client-library/javascript/start/start-js
 https://blog.restcase.com/restful-api-authentication-basics/
 
 https://medium.com/studioarmix/learn-restful-api-design-ideals-c5ec915a430f
+
+
+## Backend 
+http://www.passportjs.org/
+https://medium.com/createdd-notes/starting-with-authentication-a-tutorial-with-node-js-and-mongodb-25d524ca0359
+https://www.signet.hr/learn-how-to-handle-authentication-with-node-using-passport-js/
+https://scotch.io/tutorials/build-and-understand-a-simple-nodejs-website-with-user-authentication
