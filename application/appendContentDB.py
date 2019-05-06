@@ -23,6 +23,8 @@ import sys
 
 configFile = 'databuilder/configs/prosodyShs.conf'
 VERBOSE=True
+# used when converting video to audio
+samplingRate = 44100
 
 def extractTime(t):
     """converts ':' separated string into timedelta
@@ -30,14 +32,11 @@ def extractTime(t):
     t = t.split('.')
     ms = int(t[1].strip())
     t = t[0].split(':')
-    if (len(t) == 3):
-        h = int(t[0].strip())
-        m = int(t[1].strip())
-        s = int(t[2].strip())
-        return timedelta(hours=h, minutes=m, seconds=s, milliseconds=ms)
-    else:
-        print("could not extract time t =", t)
-        exit()
+    assert (len(t) == 3), "could not extract time t = "+t
+    h = int(t[0].strip())
+    m = int(t[1].strip())
+    s = int(t[2].strip())
+    return timedelta(hours=h, minutes=m, seconds=s, milliseconds=ms)
 
 # input is a line ex: 00:00:09.833  --> 00:00:16.630
 def getInterval(line):
@@ -78,6 +77,10 @@ def timedeltaToIndex(t, samplingRate):
     return index
 
 def dialogueIntervalsToIndices(dIntervals, samplingRate, offset=None):
+    """converts timedelta time to index using samplingRate
+    dIntervals : [(start, end), (start, end), ...]
+    offset : in terms of index (already converted from timedelta to index)
+    """
     # print(samplingRate)
     indices = []
     for ii in dIntervals:
@@ -202,6 +205,7 @@ def getVideoOffset(netflixVTT, localSRT, manual=True):
     returns timedelta object (can be used later)
     POSITIVE offset -> add offset to subtitle times when extracting dialogues from video
     NEGATIVE offset -> subtract
+    FIXME: not returning negative or not properly (!!! might not work)
     """
     netVTT = webvtt.read(netflixVTT)
     locSRT = webvtt.from_srt(localSRT)
@@ -283,6 +287,98 @@ def getVideoOffset(netflixVTT, localSRT, manual=True):
 
     return mean
 
+
+def convertVideoToWAV(mediaFile):
+    """Converts video files to .wav audioFiles using FFMPEG
+    Returns the new audioFile
+    """
+    prefix, extension = os.path.splitext(mediaFile)
+    audioFile = prefix + ".wav"
+    if extension == ".mkv":
+        cmd = "ffmpeg -y -i " + mediaFile + " -ab 160k -ac 2 -ar " + \
+            str(samplingRate)+" -vn " + audioFile
+    elif extension == ".mp4":
+        cmd = " ".join(['ffmpeg -y -i', mediaFile, '-ac 2 -f wav', audioFile])
+    else:
+        print("haven't handled .avi and .flv files. Using cmd for .mp4 to convert media to wave audio")
+        cmd = " ".join(['ffmpeg -y -i', mediaFile, '-ac 2 -f wav', audioFile])
+    result = subprocess.run(cmd, stdout=subprocess.PIPE,
+                            stderr=subprocess.STDOUT, shell=True)
+    out = result.stdout.decode('utf-8')
+    assert ("command not found" not in out), "Error: FFMPEG not installed"
+    assert ("No such file" not in out), "Error: could not find " + \
+        mediaFile + ".\n" + "FFMPEG error:" + out
+    #   check successful
+    assert ("size=" in out), "Error: unknown error in converting video mediaFile to `.wav`" + \
+        ".\n" + "FFMPEG error:" + out
+    if VERBOSE:
+        print("(ffmpeg) video successfully converted to audio!")
+    return audioFile
+
+def cropWAV(audioFile, startTime, endTime, clipName):
+    from scipy.io import wavfile
+    samplingRate, audio = wavfile.read(audioFile)
+    startidx = timedeltaToIndex(startTime, samplingRate)
+    endidx = timedeltaToIndex(endTime, samplingRate)
+    wavfile.write(clipName, samplingRate, audio[startidx:endidx])
+
+def getVideoOffsetUsingSpeech_to_text(mediaFile, captionFile):
+    """Get netflix subtitle offset using speech_to_text on audioMediaFile
+    FIXME: only for .mp4 mediaFile _for-now_
+    """
+    # sanity checking
+    assert (os.path.exists(mediaFile) and os.path.exists(captionFile)), "media or caption file don't exist"
+    # video --> wave
+    audioFile = convertVideoToWAV(mediaFile)
+    assert os.path.exists(audioFile), "some error occured converting video with FFMPEG"
+    # traverse captions and get speech_to_text of words around that time
+    import webvtt
+    from speech_to_text.transcribe_return_only_one_line import transcribe_file_with_word_time_offsets
+    leeway = timedelta(seconds=1)
+    zeroTime = timedelta(seconds=0)
+    clipPrefix = "clip"
+    ii = 0
+    for caption in webvtt.read(captionFile):
+        start = extractTime(caption.start)
+        end = extractTime(caption.end)
+        text = caption.text
+        print("subs : ", str(start), text, str(end))
+        print("--------------------")
+        cropStart = (start - leeway) if start > leeway else zeroTime
+        cropEnd = (start + leeway) # FIXME: make sure not bigger than file
+        clipName = clipPrefix + "-" + str(ii) + ".wav"
+        clipName = os.path.join(os.path.dirname(mediaFile), clipName)
+        cropWAV(audioFile, cropStart, cropEnd, clipName)
+        transcribedText, breakdown = transcribe_file_with_word_time_offsets(clipName, 'en-US')
+        if transcribedText is None: 
+            print("no transcribed text. move on to next?")
+            input("ENTER to continue")
+            continue
+        print("transcribedText:", transcribedText)
+        for jj, bb in enumerate(breakdown):
+            start2 = timedelta(seconds=bb[1], milliseconds=bb[2]) + cropStart
+            end2 = timedelta(seconds=bb[3], milliseconds=bb[4]) + cropStart
+            word2 = bb[0]
+            print('[', jj, ']', str(start2), word2, str(end2))
+        print("--------------------")
+        response = input('which word offset with start time [ENTER to skip]: ')
+        deleteFiles([clipName])
+        if response != '':
+            idx = int(response)
+            start2 = timedelta(seconds=breakdown[idx][1], milliseconds=breakdown[idx][2]) + cropStart
+            if start > start2:
+                negate = True
+                offset = start - start2
+            else:
+                offset = start2 - start
+                negate = False
+            print(offset, negate)
+            offset = (offset, negate)
+            return offset, audioFile
+        ii += 1
+    print("couldn't figure out offset. exiting...")
+    exit()
+
 def getMediaAndCaptionFiles(mediaDirectory):
     """get videoFile and captionFile full path locations
     videoOffset is tuple (timedelta offset, boolean negate?)
@@ -296,14 +392,26 @@ def getMediaAndCaptionFiles(mediaDirectory):
         prefix, ext = os.path.splitext(file)
         if ext in ['.mkv', '.mp4', '.avi', '.flv']:
             if mediaFile != '': error += 'multiple video files found\n'
+            fileRenamed = False
+            oldFile = file
+            if (' ' in file): 
+                print("there are spaces in media file! replacing with dashes...")
+                file = file.replace(' ', '-')
+                fileRenamed = True
+            if ("'" in file):
+                print("there are apostrophes in mediaFile, removing them...")
+                file = file.replace("'", '')
+                fileRenamed = True
             mediaFile = os.path.join(mediaDirectory, file)
+            if fileRenamed:
+                oldFile = os.path.join(mediaDirectory, oldFile)
+                os.rename(oldFile, mediaFile)
             if ext == '.mkv': videotype = '.mkv'
             elif ext == '.mp4': videotype = '.mp4'
             elif ext == '.avi': videotype = '.avi'
             else: videotype = '.flv'
         elif ext == '.vtt':
             if "labeled_subs" in prefix:
-                print("found labeled_subs")
                 if captionFile !=  '': error += 'multiple labeled_subs caption files found\n'
                 captionFile = os.path.join(mediaDirectory, file)
                 netflixWatchID = prefix.replace("labeled_subs_", "")
@@ -313,20 +421,24 @@ def getMediaAndCaptionFiles(mediaDirectory):
         print(error)
         exit()
     else:
-        if captionFile != '' and SRTfile != '':
-            videoOffset = getVideoOffset(captionFile, SRTfile)
-        elif SRTfile == '':
-            print("SRT file not found to sync subtitles. Try manually.")
-            offset_seconds = int(input("Captions offset seconds: "))
-            offset_ms = int(input("captions offset ms: "))
-            negate = input("add or subtract the offset? enter (a|s): ")
-            negate = True if negate == 's' else False
-            videoOffset = timedelta(seconds=int(offset_seconds), microseconds=int(offset_ms)*1000)
-            videoOffset = (videoOffset, negate)
-        else:
-            print("VTT labeled_subs... Caption file not found")
-            exit()
-    return mediaFile, captionFile, videoOffset, netflixWatchID, videotype
+        # get videoOffset using just VTT file
+        videoOffset, audioFile = getVideoOffsetUsingSpeech_to_text(mediaFile, captionFile)
+        # if captionFile != '' and SRTfile != '':
+        #     videoOffset = getVideoOffset(captionFile, SRTfile)
+        # elif SRTfile == '':
+        #     # get videoOffset using just VTT file
+        #     videoOffset, audioFile = getVideoOffsetUsingSpeech_to_text(mediaFile, captionFile)
+        #     # print("SRT file not found to sync subtitles. Try manually.")
+        #     # offset_seconds = int(input("Captions offset seconds: "))
+        #     # offset_ms = int(input("captions offset ms: "))
+        #     # negate = input("add or subtract the offset? enter (a|s): ")
+        #     # negate = True if negate == 's' else False
+        #     # videoOffset = timedelta(seconds=int(offset_seconds), microseconds=int(offset_ms)*1000)
+        #     # videoOffset = (videoOffset, negate)
+        # else:
+        #     print("VTT labeled_subs... Caption file not found")
+        #     exit()
+    return mediaFile, captionFile, videoOffset, netflixWatchID, videotype, audioFile
 
 if __name__=='__main__':
     parser = argparse.ArgumentParser(
@@ -338,7 +450,7 @@ if __name__=='__main__':
     parser.add_argument('--subsOffset', help="add the certain float offset, in milliseconds, to the times read from .vtt subtitle file above. (default) 0", type=float, default=0.0)
     args = parser.parse_args()
 
-    mediaFile, captionFile, videoOffset, netflixWatchID, videotype = getMediaAndCaptionFiles(args.mediaDirectory)
+    mediaFile, captionFile, videoOffset, netflixWatchID, videotype, audioFile = getMediaAndCaptionFiles(args.mediaDirectory)
 
     # mediaFile = mediaFile.replace("'", "\\'")
     dirName = args.mediaDirectory
@@ -353,12 +465,12 @@ if __name__=='__main__':
     print("videoOffset:", videoOffset)
     print("netflixWatchID", netflixWatchID)
 
-    tmpFullAudio = os.path.join(dirName, "tmpFullAudio.wav")
+    # tmpFullAudio = os.path.join(dirName, "tmpFullAudio.wav")
+    tmpFullAudio = audioFile # already converted
     tmpDialogue = os.path.join(dirName, "tmpDialogue.wav")
     featuresDir = os.path.join(dirName, "features")
     emotionsLogFile = os.path.join(dirName, "emotions.csv")
-    # used when converting video to audio
-    samplingRate = 44100
+    
     # FIXME: add `netflixSubtitleOffset` from front in a better way
     # netflixSubtitleOffset = args.subsOffset  # netflixSubtitleOffset = -2000
     netflixSubtitleOffset = 0 # because only using netflix subtitles now (extracted using 'Subtitles for Netflix' chrome extension)
@@ -390,20 +502,20 @@ if __name__=='__main__':
             shutil.rmtree(featuresDir)
         os.makedirs(featuresDir)
 
-        # convert video to audio
-        if videotype == '.mp4':
-            cmd = " ".join(['ffmpeg -i', mediaFile, '-ac 2 -f wav', tmpFullAudio])
-        else:
-            cmd = "ffmpeg -y -i " + mediaFile + " -ab 160k -ac 2 -ar "+str(samplingRate)+" -vn " + tmpFullAudio
+        # convert video to audio NOTE: doing this inside getVideoOffsetUsingSpeech_to_text now
+        # if videotype == '.mp4':
+        #     cmd = " ".join(['ffmpeg -i', mediaFile, '-ac 2 -f wav', tmpFullAudio])
+        # else:
+        #     cmd = "ffmpeg -y -i " + mediaFile + " -ab 160k -ac 2 -ar "+str(samplingRate)+" -vn " + tmpFullAudio
 
-        # print("cmd", cmd)
-        result = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, shell=True)
-        out = result.stdout.decode('utf-8')
-        assert ("command not found" not in out), "Error: could not convert .webm to .wav because FFMPEG program is not installed"
-        assert ("No such file" not in out), "Error: could not find " + mediaFile + ".\n" + "FFMPEG error:" + out
-        #   check successful
-        assert ("size=" in out), "Error: unknown error in converting video mediaFile to `.wav`"+ ".\n" + "FFMPEG error:" + out
-        if VERBOSE: print("(ffmpeg) video successfully converted to audio!")
+        # # print("cmd", cmd)
+        # result = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, shell=True)
+        # out = result.stdout.decode('utf-8')
+        # assert ("command not found" not in out), "Error: FFMPEG not installed"
+        # assert ("No such file" not in out), "Error: could not find " + mediaFile + ".\n" + "FFMPEG error:" + out
+        # #   check successful
+        # assert ("size=" in out), "Error: unknown error in converting video mediaFile to `.wav`"+ ".\n" + "FFMPEG error:" + out
+        # if VERBOSE: print("(ffmpeg) video successfully converted to audio!")
 
         # get dialogue intervals
         # indices = dialogueIntervalsToIndices(vttExtractDialogues(captionFile), samplingRate)

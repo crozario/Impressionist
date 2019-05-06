@@ -240,7 +240,7 @@ def getOfficeTranscriptPairsFromDir(directory, delim=';'):
 
 def getNetflixSubsVTT(directory):
     files = _getFilesFrom(directory, extension='.vtt')
-    netflix_sub = ''
+    netflix_sub = ''    
     for file in files:
         if "netflix_subs_" in file:
             netflix_sub = file
@@ -249,22 +249,31 @@ def getNetflixSubsVTT(directory):
 
 if __name__ == "__main__":
     # support office
-
-    if (len(sys.argv) != 1):
-        print("Usage: python ", sys.argv[0], "<directory with episode>")
-    directory = sys.argv[1]
-    pairs = getOfficeTranscriptPairsFromDir(directory)
-    # print(pairs[:5])
-
-    fullInputSubs = getNetflixSubsVTT(directory)
-    if fullInputSubs == '':
-        print("error getting netflix_subs_ file")
+    # season 1 not supported: 
+    # season 2 not supported: 1, 11
+    if (len(sys.argv) != 3):
+        print("Usage: python ", sys.argv[0], "<season|episode> <directory>")
         exit()
-    fullOutputSubs = fullInputSubs.replace('netflix_subs_', 'labeled_subs_')
-    print(fullInputSubs)
-    print(fullOutputSubs)
-    exit()
-    addCharNames(pairs, fullInputSubs, fullOutputSubs, verbose=True, detailedVerbose=False, interactive=True, interactiveResolve=True)
+    choice = sys.argv[1]
+    directory = sys.argv[2]
+    if (choice == 'season'):
+        all_episodes = sorted(os.listdir(directory))
+        all_episodes = [os.path.join(directory, ep) for ep in all_episodes]
+    elif (choice == 'episode'):
+        all_episodes = [directory]
+    for episodeDir in all_episodes:
+        if not os.path.isdir(episodeDir): continue
+        pairs = getOfficeTranscriptPairsFromDir(episodeDir)
+
+        fullInputSubs = getNetflixSubsVTT(episodeDir)
+        if fullInputSubs == '':
+            print("error getting netflix_subs_ file")
+            exit()
+        fullOutputSubs = fullInputSubs.replace('netflix_subs_', 'labeled_subs_')
+        print("---------------------------------")
+        print("input subs:", fullInputSubs)
+        # print(fullOutputSubs)
+        addCharNames(pairs, fullInputSubs, fullOutputSubs, verbose=False, detailedVerbose=False, interactive=True, interactiveResolve=False)
 
     # episodeNum = None
     # folderPath = None
