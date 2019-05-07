@@ -29,7 +29,6 @@ sys.path.insert(0, 'speech_to_text/')
 sys.path.insert(0, 'speech_to_emotion/')
 sys.path.insert(0, 'databuilder/')
 from compareAudio import performThreeComparisons, sendScoreToBack, _logToFile
-_logToFile(["testing"])
 
 PORT = 3000        # Port to listen on (non-privileged ports are > 1023)
 
