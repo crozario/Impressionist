@@ -12,6 +12,7 @@ const production = true;
 const logging = true;
 
 if(logging) {
+    console.log("Logging Turned On");
     console.log("ON CONTENTSCRIPT");
 }
 
@@ -360,17 +361,19 @@ let injectSideBar = () => {
     resultsContainer.style.borderBottom = "1px solid gray";
     resultsContainer.style.margin = "10px 2px";
     resultsContainer.style.padding = "2px 0";
-    resultsContainer.style.height = "auto"
+    // resultsContainer.style.height = "auto"
     
-
     // let loaderContainer = document.createElement('div');
     // loaderContainer.id = "loader";
     // loaderContainer.style.display = "none";
 
     let resultsReceivedContainer = document.createElement('div');
     resultsReceivedContainer.id = "results-received-container";
-    // resultsReceivedContainer.style.minHeight = "300px";
-    resultsReceivedContainer.style.height = "auto"
+    resultsReceivedContainer.style.height = "300px"
+    // resultsReceivedContainer.style.maxHeight = "500px";
+    resultsReceivedContainer.style.height = "400px"
+
+
     // resultsReceivedContainer.style.border = "1px solid gray";
     // resultsReceivedContainer.className = "animate-bottom";
     // resultsReceivedContainer.style.display = "none";

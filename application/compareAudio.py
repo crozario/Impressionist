@@ -34,7 +34,7 @@ URLcontentDB_gamePlay += "cont/play"
 URLuserDB_storeScoreData = "https://impressionist-user-db-api-east-1.crossley.tech/"
 URLuserDB_storeScoreData += "user/score"
 
-
+LOGGING_TO_FILE = False
 
 def similar(a, b):
     return SequenceMatcher(None, a, b).ratio()
@@ -165,6 +165,7 @@ def compareLyricalSimilarity(userTranscript, originalCaption, verbose=False, pro
 def _logToFile(logsLst, resultJSON=None, logFile="logFile.txt"):
     """Log any errors / updates worth consideration to `logFile.txt`
     """
+    if not LOGGING_TO_FILE: return
     with open(logFile, "a+") as file:
         message = "\n".join(logsLst)
         file.write("------------------Logging--------------------\n")

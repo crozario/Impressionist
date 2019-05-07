@@ -2,13 +2,24 @@
 Get links to Friends episodes 
 
 From http://www.livesinabox.com/friends/scripts.shtml
+
+Haard @ Impressionist
 """
 
-from bs4 import BeautifulSoup
-import requests
+
 import os
+
+CONTENT_DIR = "../../contentData/"
+# don't run this script from anywhere else or if CONTENT_DIR is not at above location
+if (not os.path.isdir(CONTENT_DIR)):
+    print("Using relative paths. Please run this script from inside application/dialogueExtraction/ OR make sure "+CONTENT_DIR+" exists.")
+    exit()
+
+import sys
 import re
 from transcript_to_vtt import getFriendsDialogueDichotomy, addCharNames
+from bs4 import BeautifulSoup
+import requests
 
 def getFriendsTranscriptsLinks(
     linkHome="http://www.livesinabox.com/friends/",
@@ -36,7 +47,7 @@ def getFriendsTranscriptsLinks(
             if (len(tmp) >= 2):
                 tmp[1] = " ".join(tmp[1:])
             else:
-                couldntParse.apend((strtag), "Found episode but splits to less than 2. Skipping...")
+                couldntParse.append((strtag), "Found episode but splits to less than 2. Skipping...")
                 continue
         else:
             couldntParse.append((strtag, "Couldn't parse tag.get_text(). Skipping...", "; tag.get_text() =", tag.get_text()))
@@ -91,6 +102,7 @@ def _checkAndCreateFolder(folderPath, verbose=False):
 
 def _getFilesFrom(folderPath, extension="all", verbose=False):
     """returns list of files from `folderPath` 
+    example: _getFileFrom(/folder/name, extension='.csv')
     """
     files = os.listdir(folderPath)
     # files = [os.path.join(folderPath, f) for f in files] # don't return full paths
@@ -211,23 +223,77 @@ def createContentDirsFriends(season=2, episode=None, folderPath=None, transcript
                 print("netflix_subs_...vtt file not found. Moving on.")
 
 
-CONTENT_DIR = "../../contentData/"
-# don't run this script from anywhere else or if CONTENT_DIR is not at above location
-if (not os.path.isdir(CONTENT_DIR)):
-    print("Using relative paths. Please run this script from inside application/dialogueExtraction/ OR make sure "+CONTENT_DIR+" exists.")
-    exit()
+def getOfficeTranscriptPairsFromDir(directory, delim=';'):
+    """Get tuples of transcripts (CHARNAME, dialogue)
+    """
+    transcript = "csvTranscript.csv"
+    # check existence of transcript
+    metaFile = os.path.join(directory, transcript)
+    if not os.path.exists(metaFile): 
+        print(transcript, " not found")
+        return []
+    
+    pairs = []
+    with open(metaFile, 'r') as file:
+        for line in file:
+            line = line.strip()
+            pairs.append(tuple(line.split(delim)))
 
-import sys
+    return pairs
+
+def getNetflixSubsVTT(directory):
+    files = _getFilesFrom(directory, extension='.vtt')
+    netflix_sub = ''    
+    for file in files:
+        if "netflix_subs_" in file:
+            netflix_sub = file
+            return os.path.join(directory, netflix_sub)
+    return ''
+
 if __name__ == "__main__":
-    episodeNum = None
-    folderPath = None
-    transcriptLink = None
-    if (len(sys.argv) == 2): episodeNum = int(sys.argv[1])
-    elif (len(sys.argv) == 3): # args folder and link
-        episodeNum = None
-        folderPath = sys.argv[1]
-        transcriptLink = sys.argv[2]
-    createContentDirsFriends(season=2, episode=episodeNum, folderPath=folderPath, transcriptLink=transcriptLink,  extractCharacters=True, saveTranscriptToCSV=False, verbose=True)
+    # support office
+    # season 1 not supported: 
+    # season 2 not supported: 1, 11
+    if (len(sys.argv) < 3):
+        print("Usage: python ", sys.argv[0], "<season|episode> <directory> [--interactive]")
+        print("--interactive also turns on verbose")
+        exit()
+    choice = sys.argv[1]
+    directory = sys.argv[2]
+    intResolve = False
+    if (len(sys.argv) == 4):
+        if sys.argv[3] == "--interactive":
+            intResolve = True
+    if (choice == 'season'):
+        all_episodes = sorted(os.listdir(directory))
+        all_episodes = [os.path.join(directory, ep) for ep in all_episodes]
+    elif (choice == 'episode'):
+        all_episodes = [directory]
+    for episodeDir in all_episodes:
+        if not os.path.isdir(episodeDir): continue
+        pairs = getOfficeTranscriptPairsFromDir(episodeDir)
+
+        fullInputSubs = getNetflixSubsVTT(episodeDir)
+        if fullInputSubs == '':
+            print("error getting netflix_subs_ file")
+            exit()
+        fullOutputSubs = fullInputSubs.replace('netflix_subs_', 'labeled_subs_')
+        print("---------------------------------")
+        print("input subs:", fullInputSubs)
+        # print(fullOutputSubs)
+        addCharNames(pairs, fullInputSubs, fullOutputSubs, verbose=intResolve, detailedVerbose=False, interactive=True, interactiveResolve=intResolve)
+
+    # support friends episodes
+    # episodeNum = None
+    # folderPath = None
+    # transcriptLink = None
+    # if (len(sys.argv) == 2): episodeNum = int(sys.argv[1])
+    # elif (len(sys.argv) == 3): # args folder and link
+    #     episodeNum = None
+    #     folderPath = sys.argv[1]
+    #     transcriptLink = sys.argv[2]
+    # createContentDirsFriends(season=2, episode=episodeNum, folderPath=folderPath, transcriptLink=transcriptLink,  extractCharacters=True, saveTranscriptToCSV=False, verbose=True)
+
     
     
     
