@@ -24,7 +24,7 @@ exports.insertIntoContentDB = (req,res) => {
 				// delete existing record --> the data from req will be saved in a new document in the db later
 				schema.Cont.updateOne({'title': info.title, 'seasonNumber': info.seasonNumber, 'episodeNumber': info.episodeNumber}, {'episodeTitle': info.episodeTitle, 'length': info.length, 'mediaFileLocation': info.mediaFileLocation, 'captions': info.captions, 'featureFileLocations': info.featureFileLocations, 'emotionsList': info.emotionsList, 'netflixWatchID': info.netflixWatchID, 'netflixSubtitleOffset': info.netflixSubtitleOffset, 'characterNames': info.characterNames, 'characterDialogueIDs': info.characterDialogueIDs, 'supported':true}, function(err) {
 					if(err) {
-						return res.json({
+						return res.status(500).json({
 							status: "failure",
 							error: err.message || "error occured when updating tv show document"
 						});
@@ -59,8 +59,7 @@ exports.insertIntoContentDB = (req,res) => {
 						status: "success"
 					});
 				}).catch(err => {
-					// return res.status(500).json({
-					return res.json({
+					return res.status(500).json({
 						status: "failure",
 						error: err.message || "error occured while storing information in the database"
 					});
@@ -81,7 +80,7 @@ exports.insertIntoContentDB = (req,res) => {
 				// delete existing record --> the data from req will be saved in a new document in the db later
 				schema.Cont.updateOne({'title': info.title}, {'length': info.length, 'mediaFileLocation': info.mediaFileLocation, 'captions': info.captions, 'featureFileLocations': info.featureFileLocations, 'emotionsList': info.emotionsList, 'netflixWatchID': info.netflixWatchID, 'netflixSubtitleOffset': info.netflixSubtitleOffset, 'characterNames': info.characterNames, 'characterDialogueIDs': info.characterDialogueIDs, 'supported':true}, function(err) {
 					if(err) {
-						return res.json({
+						return res.status(500).json({
 							status: "failure",
 							error: err.message || "error occured when updating movie document"
 						});
@@ -104,7 +103,7 @@ exports.insertIntoContentDB = (req,res) => {
 					netflixSubtitleOffset: info.netflixSubtitleOffset,
 					characterNames: info.characterNames,
 					characterDialogueIDs: info.characterDialogueIDs,
-					supported:true
+					supported: true
 				});
 				content.save()
 				.then(data => {
@@ -112,7 +111,7 @@ exports.insertIntoContentDB = (req,res) => {
 						status: "success"
 					});
 				}).catch(err => {
-					return res.json({
+					return res.status(500).json({
 						status: "failure",
 						error: err.message || "error occured while storing information in the database"
 					});
@@ -282,7 +281,7 @@ exports.hotContent = (req,res) => {
 // search in db for specific keywords sent from front and return all relevant documents
 exports.keywordSearch = (req,res) => {
 	const info = req.body;
-	schema.Cont.find({$text: {$search: info.keywords}}, {'title':1, 'netflixWatchID':1, 'episodeTitle':1, 'mediaType':1})
+	schema.Cont.find({$text: {$search: info.keywords}}, {'title':1, 'netflixWatchID':1, 'seasonNumber':1, 'episodeNumber':1, 'episodeTitle':1, 'mediaType':1})
 	.then(docs => {
 		return res.json({
 			status: "success",
