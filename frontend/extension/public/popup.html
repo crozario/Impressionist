@@ -8,7 +8,7 @@
   </head>
   <body>
     <div class="page-container"> 
-      <h1>
+      <!-- <h1>
         User authentication and Search is still a work in progress
       </h1>
 
@@ -16,19 +16,17 @@
         Current Supported Content: Friends Season 2 and Office, Season 5 Ep. 7 and Season 2 Ep 17 (Dwight's Speech)
       </h1>
   
-      <button id="reload-button">Reload Page</button>  
+      <button id="reload-button">Reload Page</button>   -->
       
-      <!-- <div class="title-contrainer">
+      <div class="title-contrainer">
             <h1>Impressionist</h1>
           </div>
 
-          <div class="logo-container">
-              <img src="images/logo_transparent.png" alt="Impressionist Logo">
-          </div>
-
           <div id="contents-container">
-
             <div id = "login-signup-container">
+                <div class="logo-container">
+                    <img src="images/logo_transparent.png" alt="Impressionist Logo">
+                </div>
               <div id="login-signup-tab">
                 <button id="login-tab">Login</button>
                 <button id="signup-tab">Signup</button>
@@ -52,42 +50,35 @@
                       <button id="signup-button" type="submit">Sign up</button>
                   </form>
               </div>   
-              </div>      
-            </div>
-
+              </div>   
+              
             <div id = "user-container">
-              <h2>User Info</h2>
-
-              <span id="user-email"></span>
-              <button id="logout-button" type="submit">Logout</button>
+                <h2>User Info</h2>
+  
+                <span id="user-email"></span>
+                <button id="logout-button" type="submit">Logout</button>
+              </div>
+  
+              <div id = "search-container">
+                  <form class="search">
+                    <input id ="search-input" type="text" placeholder="search..." name="search" required>
+                    <button id="search-button" type="submit"><img src="images/search_icon.png"></button>
+                  </form>
+  
+                  <div id="search-results">
+  
+                  </div>
+              </div>
+              
             </div>
+            <div id="tab-container">
+                <button id="left-tab"><img src="images/search_icon.png"></button>
+                <button id="right-tab"><img src="images/person_icon.png"></button>
+              </div>
 
-            <div id = "search-container">
-                <h2>Search Page</h2>
-            </div>
-          </div> -->
+          </div>
+      
 
-        
-            <!-- <div class="authentication-container">
-              <form id="login-form">
-                <div class="login-form-container">
-                  <input id="login-input-email" type="text" placeholder="Enter Email" name="email" required>
-        
-                  <input id="login-input-password" type="password" placeholder="Enter Password" name="password" required>
-        
-                  
-                  
-                </div>  
-      
-                <div id="status" style="display: none;"><strong>Incorrect email or password<strong></div>   
-                    
-              </form>
-            </div> -->
-      
-        <!-- <div id="tab-container">
-          <button id="left-tab"><img src="images/search_icon.png"></button>
-          <button id="right-tab"><img src="images/person_icon.png"></button>
-        </div> -->
     </div>
 
    

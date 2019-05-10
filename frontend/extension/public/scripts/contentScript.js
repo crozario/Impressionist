@@ -369,7 +369,7 @@ let injectSideBar = () => {
 
     let resultsReceivedContainer = document.createElement('div');
     resultsReceivedContainer.id = "results-received-container";
-    resultsReceivedContainer.style.height = "300px"
+    // resultsReceivedContainer.style.height = "300px"
     // resultsReceivedContainer.style.maxHeight = "500px";
     resultsReceivedContainer.style.height = "400px"
 

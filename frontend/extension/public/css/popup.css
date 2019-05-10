@@ -162,3 +162,53 @@ input {
 #search-container {
     text-align: center;
 }
+
+form.search input[type=text] {
+    /* padding: 10px; */
+    margin-left: 2px;
+    font-size: 17px;
+    border: 1px solid grey;
+    float: left;
+    width: 80%;
+}
+
+form.search button {
+    float: left;
+    width: 15%;
+    /* padding: 10px;     */
+    border: 1px solid grey;
+    border-left: none;
+    cursor: pointer;
+    border-radius: 0px;
+  }
+
+form.search::after {
+    content: "";
+    clear: both;
+    display: table;
+}
+
+#search-results {
+    text-align: center;
+    border: 1px solid grey;
+    height: 300px;
+    overflow: auto;
+}
+
+table {
+    border: 1px solid gray;
+    border-radius: 2px;
+    margin: 5px 0;
+    padding: 2px 2px;
+    width: 100%;
+}
+
+/* table td {
+    padding: 5px;
+    border: 1px solid gray;
+} */
+/* 
+#search-results table {
+    text-align: center;
+} */
+
